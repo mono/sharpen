@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="sharpen.ui"
+   name="Java To C# UI Plug-in"
+   version="1.0.0"
+   provider-name="db4objects Inc."
+   class="sharpen.ui.JavaToCSharpUI">
+
+   <runtime>
+      <library name="sharpenui.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="sharpen.core"/>
+      <import plugin="org.eclipse.jdt.core"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.ui.views"/>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="sharpen.builder"/>
+   </requires>
+
+   <extension
+         point="org.eclipse.ui.popupMenus">
+        
+      <objectContribution
+            objectClass="org.eclipse.jdt.core.ICompilationUnit"
+            id="sharpen.ui.contribution1">            
+            
+         <menu
+               label="Java To C#"
+               path="additions"
+               id="sharpen.ui.compilationUnitMenu">
+            <separator
+                  name="additions">
+            </separator>
+         </menu>
+          
+         <action
+               label="Convert"
+               class="sharpen.ui.popup.actions.ConvertCompilationUnitAction"
+               menubarPath="sharpen.ui.compilationUnitMenu/additions"
+               enablesFor="+"
+               id="sharpen.ui.convertCompilationUnitAction">
+         </action>         
+      </objectContribution>
+      
+      <objectContribution
+      		objectClass="org.eclipse.jdt.core.IJavaProject"
+      		id="sharpen.ui.contribution2">
+      		
+      	<menu
+               label="Java to C#"
+               path="additions"
+               id="sharpen.ui.javaProjectMenu">
+            <separator
+                  name="additions">
+            </separator>
+         </menu>
+      	
+      		<action
+      			label="Convert to new C# Project"
+      			class="sharpen.ui.popup.actions.ConvertProjectAction"
+      			menubarPath="sharpen.ui.javaProjectMenu/additions"
+      			enablesFor="1"
+      			id="sharpen.ui.convertProjectAction">
+      		</action>
+      	</objectContribution>
+      	
+      	<objectContribution
+      		objectClass="org.eclipse.jdt.core.IPackageFragmentRoot"
+      		id="sharpen.ui.contribution3">
+      		
+      	<menu
+               label="Java to C#"
+               path="additions"
+               id="sharpen.ui.javaProjectMenu2">
+            <separator
+                  name="additions">
+            </separator>
+         </menu>
+      	
+      		<action
+      			label="Convert to new C# Project"
+      			class="sharpen.ui.popup.actions.ConvertPackageAction"
+      			menubarPath="sharpen.ui.javaProjectMenu2/additions"
+      			enablesFor="1"
+      			id="sharpen.ui.convertPackageAction">
+      		</action>
+      	</objectContribution>
+
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="sharpen.ui.properties.SharpenBuilderPropertyPage"
+            id="sharpen.ui.properties.builderPropertyPage"
+            name="Sharpen Properties"
+            objectClass="sharpen.core.builder.ISharpenProject">
+      </page>
+   </extension>
+
+</plugin>

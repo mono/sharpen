@@ -1,0 +1,14 @@
+namespace collections
+{
+	public class List1
+	{
+		internal static void test()
+		{
+			System.Collections.IList l = new System.Collections.ArrayList();
+			if (l.Count > 0)
+			{
+				object value = l[0];
+			}
+		}
+	}
+}

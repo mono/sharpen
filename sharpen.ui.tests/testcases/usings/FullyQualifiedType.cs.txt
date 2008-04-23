@@ -1,0 +1,11 @@
+namespace Usings
+{
+	internal class Test
+	{
+	}
+
+	public class FullyQualifiedType
+	{
+		private Usings.Test _test;
+	}
+}

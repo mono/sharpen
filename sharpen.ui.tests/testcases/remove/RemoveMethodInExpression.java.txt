@@ -1,0 +1,22 @@
+package remove;
+
+class Foo {
+	public void bar() {
+		zeng("before");
+		if (baz()) {
+			zeng("after");
+		}
+		
+		boolean b = baz() == true;				
+	}
+
+	/**
+	 * @sharpen.remove false
+	 */
+	public boolean baz() {
+		return true;
+	}
+	
+	public void zeng(String s) {
+	}
+}

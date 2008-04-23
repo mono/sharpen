@@ -1,0 +1,14 @@
+interface Foo {
+	void foo();
+}
+
+interface Bar extends Foo {
+}
+
+abstract class FooImpl1 implements Bar {
+}
+
+class FooImpl2 extends FooImpl1 {
+	public void foo() {
+	}
+}

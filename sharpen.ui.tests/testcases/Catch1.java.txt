@@ -1,0 +1,36 @@
+public class Catch1 {
+	public static void run() throws Throwable {
+		try {
+			throw new Exception("uh, oh");
+		} catch (Exception e) {
+		}
+		try {
+			throw new Exception("oh, uh");
+		} catch (java.io.IOException ioe) {
+		}
+		try {
+			throw new Exception("oh, uh");
+		} catch (java.io.IOException ioe) {
+			bang(ioe);
+		}
+	}
+
+	public static void bang(Object o) {
+	}
+
+	public static Object foo() throws Exception {
+		try {
+			throw new Exception("foo");
+		} catch (java.io.IOException ioe) {
+			return null;
+		}
+	}
+
+	public static Object bar() {
+		try {
+			throw new Exception("bar");
+		} catch (Throwable e) {
+			return null;
+		}
+	}
+}

@@ -1,0 +1,16 @@
+public class Cast2
+{
+	private string _name;
+
+	public virtual void setName(object name)
+	{
+		try
+		{
+			_name = (string)name;
+		}
+		catch (System.InvalidCastException)
+		{
+			_name = null;
+		}
+	}
+}

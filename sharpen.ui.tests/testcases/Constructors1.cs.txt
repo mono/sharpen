@@ -1,0 +1,6 @@
+public class Constructors1
+{
+	public Constructors1()
+	{
+	}
+}

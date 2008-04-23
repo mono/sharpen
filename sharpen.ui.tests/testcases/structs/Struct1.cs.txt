@@ -1,0 +1,11 @@
+namespace structs
+{
+	public struct Struct1
+	{
+		public string name;
+
+		public void foo()
+		{
+		}
+	}
+}

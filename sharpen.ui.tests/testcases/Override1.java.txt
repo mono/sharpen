@@ -1,0 +1,11 @@
+class Override1Base {
+	
+	public void foo() {
+	}
+}
+
+class Override1 extends Override1Base {
+
+	public void foo() {
+	}
+}

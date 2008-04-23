@@ -1,0 +1,39 @@
+namespace innerclasses
+{
+	public class AnonymousInnerClass4
+	{
+		public virtual void run()
+		{
+			new java.lang.Thread(new _Runnable_5(this));
+		}
+
+		private sealed class _Runnable_5 : java.lang.Runnable
+		{
+			public _Runnable_5(AnonymousInnerClass4 _enclosing)
+			{
+				this._enclosing = _enclosing;
+			}
+
+			public void run()
+			{
+				string a = "foo";
+				this._enclosing.print(a + ": " + a.Trim());
+				this._enclosing.print(((innerclasses.Node)this._enclosing._root)._next._next.ToString
+					());
+			}
+
+			private readonly AnonymousInnerClass4 _enclosing;
+		}
+
+		private void print(string a)
+		{
+		}
+
+		internal object _root;
+	}
+
+	internal class Node
+	{
+		public innerclasses.Node _next;
+	}
+}

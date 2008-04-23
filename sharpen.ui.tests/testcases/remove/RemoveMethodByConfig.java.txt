@@ -1,0 +1,17 @@
+package remove;
+
+class Foo {
+
+	public void bar() {
+		zeng("before");
+		baz();
+		zeng("after");
+		
+	}
+
+	public void baz() {
+	}
+	
+	public void zeng(String s) {
+	}
+}

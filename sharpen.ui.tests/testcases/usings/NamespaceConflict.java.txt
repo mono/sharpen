@@ -1,0 +1,8 @@
+package usings;
+
+class Usings {
+}
+
+public class NamespaceConflict {
+	private Usings _test;
+}

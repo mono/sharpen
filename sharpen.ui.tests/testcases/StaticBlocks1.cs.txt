@@ -1,0 +1,9 @@
+public class StaticBlocks1
+{
+	public static readonly string[] FOO;
+
+	static StaticBlocks1()
+	{
+		FOO = new string[] { "foo", "bar" };
+	}
+}

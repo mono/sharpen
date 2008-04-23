@@ -1,0 +1,11 @@
+namespace Usings
+{
+	internal class Usings
+	{
+	}
+
+	public class NamespaceConflict
+	{
+		private Usings.Usings _test;
+	}
+}

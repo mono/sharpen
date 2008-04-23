@@ -1,0 +1,11 @@
+package generics;
+
+public class GenericReturnTypes {
+
+	public interface Entry<K, V> {
+	}
+	
+	public Entry<String, Integer> entry() {
+		return null;
+	}
+}

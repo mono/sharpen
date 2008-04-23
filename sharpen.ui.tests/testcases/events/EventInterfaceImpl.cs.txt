@@ -1,0 +1,21 @@
+namespace events
+{
+	public class EventInterfaceImpl : events.EventInterface
+	{
+		private events.QueryEventHandler _queryStarted;
+
+		public virtual event events.QueryEventHandler QueryStarted
+		{
+			add
+			{
+				_queryStarted = (events.QueryEventHandler)System.Delegate.Combine(_queryStarted, 
+					value);
+			}
+			remove
+			{
+				_queryStarted = (events.QueryEventHandler)System.Delegate.Remove(_queryStarted, value
+					);
+			}
+		}
+	}
+}

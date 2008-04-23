@@ -1,0 +1,9 @@
+public class UnsignedRightShift
+{
+	private const int DELTA = unchecked((int)(0x9E3779B9));
+
+	public virtual void run()
+	{
+		int a = (DELTA) >> (2 & 0x1f);
+	}
+}

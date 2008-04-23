@@ -1,0 +1,15 @@
+namespace disable
+{
+	public class DisableMethod
+	{
+		#if !CF_1_0
+		private void foo()
+		{
+		}
+		#endif // !CF_1_0
+
+		private void bar()
+		{
+		}
+	}
+}

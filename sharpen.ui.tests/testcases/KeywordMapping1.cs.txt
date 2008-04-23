@@ -1,0 +1,24 @@
+public class KeywordMapping1
+{
+	private string @ref;
+
+	public KeywordMapping1(string @out)
+	{
+		string @using = @out.ToLower();
+		@ref = @using;
+		@as(@ref);
+	}
+
+	public override string ToString()
+	{
+		return @ref;
+	}
+
+	private void @as(string @string)
+	{
+	}
+
+	private void setFlag(bool @bool)
+	{
+	}
+}

@@ -1,0 +1,22 @@
+public class SynchronizedMethod1
+{
+	public virtual void foo()
+	{
+		lock (this)
+		{
+			bar();
+			bar();
+		}
+	}
+
+	private void bar()
+	{
+	}
+
+	public static void baz()
+	{
+		lock (typeof(SynchronizedMethod1))
+		{
+		}
+	}
+}

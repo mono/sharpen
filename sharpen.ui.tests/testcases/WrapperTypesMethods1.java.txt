@@ -1,0 +1,31 @@
+public class WrapperTypesMethods1 {
+	public static void run() {
+		Boolean booleanWrapper = new Boolean("true");
+		boolean booleanValue = booleanWrapper.booleanValue();
+		Boolean booleanWrapperTrue = Boolean.TRUE;
+		Boolean booleanWrapperFalse = Boolean.FALSE;
+		Boolean otherBooleanWrapper = new Boolean(true);
+		String boolString = String.valueOf(booleanValue);
+		
+		Integer intWrapper = new Integer("42");
+		int intValue = intWrapper.intValue();
+		Integer anotherIntWrapper = new Integer(42);
+		
+		Long longWrapper = new Long(42);
+		long longValue = longWrapper.longValue();
+		Long anotherLongWrapper = new Long(42L);
+		
+		Byte byteWrapper = new Byte("10");
+		byte byteValue = byteWrapper.byteValue();
+		Byte anotherByteWrapper = new Byte((byte)10);
+		
+		Character charWrapper = new Character('A');
+		char charValue = charWrapper.charValue();
+		
+		String longString = Long.toString(32);
+		long anotherLongValue = Long.parseLong("32");
+		
+		Integer yetAnotherIntWrapper = Integer.valueOf("32");
+		Integer parsedInt = Integer.parseInt("32");
+	}
+}

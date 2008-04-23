@@ -1,0 +1,6 @@
+public class StaticFinalField1
+{
+	public const int LifeTheUniverseAndEverything = 42;
+
+	public static readonly object ObjectLock = new object();
+}

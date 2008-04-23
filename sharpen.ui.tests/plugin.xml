@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="sharpen.ui.tests"
+   name="Java To C# UI Tests Plug-in"
+   version="1.0.0"
+   provider-name="db4objects Inc."
+   class="sharpen.ui.tests.JavaToCSharpUITests">
+
+   <runtime>
+      <library name="sharpenuitests.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+
+   <requires>
+      <import plugin="sharpen.core"/>
+      <import plugin="sharpen.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.junit"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.jdt.core"/>
+      <import plugin="org.eclipse.jdt.launching"/>
+      <import plugin="sharpen.builder"/>
+      <import plugin="wheel"/>
+   </requires>
+
+</plugin>

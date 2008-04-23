@@ -1,0 +1,21 @@
+using System.Collections.Generic;
+
+namespace Usings
+{
+	public class Generics
+	{
+		internal static void Run()
+		{
+			IDictionary<int, string> m = new Dictionary<int, string>();
+			foreach (KeyValuePair<int, string> e in m)
+			{
+				Print(e.Key);
+				Print(e.Value);
+			}
+		}
+
+		internal static void Print(object o)
+		{
+		}
+	}
+}

@@ -1,0 +1,10 @@
+public class ForEach1 {
+	public void run(String[] args) {
+		for (String arg : args) {
+			print(arg);
+		}
+	}
+	
+	public static void print(String s) {
+	}
+}

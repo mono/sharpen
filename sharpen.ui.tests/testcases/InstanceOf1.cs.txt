@@ -1,0 +1,7 @@
+public class InstanceOf1
+{
+	public static bool isString(object obj)
+	{
+		return obj is string;
+	}
+}

@@ -1,0 +1,21 @@
+public class SwitchCase1 {
+	public static int foo(int arg) {
+		int returnValue = -1;
+		switch (arg) {
+			case 1: {
+				returnValue = 5;
+				break;
+			}
+			
+			case 42: {
+				returnValue = 0;
+				break;
+			}
+			
+			default: {
+				returnValue = 42;
+			}
+		}
+		return returnValue;
+	}
+}

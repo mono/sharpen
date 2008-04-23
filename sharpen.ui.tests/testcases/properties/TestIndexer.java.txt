@@ -1,0 +1,21 @@
+package properties;
+
+public class TestIndexer {
+	public static void main(String[] args) {
+		int j = new TestIndexer().getIt(1);		
+		TestIndexer ti = new TestIndexer();
+		j = ti.getIt(2);
+	}
+	
+	/**
+	 * @sharpen.indexer
+	 */
+	public int getIt(int i) {
+		return i;
+	}	
+	
+	public void test(int i) {
+		if (i != getIt(i)) {
+		}
+	}
+}

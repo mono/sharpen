@@ -1,0 +1,10 @@
+namespace Interfaces
+{
+	/// <summary>
+	/// See
+	/// <see cref="Interfaces.BaseFoo.Bar">Interfaces.BaseFoo.Bar</see>
+	/// </summary>
+	public class FooImpl : Interfaces.IFoo
+	{
+	}
+}

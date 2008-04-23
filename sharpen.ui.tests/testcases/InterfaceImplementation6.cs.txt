@@ -1,0 +1,16 @@
+internal interface Readable
+{
+	void read();
+}
+
+internal interface ReadWritable : Readable
+{
+	void write();
+}
+
+internal abstract class FooImpl : ReadWritable
+{
+	public abstract void read();
+
+	public abstract void write();
+}

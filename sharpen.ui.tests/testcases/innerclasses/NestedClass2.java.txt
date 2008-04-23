@@ -1,0 +1,18 @@
+package innerclasses;
+
+public class NestedClass2 {
+	public class Foo {
+		public Foo(int i) {
+		}
+		public void foo() {
+			bar();
+		}
+	}
+	
+	public void bar() {
+	}
+	
+	public void run() {
+		new Foo(42).foo();
+	}
+}

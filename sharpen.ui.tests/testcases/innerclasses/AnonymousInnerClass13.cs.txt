@@ -1,0 +1,66 @@
+namespace innerclasses
+{
+	internal abstract class Base : java.lang.Runnable
+	{
+		public Base(string arg)
+		{
+		}
+
+		public abstract void run();
+	}
+
+	internal class AnonymousInnerClass13
+	{
+		private readonly string f = "foo";
+
+		public virtual void run()
+		{
+			innerclasses.Base r = new _Base_13(this, "Hello");
+			r = new _Base_19(f);
+			string s = "bar";
+			r = new _Base_25(s);
+		}
+
+		private sealed class _Base_13 : innerclasses.Base
+		{
+			public _Base_13(AnonymousInnerClass13 _enclosing, string baseArg1) : base(baseArg1
+				)
+			{
+				this._enclosing = _enclosing;
+			}
+
+			public override void run()
+			{
+				this._enclosing.foo();
+			}
+
+			private readonly AnonymousInnerClass13 _enclosing;
+		}
+
+		private sealed class _Base_19 : innerclasses.Base
+		{
+			public _Base_19(string baseArg1) : base(baseArg1)
+			{
+			}
+
+			public override void run()
+			{
+			}
+		}
+
+		private sealed class _Base_25 : innerclasses.Base
+		{
+			public _Base_25(string baseArg1) : base(baseArg1)
+			{
+			}
+
+			public override void run()
+			{
+			}
+		}
+
+		private void foo()
+		{
+		}
+	}
+}

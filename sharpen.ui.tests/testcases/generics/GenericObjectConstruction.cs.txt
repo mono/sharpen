@@ -1,0 +1,11 @@
+namespace generics
+{
+	internal class Entry<K, V>
+	{
+	}
+
+	public class GenericObjectConstruction
+	{
+		private generics.Entry<string, int> _default = new generics.Entry<string, int>();
+	}
+}

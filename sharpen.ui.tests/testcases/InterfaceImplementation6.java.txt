@@ -1,0 +1,10 @@
+interface Readable {
+	void read();
+}
+
+interface ReadWritable extends Readable {
+	void write();
+}
+
+abstract class FooImpl implements ReadWritable {
+}

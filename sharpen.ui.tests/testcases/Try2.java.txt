@@ -1,0 +1,22 @@
+public class Try2 {
+	
+	public void run() {
+		
+		Object o = open();
+		try {
+			use(o);
+		} finally {
+			dispose(o);
+		}
+	}
+	
+	private Object open() {
+		return null;
+	}
+	
+	private void use(Object o) {
+	}
+	
+	private void dispose(Object o) {
+	}
+}

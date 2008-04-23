@@ -1,0 +1,17 @@
+public class PostfixExpressions1
+{
+	public static void run()
+	{
+		int i = 0;
+		while (i < 10)
+		{
+			print(i);
+			i++;
+		}
+		i--;
+	}
+
+	public static void print(int i)
+	{
+	}
+}

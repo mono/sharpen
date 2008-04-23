@@ -1,0 +1,4 @@
+public class IntLiterals1
+{
+	private const int DELTA = unchecked((int)(0x9E3779B9));
+}

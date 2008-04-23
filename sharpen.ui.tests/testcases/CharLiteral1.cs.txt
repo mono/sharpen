@@ -1,0 +1,4 @@
+public class CharLiteral1
+{
+	public const char A = 'A';
+}

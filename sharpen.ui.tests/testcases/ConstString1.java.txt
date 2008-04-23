@@ -1,0 +1,3 @@
+public class ConstString1 {
+	public static final String Message = "This is an ex parrot!";
+}

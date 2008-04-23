@@ -1,0 +1,14 @@
+package properties;
+
+public class SimpleSetter {
+	
+	/**
+	 * @sharpen.property
+	 */
+	public final void isCancelled(boolean value) {
+	}
+	
+	public void foo() {
+		isCancelled(true);
+	}
+}

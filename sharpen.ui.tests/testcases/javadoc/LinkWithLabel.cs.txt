@@ -1,0 +1,14 @@
+namespace javadoc
+{
+	internal interface ILinked
+	{
+	}
+
+	/// <summary>
+	/// <see cref="javadoc.ILinked">ILinked</see>
+	/// <see cref="javadoc.ILinked">ILinked</see>
+	/// </summary>
+	public class LinkWithLabel
+	{
+	}
+}

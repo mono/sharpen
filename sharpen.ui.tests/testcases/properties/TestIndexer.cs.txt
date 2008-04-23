@@ -1,0 +1,27 @@
+namespace properties
+{
+	public class TestIndexer
+	{
+		public static void Main(string[] args)
+		{
+			int j = new properties.TestIndexer()[1];
+			properties.TestIndexer ti = new properties.TestIndexer();
+			j = ti[2];
+		}
+
+		public virtual int this[int i]
+		{
+			get
+			{
+				return i;
+			}
+		}
+
+		public virtual void Test(int i)
+		{
+			if (i != this[i])
+			{
+			}
+		}
+	}
+}

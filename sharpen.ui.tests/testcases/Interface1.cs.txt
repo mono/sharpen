@@ -1,0 +1,8 @@
+public interface Interface1
+{
+	int size();
+
+	bool hasNext();
+
+	object next();
+}

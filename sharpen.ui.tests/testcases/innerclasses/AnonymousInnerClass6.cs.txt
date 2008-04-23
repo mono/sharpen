@@ -1,0 +1,29 @@
+namespace innerclasses
+{
+	public class AnonymousInnerClass6
+	{
+		private static string Message = "I'm lumberjack and I'm ok!";
+
+		public static void run()
+		{
+			new java.lang.Thread(new _Runnable_8());
+		}
+
+		private sealed class _Runnable_8 : java.lang.Runnable
+		{
+			public _Runnable_8()
+			{
+			}
+
+			public void run()
+			{
+				innerclasses.AnonymousInnerClass6.print(innerclasses.AnonymousInnerClass6.Message
+					);
+			}
+		}
+
+		internal static void print(string msg)
+		{
+		}
+	}
+}

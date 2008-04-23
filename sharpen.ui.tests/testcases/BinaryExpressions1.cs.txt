@@ -1,0 +1,23 @@
+public class BinaryExpressions1
+{
+	public static void run()
+	{
+		int a = prompt() * 2;
+		int b = a + 5 * (2 - prompt());
+		println("a: " + a + ", " + b);
+		bool flag = a > b;
+		if (!flag)
+		{
+			println("wow");
+		}
+	}
+
+	private static int prompt()
+	{
+		return 1;
+	}
+
+	private static void println(string text)
+	{
+	}
+}

@@ -1,0 +1,10 @@
+
+interface IFoo {
+	void foo();
+}
+
+class Foo implements IFoo, Cloneable {
+	public void foo() {
+	}
+}
+

@@ -1,0 +1,15 @@
+public class Try1
+{
+	public static bool test(object arg)
+	{
+		try
+		{
+			string s = (string)arg;
+			return true;
+		}
+		catch (System.InvalidCastException)
+		{
+			return false;
+		}
+	}
+}

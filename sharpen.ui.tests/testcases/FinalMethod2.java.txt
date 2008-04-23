@@ -1,0 +1,9 @@
+class FinalMethod2Base {
+	public void foo() {
+	}
+}
+
+class FinalMethod2 extends FinalMethod2Base {
+	public final void foo() {
+	}
+}

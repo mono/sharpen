@@ -1,0 +1,11 @@
+package javadoc;
+
+interface Linked {
+}
+
+/**
+ * {@link Linked Linked}
+ * {@link javadoc.Linked Linked}
+ */
+public class LinkWithLabel {
+}

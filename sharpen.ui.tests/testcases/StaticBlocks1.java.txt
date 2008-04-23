@@ -1,0 +1,7 @@
+public class StaticBlocks1 {
+	public static final String[] FOO;
+	
+	static {
+		FOO = new String[] { "foo", "bar" };
+	}
+}

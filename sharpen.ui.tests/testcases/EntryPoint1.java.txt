@@ -1,0 +1,4 @@
+public class EntryPoint1 {
+	public static void main(String[] args) {
+	}
+}

@@ -1,0 +1,16 @@
+package ignore;
+
+/**
+ * @sharpen.ignore.extends
+ */
+public class IgnoreExtendsOverride extends java.io.Reader implements java.lang.Runnable {
+
+	static abstract class Foo extends java.io.Reader {
+		public void close() {}
+	}
+	
+    public void run() {}
+	public void close() {}
+ 	public void mark(int readAheadLimit) {} 
+	public int read(char[] cbuf, int off, int len) { return 0; }
+}

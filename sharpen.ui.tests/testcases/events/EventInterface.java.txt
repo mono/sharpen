@@ -1,0 +1,11 @@
+package events;
+
+public interface EventInterface {
+		
+	/**
+	 * An event.
+	 *
+	 * @sharpen.event events.QueryEventArgs
+	 */
+	public Object queryStarted();
+}

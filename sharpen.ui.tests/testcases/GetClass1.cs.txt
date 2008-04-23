@@ -1,0 +1,7 @@
+public class GetClass1
+{
+	public static bool isArray(object o)
+	{
+		return Sharpen.Runtime.getClassForObject(o).isArray();
+	}
+}

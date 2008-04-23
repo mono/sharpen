@@ -1,0 +1,12 @@
+package innerclasses;
+
+public class AnonymousWithFinalField {
+	public static Comparable run(final Object obj) {
+ 		return new Comparable() {
+  			private final int _source = ((Integer)obj).intValue();
+  			public int compareTo(Object target) {
+  				return _source - ((Integer)target).intValue();
+  			}
+ 		};
+ 	}
+}

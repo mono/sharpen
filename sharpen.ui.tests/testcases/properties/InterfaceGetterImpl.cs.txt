@@ -1,0 +1,18 @@
+namespace properties
+{
+	public class InterfaceGetterImpl : properties.InterfaceGetter
+	{
+		public virtual bool IsCancelled
+		{
+			get
+			{
+				return false;
+			}
+		}
+
+		public static bool Foo(properties.InterfaceGetter getter)
+		{
+			return getter.IsCancelled;
+		}
+	}
+}

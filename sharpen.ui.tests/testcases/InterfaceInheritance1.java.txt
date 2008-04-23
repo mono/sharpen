@@ -1,0 +1,7 @@
+interface Foo {
+	void foo();
+}
+
+interface Bar extends Foo {
+	void bar();
+}

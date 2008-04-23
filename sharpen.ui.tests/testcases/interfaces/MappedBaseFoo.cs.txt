@@ -1,0 +1,10 @@
+namespace What.Ever
+{
+	public class MappedBaseFoo : What.Ever.IFoo
+	{
+	}
+
+	internal interface IFoo
+	{
+	}
+}

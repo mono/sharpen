@@ -1,0 +1,23 @@
+internal interface Entry<T>
+{
+}
+
+public class ForEach2
+{
+	public virtual void run(string[] args)
+	{
+		foreach (Entry<string> arg in entries())
+		{
+			print(arg);
+		}
+	}
+
+	private static Entry<string>[] entries()
+	{
+		return null;
+	}
+
+	public static void print(object s)
+	{
+	}
+}

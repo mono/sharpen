@@ -1,0 +1,10 @@
+namespace properties
+{
+	public abstract class BaseInterfaceGetter : properties.InterfaceGetter
+	{
+		public abstract bool IsCancelled
+		{
+			get;
+		}
+	}
+}

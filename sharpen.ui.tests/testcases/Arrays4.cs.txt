@@ -1,0 +1,12 @@
+public class Arrays4
+{
+	public static void run()
+	{
+		string[][][] s = new string[][][] { new string[][] { new string[2], new string[2]
+			, new string[2] }, new string[][] { new string[2], new string[2], new string[2] }
+			 };
+		s[0][1][2] = "foo";
+		string[][] s2 = new string[][] { new string[1], new string[1] };
+		s2[0][0] = "bar";
+	}
+}

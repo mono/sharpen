@@ -1,0 +1,12 @@
+package collections;
+
+import java.util.*;
+
+public class Hashtable1 {
+	public static void printAll(Object collection) {
+		Hashtable subject = (Hashtable)collection;
+		subject.put("foo", "bar");
+		if (subject.size() > 0) {
+		}
+	}
+}

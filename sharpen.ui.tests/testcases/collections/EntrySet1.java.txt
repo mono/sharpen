@@ -1,0 +1,26 @@
+package collections;
+
+import java.util.*;
+
+abstract class MyMap extends HashMap {
+	public Set entrySet() {
+		return null;
+	}
+	
+	public void debug() {
+		for (Object entry : entrySet()) {
+		}
+	}
+}
+
+public class EntrySet1 {
+	static void printAll(Map items) {
+		for (Object entry : items.entrySet()) {
+			Map.Entry e = (Map.Entry)entry;
+			print(e.getKey());
+		}
+	} 
+	
+	static void print(Object o) {
+	}
+}

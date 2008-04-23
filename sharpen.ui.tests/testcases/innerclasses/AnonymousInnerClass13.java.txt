@@ -1,0 +1,34 @@
+package innerclasses;
+
+abstract class Base implements Runnable {
+	public Base(String arg) {
+	}
+}
+
+class AnonymousInnerClass13 {
+
+	private final String f = "foo";
+	
+	public void run() {
+		Base r = new Base("Hello") {
+			public void run() {
+				foo();
+			}
+		};
+
+		r = new Base(f) {
+			public void run() {
+			}
+		};
+		
+		String s = "bar";
+		r = new Base(s) {
+			public void run() {
+			}
+		};
+	}
+	
+	private void foo() {
+	}
+}
+

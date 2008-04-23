@@ -1,0 +1,9 @@
+public class Throw1 {
+	public static void run() throws Throwable {
+		try {
+			throw new Exception("uh, oh");
+		} catch (Throwable x) {
+			throw x;
+		}
+	}
+}

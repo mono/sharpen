@@ -1,0 +1,12 @@
+package ignore;
+
+class Foo {
+
+	public void bar() {
+	}
+
+	/**
+	 * @sharpen.ignore
+	 */
+	public static final int answer = 42;
+}

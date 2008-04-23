@@ -1,0 +1,7 @@
+public class JavaArray1
+{
+	public static object get(object onArray, int index)
+	{
+		return java.lang.reflect.Array.get(onArray, index);
+	}
+}

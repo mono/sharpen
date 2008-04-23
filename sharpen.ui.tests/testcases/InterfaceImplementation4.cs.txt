@@ -1,0 +1,13 @@
+internal interface Foo
+{
+	bool foo(int a, int b);
+}
+
+internal abstract class FooImpl : Foo
+{
+	public abstract bool foo(int arg1, int arg2);
+}
+
+internal abstract class FooImpl2 : FooImpl
+{
+}

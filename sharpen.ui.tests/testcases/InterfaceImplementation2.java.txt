@@ -1,0 +1,2 @@
+public class InterfaceImplementation2 implements java.lang.Cloneable {
+}

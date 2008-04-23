@@ -1,0 +1,11 @@
+package structs;
+
+/**
+ * @sharpen.struct
+ */
+public class Struct1 {
+	public String name;
+	
+	public void foo() {
+	}
+}

@@ -1,0 +1,21 @@
+namespace properties
+{
+	public class StaticGetter
+	{
+		public static bool IsCancelled
+		{
+			get
+			{
+				return false;
+			}
+		}
+
+		public static void Foo()
+		{
+			if (properties.StaticGetter.IsCancelled)
+			{
+				return;
+			}
+		}
+	}
+}

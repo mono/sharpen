@@ -1,0 +1,8 @@
+package properties;
+
+public class TestIndexerClient {
+	public void useIt() {
+		TestIndexer ti = new TestIndexer();
+		int j = ti.getIt(7);
+	}
+}

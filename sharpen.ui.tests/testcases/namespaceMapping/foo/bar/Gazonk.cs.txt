@@ -1,0 +1,10 @@
+namespace NamespaceMapping.Foo.Bar
+{
+	public class Gazonk
+	{
+		internal virtual NamespaceMapping.Foo.Bar.Baz GetBaz()
+		{
+			return null;
+		}
+	}
+}

@@ -1,0 +1,5 @@
+public class Arrays5 {
+	public static void run() {
+		String[][] strings = new String[][] {{"a"}, {"b"}};
+	}
+}

@@ -1,0 +1,12 @@
+public class Fields2 {
+
+	protected String _name;
+	
+	public String getName() {
+		return this._name;
+	}
+	
+	public void setName(String name) {
+		this._name = name;
+	}
+}

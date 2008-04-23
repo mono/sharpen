@@ -1,0 +1,16 @@
+interface Foo {
+	public void mappedToBar();
+}
+
+class BaseFoo implements Foo {
+
+	public void mappedToBar() {
+	}
+}
+
+public class MethodNameMappingInHierarchy2 {
+
+	public void gazonk() {
+		new BaseFoo().mappedToBar();
+	}
+}

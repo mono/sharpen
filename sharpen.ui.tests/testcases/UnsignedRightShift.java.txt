@@ -1,0 +1,9 @@
+public class UnsignedRightShift {
+
+	private static final int DELTA = 0x9E3779B9;
+	
+	public void run() {
+		int a = DELTA >>> 2;
+	}
+	
+}

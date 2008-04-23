@@ -1,0 +1,2 @@
+public class JavaLang1 extends Thread {
+}

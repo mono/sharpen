@@ -1,0 +1,18 @@
+namespace generics
+{
+	internal class Item
+	{
+	}
+
+	internal interface Foo<T>
+	{
+	}
+
+	public class WildcardTypes
+	{
+		private static void run(generics.Foo<generics.Item> items)
+		{
+			generics.Foo<object> i = items;
+		}
+	}
+}

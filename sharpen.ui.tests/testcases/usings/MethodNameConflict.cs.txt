@@ -1,0 +1,14 @@
+namespace Usings
+{
+	internal class Usings
+	{
+	}
+
+	public class MethodNameConflict
+	{
+		public virtual void Usings()
+		{
+			Usings.Usings u = new Usings.Usings();
+		}
+	}
+}

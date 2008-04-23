@@ -1,0 +1,25 @@
+namespace innerclasses
+{
+	internal class Base
+	{
+		public virtual void foo()
+		{
+		}
+	}
+
+	internal class AnonymousInnerClass10
+	{
+		private sealed class _Base_9 : innerclasses.Base
+		{
+			public _Base_9()
+			{
+			}
+
+			public override void foo()
+			{
+			}
+		}
+
+		internal static innerclasses.Base b = new _Base_9();
+	}
+}

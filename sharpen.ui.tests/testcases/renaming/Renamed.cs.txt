@@ -1,0 +1,14 @@
+namespace renaming
+{
+	public class Renamed
+	{
+		public Renamed()
+		{
+		}
+
+		public virtual renaming.Renamed foo(object o)
+		{
+			return (renaming.Renamed)o;
+		}
+	}
+}

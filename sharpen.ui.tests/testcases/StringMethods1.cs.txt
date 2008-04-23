@@ -1,0 +1,40 @@
+public class StringMethods1
+{
+	/// <exception cref="System.Exception"></exception>
+	public static void run(string s)
+	{
+		int i = s.IndexOf("foo");
+		char ch = s[i];
+		if (i < 0)
+		{
+			print(s.ToUpper());
+		}
+		else
+		{
+			int j = s.Trim().LastIndexOf("foo") - s.Length;
+			if (i == j)
+			{
+				print(Sharpen.Runtime.substring(s.ToLower(), i));
+			}
+			else
+			{
+				print(Sharpen.Runtime.substring(s, i, j));
+			}
+		}
+		byte[] bytes = Sharpen.Runtime.getBytesForString(s, "utf-8");
+		if (s.StartsWith("foo"))
+		{
+			print("foo");
+		}
+		if (s.EndsWith("bar"))
+		{
+			print("bar");
+		}
+		print(Sharpen.Runtime.getStringValueOf(42));
+		print(string.Intern("foo"));
+	}
+
+	private static void print(string s)
+	{
+	}
+}

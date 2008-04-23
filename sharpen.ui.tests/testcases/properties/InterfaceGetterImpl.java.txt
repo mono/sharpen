@@ -1,0 +1,13 @@
+package properties;
+
+public class InterfaceGetterImpl implements InterfaceGetter {
+	
+	public boolean isCancelled() {
+		return false;
+	}
+	
+	public static boolean foo(InterfaceGetter getter) {
+		return getter.isCancelled();
+	}
+
+}

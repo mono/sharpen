@@ -1,0 +1,23 @@
+package innerclasses;
+
+public class AnonymousInnerClass9 {
+	
+	public void start() {
+		final int a = 0;
+		new Thread(new Runnable() {
+			public void run() {
+				new Thread(new Runnable() {
+					public void run() {
+						use(a);
+						this.foo();
+					}
+					private void foo() {
+					}
+				});
+			}
+		});
+	}
+	
+	public void use(int i) {
+	}
+}

@@ -1,0 +1,43 @@
+namespace innerclasses
+{
+	public class NestedThis
+	{
+		public class Env
+		{
+			public virtual object get(object key)
+			{
+				return null;
+			}
+
+			public virtual innerclasses.NestedThis.Env add(object key, object value)
+			{
+				return new _Env_12(this, key, value);
+			}
+
+			private sealed class _Env_12 : innerclasses.NestedThis.Env
+			{
+				public _Env_12(Env _enclosing, object key, object value)
+				{
+					this._enclosing = _enclosing;
+					this.key = key;
+					this.value = value;
+				}
+
+				public override object get(object key1)
+				{
+					if (key == key1)
+					{
+						return value;
+					}
+					return this._enclosing.get(key);
+				}
+
+				private readonly Env _enclosing;
+
+				private readonly object key;
+
+				private readonly object value;
+			}
+		}
+	}
+}

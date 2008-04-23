@@ -1,0 +1,34 @@
+namespace collections
+{
+	[System.Serializable]
+	internal abstract class MyMap : System.Collections.Hashtable
+	{
+		public override java.util.Set entrySet()
+		{
+			return null;
+		}
+
+		public virtual void debug()
+		{
+			foreach (object entry in this)
+			{
+			}
+		}
+	}
+
+	public class EntrySet1
+	{
+		internal static void printAll(System.Collections.IDictionary items)
+		{
+			foreach (object entry in items)
+			{
+				System.Collections.DictionaryEntry e = (System.Collections.DictionaryEntry)entry;
+				print(e.Key);
+			}
+		}
+
+		internal static void print(object o)
+		{
+		}
+	}
+}

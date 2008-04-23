@@ -1,0 +1,9 @@
+package ignore;
+
+/**
+ * @sharpen.ignore.implements
+ */
+public class IgnoreImplements extends Object implements Runnable {
+	public void run() {
+	}
+}

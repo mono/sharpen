@@ -1,0 +1,79 @@
+namespace javadoc
+{
+	/// <summary>
+	/// This was overlaid here.
+	/// 
+	/// Including its multiple lines.
+	/// </summary>
+	public class XmlDocOverlay
+	{
+		/// <summary>
+		/// Constructors have a special name.
+		/// </summary>
+		public XmlDocOverlay()
+		{
+		}
+
+		/// <summary>Methods should have a summary.</summary>
+		/// <remarks>Methods should have a summary.</remarks>
+		public virtual int foo(int bar)
+		{
+			return 42;
+		}
+
+		/// <summary>
+		/// Method bar is very interesting.
+		/// </summary>
+		public virtual int baz()
+		{
+			return 0;
+		}
+
+		/// <summary>
+		/// Method bar(int) is much better.
+		/// </summary>
+		public virtual int baz(int i)
+		{
+			return 0;
+		}
+
+		/// <summary>This SHOULD APPEAR in the final doc.</summary>
+		/// <remarks>This SHOULD APPEAR in the final doc.</remarks>
+		public virtual int baz(string s)
+		{
+			return 0;
+		}
+
+		/// <summary>
+		/// Method bar(string, int) is the one.
+		/// </summary>
+		public virtual int baz(string s, int i)
+		{
+			return 0;
+		}
+
+		/// <summary>Blah.</summary>
+		/// <remarks>Blah.</remarks>
+		public const int BAR = 42;
+
+		/// <summary>
+		/// it works for fields too.
+		/// </summary>
+		public const int BAZ = 0;
+	}
+
+	public delegate void QueryEventHandler(object sender, events.QueryEventArgs args);
+
+	/// <summary>
+	/// This was overlaid here.
+	/// 
+	/// And this is the IEventInterface.
+	/// </summary>
+	internal interface IEventInterface
+	{
+		/// <summary>
+		/// A query started.
+		/// </summary>
+		event events.QueryEventHandler queryStarted;
+	}
+}

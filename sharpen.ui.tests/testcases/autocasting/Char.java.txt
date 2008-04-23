@@ -1,0 +1,9 @@
+package autocasting;
+
+class CharAutocasting {
+	private char _ch;
+	
+	private void test() {
+		this._ch = 1;
+	}
+}

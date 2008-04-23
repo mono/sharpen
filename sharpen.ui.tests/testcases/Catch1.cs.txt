@@ -1,0 +1,58 @@
+public class Catch1
+{
+	/// <exception cref="System.Exception"></exception>
+	public static void run()
+	{
+		try
+		{
+			throw new System.Exception("uh, oh");
+		}
+		catch (System.Exception)
+		{
+		}
+		try
+		{
+			throw new System.Exception("oh, uh");
+		}
+		catch (System.IO.IOException)
+		{
+		}
+		try
+		{
+			throw new System.Exception("oh, uh");
+		}
+		catch (System.IO.IOException ioe)
+		{
+			bang(ioe);
+		}
+	}
+
+	public static void bang(object o)
+	{
+	}
+
+	/// <exception cref="System.Exception"></exception>
+	public static object foo()
+	{
+		try
+		{
+			throw new System.Exception("foo");
+		}
+		catch (System.IO.IOException)
+		{
+			return null;
+		}
+	}
+
+	public static object bar()
+	{
+		try
+		{
+			throw new System.Exception("bar");
+		}
+		catch
+		{
+			return null;
+		}
+	}
+}

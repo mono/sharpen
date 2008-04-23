@@ -1,0 +1,14 @@
+class Super1Base {
+
+	public String foo() {
+		return "Base.foo";
+	}
+
+}
+
+class Super1Derived extends Super1Base {
+	public String foo() {
+		String superFoo = super.foo();
+		return superFoo + "(Derived)";
+	}
+}

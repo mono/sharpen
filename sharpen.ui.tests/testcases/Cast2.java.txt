@@ -1,0 +1,12 @@
+public class Cast2 {
+	
+	private String _name;
+	
+	public void setName(Object name) {
+		try {
+			_name = (String)name;
+		} catch (ClassCastException x) {
+			_name = null;
+		}
+	}
+}

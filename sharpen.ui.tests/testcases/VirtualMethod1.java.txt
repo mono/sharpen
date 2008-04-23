@@ -1,0 +1,4 @@
+public class VirtualMethod1 {
+	public void foo() {
+	}
+}

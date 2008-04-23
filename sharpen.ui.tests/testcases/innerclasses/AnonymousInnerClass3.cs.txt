@@ -1,0 +1,60 @@
+namespace innerclasses
+{
+	public class AnonymousInnerClass3
+	{
+		private innerclasses.Printer _printer;
+
+		public virtual void start()
+		{
+			new java.lang.Thread(new _Runnable_8(this));
+		}
+
+		private sealed class _Runnable_8 : java.lang.Runnable
+		{
+			public _Runnable_8(AnonymousInnerClass3 _enclosing)
+			{
+				this._enclosing = _enclosing;
+			}
+
+			public void run()
+			{
+				new java.lang.Thread(new _Runnable_10(this));
+			}
+
+			private sealed class _Runnable_10 : java.lang.Runnable
+			{
+				public _Runnable_10(_Runnable_8 _enclosing)
+				{
+					this._enclosing = _enclosing;
+				}
+
+				public void run()
+				{
+					this._enclosing.ole();
+					this.pock();
+				}
+
+				private void pock()
+				{
+					this._enclosing._enclosing._printer.print("POCK!");
+				}
+
+				private readonly _Runnable_8 _enclosing;
+			}
+
+			private void ole()
+			{
+				this._enclosing._printer.print("Ole!");
+			}
+
+			private readonly AnonymousInnerClass3 _enclosing;
+		}
+	}
+
+	internal class Printer
+	{
+		public virtual void print(string s)
+		{
+		}
+	}
+}

@@ -1,0 +1,12 @@
+public class ClassLiterals1
+{
+	public static void run()
+	{
+		print(Sharpen.Runtime.getClassForType(typeof(string)).ToString());
+		print(Sharpen.Runtime.getClassForType(typeof(ClassLiterals1)).ToString());
+	}
+
+	private static void print(string s)
+	{
+	}
+}

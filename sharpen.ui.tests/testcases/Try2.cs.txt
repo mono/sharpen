@@ -1,0 +1,28 @@
+public class Try2
+{
+	public virtual void run()
+	{
+		object o = open();
+		try
+		{
+			use(o);
+		}
+		finally
+		{
+			dispose(o);
+		}
+	}
+
+	private object open()
+	{
+		return null;
+	}
+
+	private void use(object o)
+	{
+	}
+
+	private void dispose(object o)
+	{
+	}
+}

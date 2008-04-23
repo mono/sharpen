@@ -1,0 +1,22 @@
+public class MemberRef1
+{
+	private Member _member;
+
+	internal virtual void setMember(Member member)
+	{
+		_member = member;
+	}
+
+	public virtual string getMemberName()
+	{
+		return this._member.getName();
+	}
+}
+
+internal class Member
+{
+	public virtual string getName()
+	{
+		return null;
+	}
+}

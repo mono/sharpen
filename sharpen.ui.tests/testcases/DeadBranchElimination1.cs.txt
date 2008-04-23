@@ -1,0 +1,29 @@
+public class DeadBranchElimination1
+{
+	public const bool Debug = false;
+
+	public const bool Trace = true;
+
+	public static void run()
+	{
+		trace();
+		trace();
+		trace2();
+	}
+
+	private static void debug()
+	{
+	}
+
+	private static void trace()
+	{
+	}
+
+	private static void debug2()
+	{
+	}
+
+	private static void trace2()
+	{
+	}
+}

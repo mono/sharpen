@@ -1,0 +1,15 @@
+internal class ObjectMethods2Base
+{
+	public override string ToString()
+	{
+		return "base";
+	}
+}
+
+internal class ObjectMethods2 : ObjectMethods2Base
+{
+	public override string ToString()
+	{
+		return base.ToString() + "derived";
+	}
+}

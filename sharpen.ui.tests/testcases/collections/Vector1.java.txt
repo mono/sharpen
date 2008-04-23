@@ -1,0 +1,12 @@
+package collections;
+
+import java.util.*;
+
+public class Vector1 {
+	public static void printAll(Object collection) {
+		Vector subject = (Vector)collection;
+		subject.addElement("foo");
+		print(subject.elementAt(0));
+	}
+	public static void print(Object o) {}
+}

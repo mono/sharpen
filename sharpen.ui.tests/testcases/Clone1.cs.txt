@@ -1,0 +1,14 @@
+public class Clone1 : java.lang.Cloneable
+{
+	/// <exception cref="System.Exception"></exception>
+	public virtual Clone1 copy1()
+	{
+		return (Clone1)MemberwiseClone();
+	}
+
+	/// <exception cref="System.Exception"></exception>
+	public static Clone1 copy2(Clone1 o)
+	{
+		return (Clone1)o.MemberwiseClone();
+	}
+}

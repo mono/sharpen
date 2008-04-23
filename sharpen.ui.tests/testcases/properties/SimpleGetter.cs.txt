@@ -1,0 +1,21 @@
+namespace properties
+{
+	public class SimpleGetter
+	{
+		public bool IsCancelled
+		{
+			get
+			{
+				return false;
+			}
+		}
+
+		public virtual void Foo()
+		{
+			if (IsCancelled)
+			{
+				return;
+			}
+		}
+	}
+}

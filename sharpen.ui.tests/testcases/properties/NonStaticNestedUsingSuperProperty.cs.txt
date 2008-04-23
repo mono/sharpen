@@ -1,0 +1,23 @@
+namespace properties
+{
+	internal class Foo
+	{
+		private class Bar : properties.InterfaceGetterImpl
+		{
+			public virtual void Run()
+			{
+				if (this.IsCancelled)
+				{
+					return;
+				}
+			}
+
+			internal Bar(Foo _enclosing)
+			{
+				this._enclosing = _enclosing;
+			}
+
+			private readonly Foo _enclosing;
+		}
+	}
+}

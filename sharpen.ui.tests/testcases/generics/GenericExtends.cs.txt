@@ -1,0 +1,10 @@
+namespace generics
+{
+	internal class GenericBase<K, V>
+	{
+	}
+
+	internal class GenericExtends : generics.GenericBase<string, int>
+	{
+	}
+}

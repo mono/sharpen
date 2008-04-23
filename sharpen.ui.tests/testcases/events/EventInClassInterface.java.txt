@@ -1,0 +1,38 @@
+package events;
+
+interface EventRegistry {
+		
+	/**
+	 * An event.
+	 *
+	 * @sharpen.event QueryEventArgs
+	 */
+	public Object queryStarted();
+	
+	/**
+	 * @sharpen.event QueryEventArgs
+	 */
+	public Object queryFinished();
+	
+}
+
+class EventRegistryImpl implements EventRegistry {
+
+	private final Object _queryStarted = new Object();
+	
+	private final Object _queryFinished = new Object();
+	
+	public Object queryStarted() {
+		return _queryStarted;
+	}
+	
+	/**
+	 * @sharpen.event.onAdd onQueryFinishedListener
+	 */
+	public Object queryFinished() {
+		return _queryFinished;
+	}
+	
+	private void onQueryFinishedListener() {
+	}
+}

@@ -1,0 +1,14 @@
+public class ObjectMethods1 {
+	
+	public String toString() {
+		return "Hello!";
+	}
+	
+	public int hashCode() {
+		return 1;
+	}
+	
+	public boolean equals(Object other) {
+		return false;
+	}
+}

@@ -1,0 +1,3 @@
+internal abstract partial class Foo
+{
+}

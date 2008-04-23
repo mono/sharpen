@@ -1,0 +1,8 @@
+public class Return2 {
+
+	private String _name;
+	
+	public String getName() {
+		return _name;
+	}
+}

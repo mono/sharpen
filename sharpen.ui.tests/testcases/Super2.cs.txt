@@ -1,0 +1,13 @@
+internal class Super2Base
+{
+	public Super2Base(string name)
+	{
+	}
+}
+
+internal class Super2Derived : Super2Base
+{
+	public Super2Derived(string name) : base(name)
+	{
+	}
+}

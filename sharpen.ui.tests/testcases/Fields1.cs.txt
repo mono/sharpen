@@ -1,0 +1,10 @@
+public class Fields1
+{
+	private string _name;
+
+	protected int _intValue;
+
+	internal bool _boolValue;
+
+	public volatile bool _stopped;
+}

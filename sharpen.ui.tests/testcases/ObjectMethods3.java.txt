@@ -1,0 +1,11 @@
+public class ObjectMethods3 {
+	public static void dump(Object obj) {
+		int code = obj.hashCode();
+		if (obj.equals(obj)) {
+			print(obj.toString());
+		}
+	}
+	
+	private static void print(String s) {
+	}
+}

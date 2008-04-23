@@ -1,0 +1,14 @@
+public class WaitNotify1 {
+
+	private Object _lock;
+	
+	public void start() throws Exception {
+		_lock.wait();
+		wait();	
+	}
+	
+	public void stop() {
+		notify();
+		_lock.notify();
+	}
+}

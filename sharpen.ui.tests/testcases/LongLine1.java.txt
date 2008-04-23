@@ -1,0 +1,6 @@
+public class LongLine1 {
+	public static void foo() {
+		String bar = "foo" + "bar" + "foo" + "bar" + "foo" + "bar" + "foo" + "bar" + "foo" + "bar" + "foo" + "bar" + "foo" + "bar" + "foo" + "bar" + "foo" + "bar" + "foo" + "bar" + "foo" + "bar" + "foo" + "bar" + "foo" + "bar" + "foo" + "bar" + "foo" + "bar" + "foo" + "bar";
+		String baz = "baz";
+	}
+}

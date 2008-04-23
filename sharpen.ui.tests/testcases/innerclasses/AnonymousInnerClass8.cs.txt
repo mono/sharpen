@@ -1,0 +1,32 @@
+namespace innerclasses
+{
+	internal class Base
+	{
+		public virtual void foo()
+		{
+		}
+	}
+
+	internal class AnonymousInnerClass8 : innerclasses.Base
+	{
+		public virtual void run()
+		{
+			java.lang.Runnable r = new _Runnable_10(this);
+		}
+
+		private sealed class _Runnable_10 : java.lang.Runnable
+		{
+			public _Runnable_10(AnonymousInnerClass8 _enclosing)
+			{
+				this._enclosing = _enclosing;
+			}
+
+			public void run()
+			{
+				this._enclosing.foo();
+			}
+
+			private readonly AnonymousInnerClass8 _enclosing;
+		}
+	}
+}

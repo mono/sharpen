@@ -1,0 +1,37 @@
+package javadoc;
+
+/**
+ * Remarks should be used to describe types,
+ * names like .NET should not make a difference.
+ * A remark can span multiple lines.
+ * And xml significant characters such as < and > should be escaped.
+ * But not html tags such as <p></p>, <br> and <code>foo</code> which are legal.
+ */
+public abstract class Javadoc1 {
+
+	/**
+	 * Constructors can have it too.
+	 */
+	public Javadoc1() {
+	}
+	
+	/**
+	 * Methods should have a summary.
+	 * Multiple lines also allowed. 
+	 * Try with - {@link Javadoc1#BAR}
+	 * @param bar the bar argument
+	 * @return the ultimate answer
+	 * @throws IllegalStateException when things go crazy
+	 * @see Integer#MAX_VALUE
+	 */
+	public int foo(int bar) throws IllegalStateException {
+		return 42;
+	}
+	
+	public abstract void bar() throws java.io.IOException;
+	
+	/**
+	 * Blah.
+	 */
+	public static final int BAR = 42;
+}

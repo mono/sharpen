@@ -1,0 +1,7 @@
+public class Finalize1 {
+	public Finalize1() {
+	}
+	
+	protected void finalize() {
+	}
+}

@@ -1,0 +1,28 @@
+package innerclasses;
+
+public class AnonymousInnerClass7 {
+	public void run() {
+		final String msg = "SPAM, SPAM, SPAM!";
+		new Thread(new Runnable() {
+			public void run() {
+				execute("what? ");
+			}
+			
+			private void execute(String prefix) {
+				print(prefix + msg);
+				print(((Node)_root)._next._next.toString());
+			}
+		});
+	}
+	
+	private void print(String a) {
+	}
+	
+	Object _root;
+}
+
+class Node {
+
+	public Node _next;
+	
+}

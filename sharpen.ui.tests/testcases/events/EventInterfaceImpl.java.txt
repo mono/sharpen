@@ -1,0 +1,10 @@
+package events;
+
+public class EventInterfaceImpl implements EventInterface {
+
+	private Object _queryStarted;
+	
+	public Object queryStarted() {
+		return _queryStarted;
+	}
+}

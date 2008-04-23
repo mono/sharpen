@@ -1,0 +1,15 @@
+public class ObjectMethods3
+{
+	public static void dump(object obj)
+	{
+		int code = obj.GetHashCode();
+		if (obj.Equals(obj))
+		{
+			print(obj.ToString());
+		}
+	}
+
+	private static void print(string s)
+	{
+	}
+}

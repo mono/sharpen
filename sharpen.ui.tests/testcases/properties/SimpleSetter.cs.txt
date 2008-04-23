@@ -1,0 +1,17 @@
+namespace properties
+{
+	public class SimpleSetter
+	{
+		public bool IsCancelled
+		{
+			set
+			{
+			}
+		}
+
+		public virtual void Foo()
+		{
+			IsCancelled = true;
+		}
+	}
+}

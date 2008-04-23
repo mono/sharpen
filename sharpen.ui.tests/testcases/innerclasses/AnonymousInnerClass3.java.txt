@@ -1,0 +1,32 @@
+package innerclasses;
+
+public class AnonymousInnerClass3 {
+
+	private Printer _printer;
+	
+	public void start() {
+		new Thread(new Runnable() {
+			public void run() {
+				new Thread(new Runnable() {
+					public void run() {
+						ole();
+						pock();
+					}
+					
+					private void pock() {
+						_printer.print("POCK!");
+					}
+				});
+			}
+			
+			private void ole() {
+				_printer.print("Ole!");
+			}
+		});
+	}
+}
+
+class Printer {
+	public void print(String s) {
+	}
+}

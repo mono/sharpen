@@ -1,0 +1,45 @@
+namespace javadoc
+{
+	/// <summary>
+	/// Remarks should be used to describe types,
+	/// names like .NET should not make a difference.
+	/// </summary>
+	/// <remarks>
+	/// Remarks should be used to describe types,
+	/// names like .NET should not make a difference.
+	/// A remark can span multiple lines.
+	/// And xml significant characters such as &lt; and &gt; should be escaped.
+	/// But not html tags such as <p></p>, <br /> and <code>foo</code> which are legal.
+	/// </remarks>
+	public abstract class Javadoc1
+	{
+		/// <summary>Constructors can have it too.</summary>
+		/// <remarks>Constructors can have it too.</remarks>
+		public Javadoc1()
+		{
+		}
+
+		/// <summary>Methods should have a summary.</summary>
+		/// <remarks>
+		/// Methods should have a summary.
+		/// Multiple lines also allowed.
+		/// Try with -
+		/// <see cref="javadoc.Javadoc1.BAR">javadoc.Javadoc1.BAR</see>
+		/// </remarks>
+		/// <param name="bar">the bar argument</param>
+		/// <returns>the ultimate answer</returns>
+		/// <exception cref="System.InvalidOperationException">when things go crazy</exception>
+		/// <seealso cref="int.MaxValue">int.MaxValue</seealso>
+		public virtual int foo(int bar)
+		{
+			return 42;
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		public abstract void bar();
+
+		/// <summary>Blah.</summary>
+		/// <remarks>Blah.</remarks>
+		public const int BAR = 42;
+	}
+}

@@ -1,0 +1,27 @@
+public class WrapperTypesMethods1
+{
+	public static void run()
+	{
+		bool booleanWrapper = System.Convert.ToBoolean("true");
+		bool booleanValue = booleanWrapper;
+		bool booleanWrapperTrue = true;
+		bool booleanWrapperFalse = false;
+		bool otherBooleanWrapper = true;
+		string boolString = Sharpen.Runtime.getStringValueOf(booleanValue);
+		int intWrapper = System.Convert.ToInt32("42");
+		int intValue = intWrapper;
+		int anotherIntWrapper = 42;
+		long longWrapper = System.Convert.ToInt64(42);
+		long longValue = longWrapper;
+		long anotherLongWrapper = 42L;
+		byte byteWrapper = System.Convert.ToByte("10");
+		byte byteValue = byteWrapper;
+		byte anotherByteWrapper = (byte)10;
+		char charWrapper = 'A';
+		char charValue = charWrapper;
+		string longString = System.Convert.ToString(32);
+		long anotherLongValue = long.Parse("32");
+		int yetAnotherIntWrapper = int.Parse("32");
+		int parsedInt = int.Parse("32");
+	}
+}

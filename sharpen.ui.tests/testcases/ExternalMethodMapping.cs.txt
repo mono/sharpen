@@ -1,0 +1,7 @@
+public class ExternalMethodMapping
+{
+	public virtual void Foo(javatocsharp.ui.tests.BindingTestCaseSubject.Baz baz)
+	{
+		baz.Mapped();
+	}
+}

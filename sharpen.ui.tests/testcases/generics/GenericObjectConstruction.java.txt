@@ -1,0 +1,8 @@
+package generics;
+
+class Entry<K, V> {
+}
+
+public class GenericObjectConstruction {
+	private Entry<String, Integer> _default = new Entry<String, Integer>();
+}

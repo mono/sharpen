@@ -1,0 +1,19 @@
+class While1 {
+
+	static void listResult(ObjectSet result) {
+        while(result.hasNext()) {
+        	Object next = result.next();
+            println(next);
+        }
+    }
+    
+    static void println(Object obj) {
+    }
+    
+}
+
+interface ObjectSet {
+	int size();
+	boolean hasNext();
+	Object next();
+}

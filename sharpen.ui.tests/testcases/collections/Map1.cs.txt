@@ -1,0 +1,30 @@
+namespace collections
+{
+	public class Map1
+	{
+		internal static void test()
+		{
+			System.Collections.IDictionary map = new System.Collections.Hashtable();
+			if (map.Contains("foo"))
+			{
+				object value = map["foo"];
+			}
+			foreach (object value in map.Values)
+			{
+			}
+			foreach (object key in map.Keys)
+			{
+			}
+		}
+
+		internal static System.Collections.IDictionary genericSortedMap()
+		{
+			return new System.Collections.Generic.SortedList<string, string>();
+		}
+
+		internal static System.Collections.IDictionary sortedMap()
+		{
+			return new System.Collections.SortedList();
+		}
+	}
+}

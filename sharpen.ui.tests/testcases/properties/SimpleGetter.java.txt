@@ -1,0 +1,17 @@
+package properties;
+
+public class SimpleGetter {
+	
+	/**
+	 * @sharpen.property
+	 */
+	public final boolean isCancelled() {
+		return false;
+	}
+	
+	public void foo() {
+		if (isCancelled()) {
+			return;
+		}
+	}
+}

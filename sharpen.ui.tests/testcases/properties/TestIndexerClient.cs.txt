@@ -1,0 +1,11 @@
+namespace properties
+{
+	public class TestIndexerClient
+	{
+		public virtual void UseIt()
+		{
+			properties.TestIndexer ti = new properties.TestIndexer();
+			int j = ti[7];
+		}
+	}
+}

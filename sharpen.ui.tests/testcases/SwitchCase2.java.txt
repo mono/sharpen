@@ -1,0 +1,12 @@
+public class SwitchCase2 {
+	public static int foo(int arg) {
+		switch (arg) {
+			case 0:
+			case 1:
+				return 1;		
+			case 42:			
+			default:
+				return 42;
+		}
+	}
+}

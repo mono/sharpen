@@ -1,0 +1,6 @@
+namespace What.Ever
+{
+	public class MappedFooImpl : What.Ever.IFoo
+	{
+	}
+}

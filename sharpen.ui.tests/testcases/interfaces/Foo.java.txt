@@ -1,0 +1,18 @@
+package interfaces;
+
+public interface Foo {
+	void bar();
+}
+
+class Baz implements Foo {
+
+	public void bar() {
+	}
+}
+
+class Gazonk {
+
+	public void quux(Foo f) {
+		f.bar();
+	}
+}

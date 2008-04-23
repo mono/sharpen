@@ -1,0 +1,7 @@
+public class SignatureMapping
+{
+	public virtual void foo()
+	{
+		string s = Sharpen.Runtime.getStringForBytes(new byte[0], 0, 0);
+	}
+}

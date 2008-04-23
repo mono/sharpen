@@ -1,0 +1,11 @@
+package nativeTypeSystem;
+
+public class StringMethods1 {
+	public static void run(String s) {
+		print(String.valueOf(42));
+		print(String.valueOf(43-1));
+	}
+	
+	private static void print(String s) {
+	}
+}

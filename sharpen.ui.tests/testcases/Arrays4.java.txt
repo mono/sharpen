@@ -1,0 +1,9 @@
+public class Arrays4 {
+	public static void run() {	
+		String[][][] s = new String[2][3][2];
+		s[0][1][2] = "foo";
+		
+		String[][] s2 = new String[2][1];
+		s2[0][0] = "bar";
+	}
+}

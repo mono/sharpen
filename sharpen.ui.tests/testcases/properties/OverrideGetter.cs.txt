@@ -1,0 +1,13 @@
+namespace properties
+{
+	public class OverrideGetter : properties.InterfaceGetterImpl
+	{
+		public override bool IsCancelled
+		{
+			get
+			{
+				return true;
+			}
+		}
+	}
+}

@@ -1,0 +1,13 @@
+internal class FinalMethod2Base
+{
+	public virtual void foo()
+	{
+	}
+}
+
+internal class FinalMethod2 : FinalMethod2Base
+{
+	public sealed override void foo()
+	{
+	}
+}

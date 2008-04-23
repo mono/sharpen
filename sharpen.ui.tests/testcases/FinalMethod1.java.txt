@@ -1,0 +1,4 @@
+public class FinalMethod1 {
+	public final void foo() {
+	}
+}

@@ -1,0 +1,20 @@
+public class KeywordMapping1 {
+	
+	private String ref;
+	
+	public KeywordMapping1(String out) {
+		String using = out.toLowerCase();
+		ref = using;
+		as(ref);
+	}
+	
+	public String toString() {
+		return ref;
+	}
+	
+	private void as(String string) {
+	}
+
+	private void setFlag(boolean bool) {
+	}
+}

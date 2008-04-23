@@ -1,0 +1,25 @@
+public class ExceptionMapping1 {
+	public void foo(Object arg) {
+		if (null == arg) {
+			throw new NullPointerException();
+		}		
+		throw new IllegalStateException();
+	}
+	
+	public void bar(Object arg) {
+		throw new IllegalArgumentException();
+	}
+	
+	public void baz() throws java.net.SocketException {
+		throw new java.net.SocketException();
+	}
+	
+	public void gazonk() {
+		try {
+			baz();
+		} catch (Throwable x) {
+			bar(x.getMessage());
+			bar(x.getCause());
+		}
+	}
+}

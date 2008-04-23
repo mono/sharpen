@@ -1,0 +1,7 @@
+import javatocsharp.ui.tests.*;
+
+public class ExternalMethodMapping {
+	public void foo(BindingTestCaseSubject.Baz baz) {
+		baz.bar();
+	}
+}

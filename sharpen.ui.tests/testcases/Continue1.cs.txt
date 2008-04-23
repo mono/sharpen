@@ -1,0 +1,16 @@
+public class Continue1
+{
+	public static void run()
+	{
+		int i = 0;
+		while (true)
+		{
+			if (i > 5)
+			{
+				++i;
+				continue;
+			}
+			i += 2;
+		}
+	}
+}

@@ -1,0 +1,4 @@
+public class TernaryOperator1 {
+	int foo = true ? 1 : 0;
+	int bar = (false ? true : false) ? 1 : (true ? 0 : 2);
+}

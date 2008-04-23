@@ -1,0 +1,17 @@
+interface Entry<T> {
+}
+	
+public class ForEach2 {
+	public void run(String[] args) {
+		for (Entry<String> arg : entries()) {
+			print(arg);
+		}
+	}
+	
+	private static Entry<String>[] entries() {
+		return null;
+	}
+	
+	public static void print(Object s) {
+	}
+}

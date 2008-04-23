@@ -1,0 +1,10 @@
+namespace mp
+{
+	internal class BaseType
+	{
+	}
+
+	internal class FinalType : mp.BaseType
+	{
+	}
+}

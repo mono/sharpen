@@ -1,0 +1,22 @@
+namespace Interfaces
+{
+	public interface IFoo
+	{
+		void Bar();
+	}
+
+	internal class Baz : Interfaces.IFoo
+	{
+		public virtual void Bar()
+		{
+		}
+	}
+
+	internal class Gazonk
+	{
+		public virtual void Quux(Interfaces.IFoo f)
+		{
+			f.Bar();
+		}
+	}
+}

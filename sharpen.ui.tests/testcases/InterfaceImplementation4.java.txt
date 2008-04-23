@@ -1,0 +1,9 @@
+interface Foo {
+	boolean foo(int a, int b);
+}
+
+abstract class FooImpl implements Foo {
+}
+
+abstract class FooImpl2 extends FooImpl {
+}

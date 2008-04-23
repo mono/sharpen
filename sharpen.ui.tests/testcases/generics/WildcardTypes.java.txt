@@ -1,0 +1,13 @@
+package generics;
+
+class Item {
+}
+
+interface Foo<T> {
+}
+
+public class WildcardTypes {
+	private static void run(Foo<? extends Item> items) {
+		Foo<?> i = items;
+	}
+}

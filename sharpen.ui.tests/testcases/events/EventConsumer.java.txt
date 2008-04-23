@@ -1,0 +1,57 @@
+package events;
+
+/**
+ * @sharpen.ignore
+ */
+interface Event4 {
+	/**
+	 * @sharpen.event.add
+	 */
+	void addListener(EventListener4 listener);
+}
+
+/**
+ * @sharpen.ignore
+ */
+class EventArgs {
+}
+
+/**
+ * @sharpen.ignore
+ */
+interface EventListener4 {
+	void onEvent(Event4 e, EventArgs args);
+}
+
+/**
+ * @sharpen.ignore
+ */
+class FooEventArgs extends EventArgs {
+}
+
+interface EventRegistry {
+	/**
+	 * @sharpen.event events.FooEventArgs
+	 */
+	Event4 foo();
+}
+
+public class EventConsumer {
+	public static void main(final String[] cmdLine) {
+		EventRegistry registry = eventRegistry();
+		registry.foo().addListener(new EventListener4() {
+			public void onEvent(Event4 e, EventArgs args) {
+				for (int i=0; i<cmdLine.length; ++i) {
+					print(cmdLine[i]);
+				}
+			}
+		});
+	}
+	
+	static EventRegistry eventRegistry() {
+		return null;
+	}
+	
+	static void print(String s) {
+	}
+}

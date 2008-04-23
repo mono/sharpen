@@ -1,0 +1,28 @@
+namespace innerclasses
+{
+	public class AnonymousWithFinalField
+	{
+		public static java.lang.Comparable run(object obj)
+		{
+			return new _Comparable_5(obj);
+		}
+
+		private sealed class _Comparable_5 : java.lang.Comparable
+		{
+			public _Comparable_5(object obj)
+			{
+				this.obj = obj;
+				this._source = ((int)obj);
+			}
+
+			private readonly int _source;
+
+			public int compareTo(object target)
+			{
+				return this._source - ((int)target);
+			}
+
+			private readonly object obj;
+		}
+	}
+}

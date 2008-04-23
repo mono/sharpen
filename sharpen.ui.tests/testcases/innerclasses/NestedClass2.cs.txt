@@ -1,0 +1,29 @@
+namespace innerclasses
+{
+	public class NestedClass2
+	{
+		public class Foo
+		{
+			public Foo(NestedClass2 _enclosing, int i)
+			{
+				this._enclosing = _enclosing;
+			}
+
+			public virtual void foo()
+			{
+				this._enclosing.bar();
+			}
+
+			private readonly NestedClass2 _enclosing;
+		}
+
+		public virtual void bar()
+		{
+		}
+
+		public virtual void run()
+		{
+			new innerclasses.NestedClass2.Foo(this, 42).foo();
+		}
+	}
+}

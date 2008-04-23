@@ -1,0 +1,15 @@
+public class Arrays1 {
+	public static void main(String[] args) {
+		process(args);
+	}
+	
+	private static void process(String args[]) {	
+		for (int i=0; i<args.length; ++i) {
+			print(args[i]);
+		}
+		int len = (args).length;
+	}
+	
+	private static void print(Object arg) {
+	}
+}

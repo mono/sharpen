@@ -1,0 +1,11 @@
+package innerclasses;
+
+public class NestedStaticClass1 {
+	public static class Foo {
+		public void foo() {
+		}
+	}
+	
+	public void bar() {
+	}
+}

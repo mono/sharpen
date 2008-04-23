@@ -1,0 +1,56 @@
+namespace innerclasses
+{
+	public class AnonymousInnerClass9
+	{
+		public virtual void start()
+		{
+			int a = 0;
+			new java.lang.Thread(new _Runnable_7(this, a));
+		}
+
+		private sealed class _Runnable_7 : java.lang.Runnable
+		{
+			public _Runnable_7(AnonymousInnerClass9 _enclosing, int a)
+			{
+				this._enclosing = _enclosing;
+				this.a = a;
+			}
+
+			public void run()
+			{
+				new java.lang.Thread(new _Runnable_9(this, a));
+			}
+
+			private sealed class _Runnable_9 : java.lang.Runnable
+			{
+				public _Runnable_9(_Runnable_7 _enclosing, int a)
+				{
+					this._enclosing = _enclosing;
+					this.a = a;
+				}
+
+				public void run()
+				{
+					this._enclosing._enclosing.use(a);
+					this.foo();
+				}
+
+				private void foo()
+				{
+				}
+
+				private readonly _Runnable_7 _enclosing;
+
+				private readonly int a;
+			}
+
+			private readonly AnonymousInnerClass9 _enclosing;
+
+			private readonly int a;
+		}
+
+		public virtual void use(int i)
+		{
+		}
+	}
+}

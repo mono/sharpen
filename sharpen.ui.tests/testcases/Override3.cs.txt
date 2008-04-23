@@ -1,0 +1,20 @@
+internal interface Foo
+{
+	void foo();
+}
+
+internal interface Bar : Foo
+{
+}
+
+internal abstract class FooImpl1 : Bar
+{
+	public abstract void foo();
+}
+
+internal class FooImpl2 : FooImpl1
+{
+	public override void foo()
+	{
+	}
+}

@@ -1,0 +1,15 @@
+package innerclasses;
+
+public class AnonymousInnerClass12 {
+
+	public void run() {
+		new Thread(new Runnable() {
+			public void run() {
+				AnonymousInnerClass12.this.print("Hello");
+			}
+		});
+	}
+	
+	void print(String msg) {
+	}
+}

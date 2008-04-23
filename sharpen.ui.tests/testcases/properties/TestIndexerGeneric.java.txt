@@ -1,0 +1,16 @@
+package properties;
+
+public class TestIndexerGeneric<E> {
+	public static void main(String[] args) {
+		int j = new TestIndexerGeneric<Integer>().getIt(1);		
+		TestIndexerGeneric<String> ti = new TestIndexerGeneric<String>();
+		String v = ti.getIt(4);
+	}
+	
+	/**
+	 * @sharpen.indexer
+	 */
+	public E getIt(int i) {
+		return null;
+	}
+}

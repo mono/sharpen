@@ -1,0 +1,13 @@
+internal class Override1Base
+{
+	public virtual void foo()
+	{
+	}
+}
+
+internal class Override1 : Override1Base
+{
+	public override void foo()
+	{
+	}
+}

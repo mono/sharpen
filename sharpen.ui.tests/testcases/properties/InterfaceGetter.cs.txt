@@ -1,0 +1,10 @@
+namespace properties
+{
+	public interface InterfaceGetter
+	{
+		bool IsCancelled
+		{
+			get;
+		}
+	}
+}

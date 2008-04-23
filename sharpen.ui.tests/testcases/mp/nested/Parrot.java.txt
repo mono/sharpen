@@ -1,0 +1,4 @@
+package mp.nested;
+
+public class Parrot {
+}

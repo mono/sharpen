@@ -1,0 +1,10 @@
+class Super2Base {
+	public Super2Base(String name) {
+	}
+}
+
+class Super2Derived extends Super2Base {
+	public Super2Derived(String name) {
+		super(name);		
+	}
+}

@@ -1,0 +1,25 @@
+public class StringMethods1 {
+	public static void run(String s) throws Exception {
+		int i = s.indexOf("foo");
+		char ch = s.charAt(i);
+		if (i < 0) {
+			print(s.toUpperCase());
+		} else {
+			int j = s.trim().lastIndexOf("foo") - s.length();
+			if (i == j) {
+				print(s.toLowerCase().substring(i));
+			} else {
+				print(s.substring(i, j));
+			}
+		}
+		byte[] bytes = s.getBytes("utf-8");
+		if (s.startsWith("foo")) print("foo");
+		if (s.endsWith("bar")) print("bar");
+		print(String.valueOf(42));
+		print("foo".intern());
+	}
+	
+	private static void print(String s) {
+	}
+	
+}

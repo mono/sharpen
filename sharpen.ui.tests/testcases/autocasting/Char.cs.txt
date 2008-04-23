@@ -1,0 +1,12 @@
+namespace autocasting
+{
+	internal class CharAutocasting
+	{
+		private char _ch;
+
+		private void test()
+		{
+			this._ch = (char)1;
+		}
+	}
+}

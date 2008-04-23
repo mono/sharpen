@@ -1,0 +1,10 @@
+public class EntryPoint2 {
+	public static void main(String[] args) {
+		EntryPoint2Main.main(args);
+	}
+}
+
+class EntryPoint2Main {
+	public static void main(String[] args) {
+	}
+}

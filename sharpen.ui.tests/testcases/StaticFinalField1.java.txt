@@ -1,0 +1,7 @@
+public class StaticFinalField1 {
+
+	public static final int LifeTheUniverseAndEverything = 42;
+	
+	public static final Object ObjectLock = new Object();
+	
+}

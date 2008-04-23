@@ -1,0 +1,27 @@
+namespace generics
+{
+	public class CollectionMappings
+	{
+		internal static void run()
+		{
+			// unqualified gets mapped to System.Collections
+			System.Collections.IList l1 = new System.Collections.ArrayList();
+			unqualified(l1);
+			// qualified gets mapped to System.Collections.Generic
+			System.Collections.Generic.IList<string> l2 = new System.Collections.Generic.List
+				<string>();
+			qualified(l2);
+		}
+
+		internal static void unqualified(System.Collections.IEnumerable iterable)
+		{
+			System.Collections.IEnumerator i = iterable.GetEnumerator();
+		}
+
+		internal static void qualified(System.Collections.Generic.IEnumerable<string> iterable
+			)
+		{
+			System.Collections.Collection.IEnumerator<string> i = iterable.GetEnumerator();
+		}
+	}
+}

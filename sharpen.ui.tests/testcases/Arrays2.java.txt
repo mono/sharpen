@@ -1,0 +1,9 @@
+public class Arrays2 {
+	public static void run() {	
+		String[] s = new String[2];
+		s[0] = "foo";
+		s[1] = "bar";
+		boolean flag = s instanceof String[];
+		Class type = String[].class;
+	}
+}

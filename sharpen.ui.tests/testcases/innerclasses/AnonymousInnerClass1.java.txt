@@ -1,0 +1,24 @@
+package innerclasses;
+
+public class AnonymousInnerClass1 {
+	public void start() {
+		new Thread(new Runnable() {
+			public void run() {
+				print("Las Llamas son maiores que las ranas!");
+			}
+		});
+		
+		new Thread(new Runnable() {
+			public void run() {
+				ole();
+			}
+			
+			private void ole() {
+				print("Ole!");
+			}
+		});
+	}
+	
+	public void print(String msg) {
+	}
+}

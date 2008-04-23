@@ -1,0 +1,10 @@
+package generics;
+
+public class GenericMethodParameters {
+
+	public interface Entry<K, V> {
+	}
+	
+	public void entry(Entry<String, Integer> p1, Entry<Integer, String> p2) {
+	}
+}

@@ -1,0 +1,13 @@
+public class For1 {
+	public static void run() {
+		for (int i=0; i<10; ++i) {
+			int j=i;
+			for (; j<10;) {
+				plot(i, j);
+			}
+		}
+	}
+	
+	private static void plot(int x, int y) {
+	}
+}

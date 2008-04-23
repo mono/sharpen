@@ -1,0 +1,3 @@
+public class InterfaceImplementation2 : java.lang.Cloneable
+{
+}

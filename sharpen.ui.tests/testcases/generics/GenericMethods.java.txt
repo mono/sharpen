@@ -1,0 +1,7 @@
+package generics;
+
+public class GenericMethods {
+	public <T> T[] toArray(T[] a) {
+		return a;
+	}
+}

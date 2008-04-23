@@ -1,0 +1,16 @@
+namespace NativeTypeSystem
+{
+	public class Reflection
+	{
+		/// <exception cref="System.Exception"></exception>
+		public virtual void InvokeMethod(System.Reflection.MethodInfo m, object[] args)
+		{
+			m.Invoke(null, args);
+		}
+
+		public virtual string DeclaringType(System.Reflection.MethodInfo m)
+		{
+			return m.DeclaringType.FullName;
+		}
+	}
+}

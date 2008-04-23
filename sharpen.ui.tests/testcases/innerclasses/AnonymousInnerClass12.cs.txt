@@ -1,0 +1,29 @@
+namespace innerclasses
+{
+	public class AnonymousInnerClass12
+	{
+		public virtual void run()
+		{
+			new java.lang.Thread(new _Runnable_6(this));
+		}
+
+		private sealed class _Runnable_6 : java.lang.Runnable
+		{
+			public _Runnable_6(AnonymousInnerClass12 _enclosing)
+			{
+				this._enclosing = _enclosing;
+			}
+
+			public void run()
+			{
+				this._enclosing.print("Hello");
+			}
+
+			private readonly AnonymousInnerClass12 _enclosing;
+		}
+
+		internal virtual void print(string msg)
+		{
+		}
+	}
+}

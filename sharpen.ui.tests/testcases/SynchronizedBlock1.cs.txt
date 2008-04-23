@@ -1,0 +1,14 @@
+public class SynchronizedBlock1
+{
+	public virtual void foo()
+	{
+		lock (this)
+		{
+			bar();
+		}
+	}
+
+	private void bar()
+	{
+	}
+}

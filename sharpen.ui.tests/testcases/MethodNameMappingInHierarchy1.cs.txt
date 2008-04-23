@@ -1,0 +1,26 @@
+internal interface Foo
+{
+	void Bar();
+}
+
+internal abstract class BaseFoo : Foo
+{
+	public virtual void Baz()
+	{
+		Bar();
+	}
+
+	public abstract void Bar();
+}
+
+public class MethodNameMappingInHierarchy1 : Foo
+{
+	public virtual void Bar()
+	{
+	}
+
+	public virtual void Gazonk()
+	{
+		Bar();
+	}
+}

@@ -1,0 +1,17 @@
+package innerclasses;
+
+class Base {
+	public void foo() {
+	}
+}
+
+class AnonymousInnerClass8 extends Base {
+	public void run() {
+		Runnable r = new Runnable() {
+			public void run() {
+				foo();
+			}
+		};
+	}
+}
+

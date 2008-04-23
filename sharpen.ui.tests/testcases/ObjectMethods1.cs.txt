@@ -1,0 +1,17 @@
+public class ObjectMethods1
+{
+	public override string ToString()
+	{
+		return "Hello!";
+	}
+
+	public override int GetHashCode()
+	{
+		return 1;
+	}
+
+	public override bool Equals(object other)
+	{
+		return false;
+	}
+}

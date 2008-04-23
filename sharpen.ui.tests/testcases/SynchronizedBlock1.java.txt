@@ -1,0 +1,10 @@
+public class SynchronizedBlock1 {
+	public void foo() {
+		synchronized(this) {
+			bar();
+		}
+	}
+	
+	private void bar() {
+	}
+}

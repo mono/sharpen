@@ -1,0 +1,35 @@
+public class ExceptionMapping1
+{
+	public virtual void foo(object arg)
+	{
+		if (null == arg)
+		{
+			throw new System.ArgumentNullException();
+		}
+		throw new System.InvalidOperationException();
+	}
+
+	public virtual void bar(object arg)
+	{
+		throw new System.ArgumentException();
+	}
+
+	/// <exception cref="System.Net.Sockets.SocketException"></exception>
+	public virtual void baz()
+	{
+		throw new System.Net.Sockets.SocketException();
+	}
+
+	public virtual void gazonk()
+	{
+		try
+		{
+			baz();
+		}
+		catch (System.Exception x)
+		{
+			bar(x.Message);
+			bar(x.InnerException);
+		}
+	}
+}

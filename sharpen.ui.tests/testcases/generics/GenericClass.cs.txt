@@ -1,0 +1,17 @@
+namespace generics
+{
+	public class GenericClass<T1, T2>
+	{
+		private T1 _field1;
+
+		public GenericClass(T1 f1)
+		{
+			_field1 = f1;
+		}
+
+		public virtual T1 field1()
+		{
+			return _field1;
+		}
+	}
+}

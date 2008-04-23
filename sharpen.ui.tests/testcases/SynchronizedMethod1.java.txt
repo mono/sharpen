@@ -1,0 +1,12 @@
+public class SynchronizedMethod1 {
+	public synchronized void foo() {
+		bar();
+		bar();
+	}
+	
+	private void bar() {
+	}
+	
+	public static synchronized void baz() {
+	}
+}

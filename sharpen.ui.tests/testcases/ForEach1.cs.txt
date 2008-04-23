@@ -1,0 +1,14 @@
+public class ForEach1
+{
+	public virtual void run(string[] args)
+	{
+		foreach (string arg in args)
+		{
+			print(arg);
+		}
+	}
+
+	public static void print(string s)
+	{
+	}
+}

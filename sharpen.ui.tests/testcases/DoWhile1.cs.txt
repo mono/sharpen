@@ -1,0 +1,11 @@
+public class DoWhile1
+{
+	public static void foo(int i)
+	{
+		do
+		{
+			--i;
+		}
+		while (i > 0);
+	}
+}

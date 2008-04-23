@@ -1,0 +1,13 @@
+namespace properties
+{
+	public class BaseInterfaceGetterImpl : properties.BaseInterfaceGetter
+	{
+		public override bool IsCancelled
+		{
+			get
+			{
+				return false;
+			}
+		}
+	}
+}

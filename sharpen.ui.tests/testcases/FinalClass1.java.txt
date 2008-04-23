@@ -1,0 +1,4 @@
+public final class FinalClass1 {
+	public void foo() {
+	}
+}

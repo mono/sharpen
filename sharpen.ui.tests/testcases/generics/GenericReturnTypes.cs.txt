@@ -1,0 +1,14 @@
+namespace generics
+{
+	public class GenericReturnTypes
+	{
+		public interface Entry<K, V>
+		{
+		}
+
+		public virtual generics.GenericReturnTypes.Entry<string, int> entry()
+		{
+			return null;
+		}
+	}
+}

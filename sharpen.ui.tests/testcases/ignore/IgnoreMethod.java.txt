@@ -1,0 +1,13 @@
+package ignore;
+
+class Foo {
+
+	public void bar() {
+	}
+
+	/**
+	 * @sharpen.ignore
+	 */
+	public void baz() {
+	}
+}

@@ -1,0 +1,43 @@
+namespace innerclasses
+{
+	public class AnonymousInnerClass5
+	{
+		public virtual void run()
+		{
+			string msg = "SPAM, SPAM, SPAM!";
+			new java.lang.Thread(new _Runnable_6(this, msg));
+		}
+
+		private sealed class _Runnable_6 : java.lang.Runnable
+		{
+			public _Runnable_6(AnonymousInnerClass5 _enclosing, string msg)
+			{
+				this._enclosing = _enclosing;
+				this.msg = msg;
+			}
+
+			public void run()
+			{
+				string a = "The message is: ";
+				this._enclosing.print(a + msg);
+				this._enclosing.print(((innerclasses.Node)this._enclosing._root)._next._next.ToString
+					());
+			}
+
+			private readonly AnonymousInnerClass5 _enclosing;
+
+			private readonly string msg;
+		}
+
+		private void print(string a)
+		{
+		}
+
+		internal object _root;
+	}
+
+	internal class Node
+	{
+		public innerclasses.Node _next;
+	}
+}

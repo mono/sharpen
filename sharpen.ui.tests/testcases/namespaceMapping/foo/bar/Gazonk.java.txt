@@ -1,0 +1,7 @@
+package namespaceMapping.foo.bar;
+
+public class Gazonk {
+	Baz getBaz() {
+		return null;
+	}
+}

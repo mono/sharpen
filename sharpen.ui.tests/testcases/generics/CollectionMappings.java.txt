@@ -1,0 +1,23 @@
+package generics;
+
+import java.util.*;
+
+public class CollectionMappings {
+	static void run() {	
+		// unqualified gets mapped to System.Collections
+		List l1 = new ArrayList(); 
+		unqualified(l1);
+		
+		// qualified gets mapped to System.Collections.Generic
+		List<String> l2 = new ArrayList<String>(); 
+		qualified(l2);
+	}
+	
+	static void unqualified(Iterable iterable) {
+		Iterator i = iterable.iterator();
+	}
+	
+	static void qualified(Iterable<String> iterable) {
+		Iterator<String> i = iterable.iterator();
+	}
+}

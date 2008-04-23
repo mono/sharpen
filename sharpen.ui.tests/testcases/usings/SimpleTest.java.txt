@@ -1,0 +1,6 @@
+package usings;
+ 
+public class SimpleTest {
+
+	private SimpleTest _test;
+}

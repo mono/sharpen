@@ -1,0 +1,26 @@
+public class FieldMapping
+{
+	internal double doubleMax = double.MaxValue;
+
+	internal double doubleMin = double.MinValue;
+
+	internal double doubleNaN = double.NaN;
+
+	internal double doubleNegativeInfinity = double.NegativeInfinity;
+
+	internal double doublePositiveInfinity = double.PositiveInfinity;
+
+	internal float floatMax = float.MaxValue;
+
+	internal float floatMin = float.MinValue;
+
+	internal float floatNaN = float.NaN;
+
+	internal float floatNegativeInfinity = float.NegativeInfinity;
+
+	internal float floatPositiveInfinity = float.PositiveInfinity;
+
+	internal byte byteMax = byte.MaxValue;
+
+	internal byte byteMin = byte.MinValue;
+}

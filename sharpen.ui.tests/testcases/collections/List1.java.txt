@@ -1,0 +1,10 @@
+package collections;
+
+public class List1 {
+	static void test() {
+		java.util.List l = new java.util.LinkedList();
+		if (l.size() > 0) {
+			Object value = l.get(0);
+		}
+	}
+}

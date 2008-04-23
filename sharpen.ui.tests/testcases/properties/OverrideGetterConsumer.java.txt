@@ -1,0 +1,18 @@
+package properties;
+
+abstract class Blah {
+
+	public abstract void foo();
+}
+
+public class OverrideGetterConsumer {
+
+	public static void foo() {
+		final OverrideGetter og = new OverrideGetter();
+		new Blah() {
+			public void foo() {
+				og.isCancelled();
+			}
+		};
+	}
+}

@@ -1,0 +1,15 @@
+interface Readable {
+	void read();
+}
+
+interface ReadWritable extends Readable {
+	void write();
+}
+
+class FooImpl implements ReadWritable {
+	public final void read() {
+	}
+	
+	public final void write() {
+	}
+}

@@ -1,0 +1,8 @@
+package interfaces;
+
+public class BaseFoo implements Foo {
+	public static final int BAR = 42;
+}
+
+interface Foo {
+}

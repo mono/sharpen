@@ -1,0 +1,66 @@
+package javadoc;
+
+/**
+ * This should not appear in the final doc.
+ */
+public class XmlDocOverlay {
+
+	/**
+	 * This should not appear in the final doc.
+	 */
+	public XmlDocOverlay() {
+	}
+
+	/**
+	 * Methods should have a summary.
+	 */
+	public int foo(int bar) {
+		return 42;
+	}
+	
+	/**
+	 * This should not appear in the final doc.
+	 */
+	public int baz() {
+		return 0;
+	}
+	
+	/**
+	 * This should not appear in the final doc.
+	 */
+	public int baz(int i) {
+		return 0;
+	}
+	
+	/**
+	 * This SHOULD APPEAR in the final doc.
+	 */
+	public int baz(String s) {
+		return 0;
+	}	
+	
+	/**
+	 * This should not appear in the final doc.
+	 */
+	public int baz(String s, int i) {
+		return 0;
+	}	
+	
+	
+	/**
+	 * Blah.
+	 */
+	public static final int BAR = 42;
+	
+	public static final int BAZ = 0;
+}
+
+interface EventInterface {
+		
+	/**
+	 * An event.
+	 *
+	 * @sharpen.event events.QueryEventArgs
+	 */
+	public Object queryStarted();
+}

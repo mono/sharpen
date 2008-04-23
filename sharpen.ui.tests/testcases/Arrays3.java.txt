@@ -1,0 +1,6 @@
+public class Arrays3 {
+	public static void run() {	
+		String[] s = new String[] { "foo", "bar" };
+		int[] array[] = null;
+	}
+}

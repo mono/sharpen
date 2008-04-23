@@ -1,0 +1,13 @@
+
+internal interface IBaz
+{
+}
+
+internal interface IBar : IBaz
+{
+}
+
+[System.Serializable]
+internal class Bar : IBar
+{
+}

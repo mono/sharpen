@@ -1,0 +1,17 @@
+package properties;
+
+public class StaticGetter {
+	
+	/**
+	 * @sharpen.property
+	 */
+	public static boolean isCancelled() {
+		return false;
+	}
+	
+	public static void foo() {
+		if (StaticGetter.isCancelled()) {
+			return;
+		}
+	}
+}

@@ -1,0 +1,5 @@
+public class Transient1
+{
+	[System.NonSerialized]
+	public string _foo;
+}

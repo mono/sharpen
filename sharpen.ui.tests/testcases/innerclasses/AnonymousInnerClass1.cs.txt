@@ -1,0 +1,50 @@
+namespace innerclasses
+{
+	public class AnonymousInnerClass1
+	{
+		public virtual void start()
+		{
+			new java.lang.Thread(new _Runnable_5(this));
+			new java.lang.Thread(new _Runnable_11(this));
+		}
+
+		private sealed class _Runnable_5 : java.lang.Runnable
+		{
+			public _Runnable_5(AnonymousInnerClass1 _enclosing)
+			{
+				this._enclosing = _enclosing;
+			}
+
+			public void run()
+			{
+				this._enclosing.print("Las Llamas son maiores que las ranas!");
+			}
+
+			private readonly AnonymousInnerClass1 _enclosing;
+		}
+
+		private sealed class _Runnable_11 : java.lang.Runnable
+		{
+			public _Runnable_11(AnonymousInnerClass1 _enclosing)
+			{
+				this._enclosing = _enclosing;
+			}
+
+			public void run()
+			{
+				this.ole();
+			}
+
+			private void ole()
+			{
+				this._enclosing.print("Ole!");
+			}
+
+			private readonly AnonymousInnerClass1 _enclosing;
+		}
+
+		public virtual void print(string msg)
+		{
+		}
+	}
+}

@@ -1,0 +1,14 @@
+package renaming;
+
+/**
+ * @sharpen.rename Renamed
+ */
+public class TypeRenaming {
+
+	public TypeRenaming() {
+	}
+	
+	public TypeRenaming foo(Object o) {
+		return (TypeRenaming)o;
+	}
+}

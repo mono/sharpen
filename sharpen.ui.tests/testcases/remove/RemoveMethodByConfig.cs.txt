@@ -1,0 +1,15 @@
+namespace remove
+{
+	internal class Foo
+	{
+		public virtual void bar()
+		{
+			zeng("before");
+			zeng("after");
+		}
+
+		public virtual void zeng(string s)
+		{
+		}
+	}
+}

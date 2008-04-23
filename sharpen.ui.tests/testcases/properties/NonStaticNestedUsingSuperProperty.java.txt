@@ -1,0 +1,13 @@
+package properties;
+
+class Foo {
+
+	private class Bar extends InterfaceGetterImpl {
+		public void run() {
+			if (isCancelled()) {
+				return;
+			}
+		}
+	}
+	
+}

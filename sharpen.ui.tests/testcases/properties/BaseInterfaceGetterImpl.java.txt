@@ -1,0 +1,8 @@
+package properties;
+
+public class BaseInterfaceGetterImpl extends BaseInterfaceGetter {
+
+	public boolean isCancelled() {
+		return false;
+	}
+}

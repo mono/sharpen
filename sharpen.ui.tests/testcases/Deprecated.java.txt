@@ -1,0 +1,19 @@
+/**
+ * @deprecated
+ */
+class Deprecated {
+	/**
+	 * @deprecated because so
+	 */
+	 public void foo() {
+	 }
+	 
+	 /**
+	  * @deprecated first line and
+	  * second line
+	  * third line
+	  * @param bar unused
+	  */
+	  public void foo(int bar) {
+	  }
+}

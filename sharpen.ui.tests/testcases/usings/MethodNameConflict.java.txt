@@ -1,0 +1,11 @@
+package usings;
+
+class Usings {
+}
+
+public class MethodNameConflict {
+
+	public void usings() {
+		Usings u = new Usings();
+	}
+}

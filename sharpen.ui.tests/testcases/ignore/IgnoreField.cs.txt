@@ -1,0 +1,9 @@
+namespace ignore
+{
+	internal class Foo
+	{
+		public virtual void bar()
+		{
+		}
+	}
+}

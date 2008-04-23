@@ -1,0 +1,8 @@
+public class StandardConstants1
+{
+	public static void run()
+	{
+		int imax = int.MaxValue;
+		long lmax = long.MaxValue;
+	}
+}

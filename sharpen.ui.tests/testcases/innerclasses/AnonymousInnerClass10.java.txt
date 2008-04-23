@@ -1,0 +1,16 @@
+package innerclasses;
+
+class Base {
+	public void foo() {
+	}
+}
+
+class AnonymousInnerClass10 {
+	public void run() {
+		Base b = new Base() {
+			public void foo() {
+			}
+		};
+	}
+}
+

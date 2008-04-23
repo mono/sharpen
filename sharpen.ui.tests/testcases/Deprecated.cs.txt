@@ -1,0 +1,14 @@
+[System.ObsoleteAttribute]
+internal class Deprecated
+{
+	[System.ObsoleteAttribute(@"because so")]
+	public virtual void foo()
+	{
+	}
+
+	/// <param name="bar">unused</param>
+	[System.ObsoleteAttribute(@"first line and second line third line")]
+	public virtual void foo(int bar)
+	{
+	}
+}

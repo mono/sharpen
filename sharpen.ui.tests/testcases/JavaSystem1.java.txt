@@ -1,0 +1,5 @@
+public class JavaSystem1 {
+	public static void main(String[] args) {
+		System.out.println(System.identityHashCode("Hello!"));
+	}
+}

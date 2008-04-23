@@ -1,0 +1,14 @@
+public class If1 {
+	public static void run(Object arg) {
+		if (isValid(arg)) {
+			internalRun(arg);
+		}
+	}
+	
+	private static boolean isValid(Object arg) {
+		return false;
+	}
+	
+	private static void internalRun(Object arg) {
+	}
+}

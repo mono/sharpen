@@ -1,0 +1,6 @@
+public class EntryPoint1
+{
+	public static void Main(string[] args)
+	{
+	}
+}

@@ -1,0 +1,24 @@
+package innerclasses;
+
+public class AnonymousInnerClass4 {
+	public void run() {
+		new Thread(new Runnable() {
+			public void run() {
+				String a = "foo";
+				print(a + ": " + a.trim());
+				print(((Node)_root)._next._next.toString());
+			}
+		});
+	}
+	
+	private void print(String a) {
+	}
+	
+	Object _root;
+}
+
+class Node {
+
+	public Node _next;
+	
+}

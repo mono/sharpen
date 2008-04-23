@@ -1,0 +1,6 @@
+public class StandardConstants1 {
+	public static void run() {
+		int imax = Integer.MAX_VALUE;
+		long lmax = Long.MAX_VALUE;
+	}
+}

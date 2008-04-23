@@ -1,0 +1,11 @@
+class ObjectMethods2Base {
+	public String toString() {
+		return "base";
+	}
+}
+
+class ObjectMethods2 extends ObjectMethods2Base {
+	public String toString() {
+		return super.toString() + "derived";
+	}
+}

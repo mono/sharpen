@@ -1,0 +1,15 @@
+namespace nativeTypeSystem
+{
+	public class StringMethods1
+	{
+		public static void run(string s)
+		{
+			print(42.ToString());
+			print((43 - 1).ToString());
+		}
+
+		private static void print(string s)
+		{
+		}
+	}
+}

@@ -1,0 +1,15 @@
+namespace comments
+{
+	public class AfterMethods
+	{
+		public virtual void foo()
+		{
+		}
+
+		// end foo
+		public virtual void bar()
+		{
+		}
+		// end bar
+	}
+}

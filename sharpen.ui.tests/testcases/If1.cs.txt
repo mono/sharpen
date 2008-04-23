@@ -1,0 +1,19 @@
+public class If1
+{
+	public static void run(object arg)
+	{
+		if (isValid(arg))
+		{
+			internalRun(arg);
+		}
+	}
+
+	private static bool isValid(object arg)
+	{
+		return false;
+	}
+
+	private static void internalRun(object arg)
+	{
+	}
+}

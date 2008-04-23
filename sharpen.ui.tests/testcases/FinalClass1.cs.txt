@@ -1,0 +1,6 @@
+public sealed class FinalClass1
+{
+	public void foo()
+	{
+	}
+}

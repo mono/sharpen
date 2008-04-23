@@ -1,0 +1,13 @@
+class BaseClass {
+	public void foo() {
+	}
+}
+
+class DerivedClass extends BaseClass {
+}
+
+class MostDerivedClass extends DerivedClass {
+	
+	public void foo() {
+	}
+}

@@ -1,0 +1,25 @@
+public class FieldMapping {
+    double doubleMax = Double.MAX_VALUE;
+
+    double doubleMin = Double.MIN_VALUE;
+
+    double doubleNaN = Double.NaN;
+
+    double doubleNegativeInfinity = Double.NEGATIVE_INFINITY;
+
+    double doublePositiveInfinity = Double.POSITIVE_INFINITY;
+    
+    float floatMax = Float.MAX_VALUE;
+
+    float floatMin = Float.MIN_VALUE;
+
+    float floatNaN = Float.NaN;
+
+    float floatNegativeInfinity = Float.NEGATIVE_INFINITY;
+
+    float floatPositiveInfinity = Float.POSITIVE_INFINITY;
+    
+    byte byteMax = Byte.MAX_VALUE;
+    
+    byte byteMin = Byte.MIN_VALUE;
+}

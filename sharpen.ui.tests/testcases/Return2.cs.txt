@@ -1,0 +1,9 @@
+public class Return2
+{
+	private string _name;
+
+	public virtual string getName()
+	{
+		return _name;
+	}
+}

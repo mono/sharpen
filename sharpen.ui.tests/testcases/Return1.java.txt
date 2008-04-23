@@ -1,0 +1,5 @@
+public class Return1 {
+	public int getValue() {
+		return 0;
+	}
+}

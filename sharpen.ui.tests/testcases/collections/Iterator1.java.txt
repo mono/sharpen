@@ -1,0 +1,14 @@
+package collections;
+
+import java.util.*;
+
+public class Iterator1 {
+	public static void printAll(Object collection) {
+		Collection subject = (Collection)collection;
+		Iterator it = subject.iterator();
+		while (it.hasNext()) {
+			print(it.next());
+		}
+	}
+	public static void print(Object o) {}
+}

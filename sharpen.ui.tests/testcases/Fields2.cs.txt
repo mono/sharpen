@@ -1,0 +1,14 @@
+public class Fields2
+{
+	protected string _name;
+
+	public virtual string getName()
+	{
+		return this._name;
+	}
+
+	public virtual void setName(string name)
+	{
+		this._name = name;
+	}
+}

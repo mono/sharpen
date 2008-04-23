@@ -1,0 +1,10 @@
+/**
+ * @sharpen.enum
+ */
+public class Enum1 {
+	public static final Enum1 FOO = new Enum1();
+	public static final Enum1 BAR = new Enum1();
+	
+	private Enum1() {
+	}
+}

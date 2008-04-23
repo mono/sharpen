@@ -1,0 +1,14 @@
+namespace collections
+{
+	public class Hashtable1
+	{
+		public static void printAll(object collection)
+		{
+			System.Collections.Hashtable subject = (System.Collections.Hashtable)collection;
+			subject.Add("foo", "bar");
+			if (subject.Count > 0)
+			{
+			}
+		}
+	}
+}

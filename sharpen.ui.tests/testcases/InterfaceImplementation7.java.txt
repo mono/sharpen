@@ -1,0 +1,11 @@
+interface Readable {
+	void read();
+}
+
+class ReadableImpl {
+	public void read() {
+	}
+}
+
+class FooImpl extends ReadableImpl implements Readable {
+}

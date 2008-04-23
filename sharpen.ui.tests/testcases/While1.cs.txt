@@ -1,0 +1,24 @@
+internal class While1
+{
+	internal static void listResult(ObjectSet result)
+	{
+		while (result.hasNext())
+		{
+			object next = result.next();
+			println(next);
+		}
+	}
+
+	internal static void println(object obj)
+	{
+	}
+}
+
+internal interface ObjectSet
+{
+	int size();
+
+	bool hasNext();
+
+	object next();
+}

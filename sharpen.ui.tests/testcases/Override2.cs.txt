@@ -1,0 +1,17 @@
+internal class BaseClass
+{
+	public virtual void foo()
+	{
+	}
+}
+
+internal class DerivedClass : BaseClass
+{
+}
+
+internal class MostDerivedClass : DerivedClass
+{
+	public override void foo()
+	{
+	}
+}

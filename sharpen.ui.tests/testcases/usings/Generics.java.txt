@@ -1,0 +1,16 @@
+package usings;
+
+import java.util.*;
+
+public class Generics {
+	static void run() {
+		Map<Integer, String> m = new HashMap<Integer, String>();
+		for (Map.Entry<Integer, String> e : m.entrySet()) {
+			print(e.getKey());
+			print(e.getValue());
+		}
+	}
+	
+	static void print(Object o) {
+	}
+}

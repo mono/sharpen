@@ -1,0 +1,9 @@
+package renaming;
+
+class SimpleMethodRenaming {
+	/**
+	 * @sharpen.rename _test
+	 */
+	 public void test() {
+	 }
+}

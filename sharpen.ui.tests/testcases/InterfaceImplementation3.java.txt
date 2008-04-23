@@ -1,0 +1,6 @@
+interface Foo {
+	void foo();
+}
+
+abstract class FooImpl implements Foo {
+}

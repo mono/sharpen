@@ -1,0 +1,11 @@
+package comments;
+
+public class AfterMethods {
+	public void foo() {
+	}
+	// end foo
+	
+	public void bar() {
+	}
+	// end bar
+}

@@ -1,0 +1,20 @@
+public class MemberRef1 {
+
+	private Member _member;
+
+	void setMember(Member member) {
+		_member = member;
+	}
+
+	public String getMemberName() {
+		return this._member.getName();
+	}
+	
+}
+
+class Member {
+
+	public String getName() {
+		return null;
+	}
+}

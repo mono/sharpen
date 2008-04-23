@@ -1,0 +1,11 @@
+namespace Interfaces
+{
+	public class BaseFoo : Interfaces.IFoo
+	{
+		public const int Bar = 42;
+	}
+
+	internal interface IFoo
+	{
+	}
+}

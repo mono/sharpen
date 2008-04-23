@@ -1,0 +1,9 @@
+public class ClassLiterals1 {
+	public static void run() {
+		print(java.lang.String.class.toString());
+		print(ClassLiterals1.class.toString());
+	}
+	
+	private static void print(String s) {
+	}
+}

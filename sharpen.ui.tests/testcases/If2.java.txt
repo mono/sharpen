@@ -1,0 +1,19 @@
+public class If2 {
+	public static void run(Object arg) {
+		if (isValid(arg)) {
+			internalRun(arg);			
+		} else {
+			invalidArgError(arg);
+		}
+	}
+	
+	private static boolean isValid(Object arg) {
+		return false;
+	}
+	
+	private static void invalidArgError(Object arg) {
+	}
+	
+	private static void internalRun(Object arg) {
+	}
+}

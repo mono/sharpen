@@ -1,0 +1,13 @@
+package disable;
+
+public class DisableMethod {
+
+	/**
+	 * @sharpen.if !CF_1_0
+	 */
+	 private void foo() {
+	 }
+	 
+	 private void bar() {
+	 }
+}

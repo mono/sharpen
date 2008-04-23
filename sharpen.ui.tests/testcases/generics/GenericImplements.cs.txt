@@ -1,0 +1,10 @@
+namespace generics
+{
+	internal interface GenericInterface<K, V>
+	{
+	}
+
+	internal class GenericImplements : generics.GenericInterface<string, int>
+	{
+	}
+}

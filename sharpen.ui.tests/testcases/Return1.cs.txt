@@ -1,0 +1,7 @@
+public class Return1
+{
+	public virtual int getValue()
+	{
+		return 0;
+	}
+}

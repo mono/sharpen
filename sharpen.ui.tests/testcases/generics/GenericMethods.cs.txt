@@ -1,0 +1,10 @@
+namespace generics
+{
+	public class GenericMethods
+	{
+		public virtual T[] toArray<T>(T[] a)
+		{
+			return a;
+		}
+	}
+}

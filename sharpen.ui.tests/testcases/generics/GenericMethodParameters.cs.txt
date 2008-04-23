@@ -1,0 +1,14 @@
+namespace generics
+{
+	public class GenericMethodParameters
+	{
+		public interface Entry<K, V>
+		{
+		}
+
+		public virtual void entry(generics.GenericMethodParameters.Entry<string, int> p1, 
+			generics.GenericMethodParameters.Entry<int, string> p2)
+		{
+		}
+	}
+}

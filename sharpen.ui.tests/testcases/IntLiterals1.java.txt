@@ -1,0 +1,5 @@
+public class IntLiterals1 {
+
+	private static final int DELTA = 0x9E3779B9;
+	
+}

@@ -1,0 +1,11 @@
+public class Try1 {
+
+	public static boolean test(Object arg) {
+		try {
+			String s = (String)arg;
+			return true;
+		} catch (ClassCastException x) {
+			return false;
+		}
+	}
+}

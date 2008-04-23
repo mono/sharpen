@@ -1,0 +1,8 @@
+public class Fields1 {
+	
+	private String _name;
+	protected Integer _intValue;
+	boolean _boolValue;
+	public volatile boolean _stopped;
+	
+}

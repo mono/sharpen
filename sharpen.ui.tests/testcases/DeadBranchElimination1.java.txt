@@ -1,0 +1,39 @@
+public class DeadBranchElimination1 {
+
+	public static final boolean Debug = false;
+	
+	public static final boolean Trace = true;
+	
+	public static void run() {
+		if (Debug) {
+			debug();
+		}
+		if (Trace) {
+			trace();
+		}
+		if (Debug) {
+			debug();
+		} else {
+			trace();
+		}
+		if (!Trace) {
+			debug2();
+		}
+		if (!Debug) {
+			trace2();
+		}
+	}
+	
+	private static void debug() {
+	}
+	
+	private static void trace() {
+	}
+	
+	private static void debug2() {
+	}
+	
+	private static void trace2() {
+	}
+	
+}

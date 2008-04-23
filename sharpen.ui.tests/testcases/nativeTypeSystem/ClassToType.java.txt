@@ -1,0 +1,38 @@
+package nativeTypeSystem;
+
+public class ClassToType {
+	public void run() throws ClassNotFoundException {
+		run(ClassToType.class);
+		run(getClass());
+		String name = this.getClass().getName();
+		run(Class.forName(name));
+		run(Class.forName(String.class.getName()));
+		run(this.getClass().getSuperclass());
+		
+		run(Boolean.TYPE);
+		run(Byte.TYPE);
+		run(Character.TYPE);
+		run(Short.TYPE);
+		run(Integer.TYPE);
+		run(Long.TYPE);
+		run(Float.TYPE);
+		run(Double.TYPE);
+		run(Void.TYPE);
+	}
+	
+	public void run(Class clazz) {
+		String foo = clazz.getName();
+		boolean bar = clazz.isInstance("foo");
+		boolean primitive = clazz.isPrimitive();
+		try {
+			Object o = clazz.newInstance();
+		} catch (IllegalAccessException x) {
+			bang(x);
+		} catch (Exception x) {
+			bang(x);
+		}
+	}
+
+	public void bang(Exception e) {
+	}
+}

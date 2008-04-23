@@ -1,0 +1,15 @@
+internal interface Readable
+{
+	void read();
+}
+
+internal class ReadableImpl
+{
+	public virtual void read()
+	{
+	}
+}
+
+internal class FooImpl : ReadableImpl, Readable
+{
+}

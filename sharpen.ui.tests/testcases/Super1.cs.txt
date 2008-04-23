@@ -1,0 +1,16 @@
+internal class Super1Base
+{
+	public virtual string foo()
+	{
+		return "Base.foo";
+	}
+}
+
+internal class Super1Derived : Super1Base
+{
+	public override string foo()
+	{
+		string superFoo = base.foo();
+		return superFoo + "(Derived)";
+	}
+}

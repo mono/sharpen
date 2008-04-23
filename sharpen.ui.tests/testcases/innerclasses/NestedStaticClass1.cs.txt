@@ -1,0 +1,16 @@
+namespace innerclasses
+{
+	public class NestedStaticClass1
+	{
+		public class Foo
+		{
+			public virtual void foo()
+			{
+			}
+		}
+
+		public virtual void bar()
+		{
+		}
+	}
+}

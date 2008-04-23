@@ -1,0 +1,9 @@
+namespace generics
+{
+	public interface GenericInterface<T>
+	{
+		void foo(T value);
+
+		T bar();
+	}
+}

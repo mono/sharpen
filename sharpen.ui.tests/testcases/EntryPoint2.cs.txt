@@ -1,0 +1,14 @@
+public class EntryPoint2
+{
+	public static void Main(string[] args)
+	{
+		EntryPoint2Main.Main(args);
+	}
+}
+
+internal class EntryPoint2Main
+{
+	public static void Main(string[] args)
+	{
+	}
+}

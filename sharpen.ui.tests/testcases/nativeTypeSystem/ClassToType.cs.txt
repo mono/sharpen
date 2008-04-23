@@ -1,0 +1,48 @@
+namespace nativeTypeSystem
+{
+	public class ClassToType
+	{
+		/// <exception cref="System.TypeLoadException"></exception>
+		public virtual void run()
+		{
+			run(typeof(nativeTypeSystem.ClassToType));
+			run(GetType());
+			string name = this.GetType().FullName;
+			run(Sharpen.Runtime.GetType(name));
+			run(Sharpen.Runtime.GetType(typeof(string).FullName));
+			run(this.GetType().BaseType);
+			run(typeof(bool));
+			run(typeof(byte));
+			run(typeof(char));
+			run(typeof(short));
+			run(typeof(int));
+			run(typeof(long));
+			run(typeof(float));
+			run(typeof(double));
+			run(typeof(void));
+		}
+
+		public virtual void run(System.Type clazz)
+		{
+			string foo = clazz.FullName;
+			bool bar = clazz.IsInstanceOfType("foo");
+			bool primitive = clazz.IsPrimitive;
+			try
+			{
+				object o = System.Activator.CreateInstance(clazz);
+			}
+			catch (System.MemberAccessException x)
+			{
+				bang(x);
+			}
+			catch (System.Exception x)
+			{
+				bang(x);
+			}
+		}
+
+		public virtual void bang(System.Exception e)
+		{
+		}
+	}
+}

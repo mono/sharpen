@@ -1,0 +1,6 @@
+namespace namespaceMapping.@out.@event
+{
+	public class Foo
+	{
+	}
+}

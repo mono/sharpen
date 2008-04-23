@@ -1,0 +1,16 @@
+namespace collections
+{
+	public class Vector1
+	{
+		public static void printAll(object collection)
+		{
+			System.Collections.ArrayList subject = (System.Collections.ArrayList)collection;
+			subject.Add("foo");
+			print(subject[0]);
+		}
+
+		public static void print(object o)
+		{
+		}
+	}
+}

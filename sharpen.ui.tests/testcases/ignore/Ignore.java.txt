@@ -1,0 +1,13 @@
+package ignore;
+
+/**
+ * @sharpen.ignore
+ */
+class Foo {
+}
+
+/**
+ * @sharpen.ignore
+ */
+enum Bar {
+}

@@ -1,0 +1,17 @@
+package innerclasses;
+
+public class AnonymousInnerClass6 {
+
+	private static String Message = "I'm lumberjack and I'm ok!";
+	
+	public static void run() {
+		new Thread(new Runnable() {
+			public void run() {
+				print(Message);
+			}
+		});
+	}
+	
+	static void print(String msg) {
+	}
+}

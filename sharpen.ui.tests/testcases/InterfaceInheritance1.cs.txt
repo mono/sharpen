@@ -1,0 +1,9 @@
+internal interface Foo
+{
+	void foo();
+}
+
+internal interface Bar : Foo
+{
+	void bar();
+}

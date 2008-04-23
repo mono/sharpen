@@ -1,0 +1,9 @@
+
+public class StringEmpty {
+
+	public String f = "";
+
+	public void foo() {
+		f = "";
+	}
+}

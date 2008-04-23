@@ -1,0 +1,31 @@
+namespace properties
+{
+	internal abstract class Blah
+	{
+		public abstract void Foo();
+	}
+
+	public class OverrideGetterConsumer
+	{
+		public static void Foo()
+		{
+			properties.OverrideGetter og = new properties.OverrideGetter();
+			new _Blah_12(og);
+		}
+
+		private sealed class _Blah_12 : properties.Blah
+		{
+			public _Blah_12(properties.OverrideGetter og)
+			{
+				this.og = og;
+			}
+
+			public override void Foo()
+			{
+				og.IsCancelled;
+			}
+
+			private readonly properties.OverrideGetter og;
+		}
+	}
+}

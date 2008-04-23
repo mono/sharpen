@@ -1,0 +1,10 @@
+public class PrintStackTrace1
+{
+	public static void run()
+	{
+		Sharpen.Runtime.printStackTrace(new System.Exception());
+		System.Exception e = new System.Exception();
+		Sharpen.Runtime.printStackTrace(e);
+		Sharpen.Runtime.printStackTrace(e, System.Console.Out);
+	}
+}

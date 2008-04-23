@@ -1,0 +1,11 @@
+public class Arrays2
+{
+	public static void run()
+	{
+		string[] s = new string[2];
+		s[0] = "foo";
+		s[1] = "bar";
+		bool flag = s is string[];
+		java.lang.Class type = Sharpen.Runtime.getClassForType(typeof(string[]));
+	}
+}

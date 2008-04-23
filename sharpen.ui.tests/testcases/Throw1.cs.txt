@@ -1,0 +1,15 @@
+public class Throw1
+{
+	/// <exception cref="System.Exception"></exception>
+	public static void run()
+	{
+		try
+		{
+			throw new System.Exception("uh, oh");
+		}
+		catch (System.Exception x)
+		{
+			throw;
+		}
+	}
+}

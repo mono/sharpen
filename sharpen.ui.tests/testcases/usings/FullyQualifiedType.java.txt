@@ -1,0 +1,8 @@
+package usings;
+
+class Test {
+}
+
+public class FullyQualifiedType {
+	private Test _test;
+}

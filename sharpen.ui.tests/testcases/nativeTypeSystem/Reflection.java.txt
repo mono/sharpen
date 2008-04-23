@@ -1,0 +1,14 @@
+package nativeTypeSystem;
+
+import java.lang.reflect.*;
+
+public class Reflection {
+	public void invokeMethod(Method m, Object[] args) throws Exception {
+		m.setAccessible(true);
+		m.invoke(null, args);
+	}
+	
+	public String declaringType(Method m) {
+		return m.getDeclaringClass().getName();
+	}
+}

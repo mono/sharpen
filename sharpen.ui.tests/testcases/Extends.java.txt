@@ -1,0 +1,5 @@
+/**
+ * @sharpen.extends System.IDisposable
+ */
+interface Foo {
+}

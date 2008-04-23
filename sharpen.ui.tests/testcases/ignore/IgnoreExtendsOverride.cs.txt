@@ -1,0 +1,29 @@
+namespace ignore
+{
+	public class IgnoreExtendsOverride : java.lang.Runnable
+	{
+		internal abstract class Foo : java.io.Reader
+		{
+			public override void close()
+			{
+			}
+		}
+
+		public virtual void run()
+		{
+		}
+
+		public virtual void close()
+		{
+		}
+
+		public virtual void mark(int readAheadLimit)
+		{
+		}
+
+		public virtual int read(char[] cbuf, int off, int len)
+		{
+			return 0;
+		}
+	}
+}

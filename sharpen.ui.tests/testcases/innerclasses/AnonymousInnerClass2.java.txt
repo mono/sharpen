@@ -1,0 +1,27 @@
+package innerclasses;
+
+public class AnonymousInnerClass2 {
+	public void start() {
+		new Thread(new Runnable() {
+			public void run() {
+				new Thread(new Runnable() {
+					public void run() {
+						ole();
+						pock();
+					}
+					
+					private void pock() {
+						print("POCK!");
+					}
+				});
+			}
+			
+			private void ole() {
+				print("Ole!");
+			}
+		});
+	}
+	
+	public void print(String msg) {
+	}
+}

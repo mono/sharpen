@@ -1,0 +1,11 @@
+public class LongLine1
+{
+	public static void foo()
+	{
+		string bar = "foo" + "bar" + "foo" + "bar" + "foo" + "bar" + "foo" + "bar" + "foo"
+			 + "bar" + "foo" + "bar" + "foo" + "bar" + "foo" + "bar" + "foo" + "bar" + "foo"
+			 + "bar" + "foo" + "bar" + "foo" + "bar" + "foo" + "bar" + "foo" + "bar" + "foo"
+			 + "bar" + "foo" + "bar";
+		string baz = "baz";
+	}
+}

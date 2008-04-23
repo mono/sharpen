@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<doc>
+	<type name="javadoc.XmlDocOverlay">
+	
+		<doc>
+			<summary>
+			This was overlaid here.
+			
+			Including its multiple lines.
+			</summary>
+		</doc>
+		
+		<member name="ctor()">
+			<doc>
+				<summary>
+				Constructors have a special name.
+				</summary>
+			</doc>
+		</member>
+		
+		<member name="baz()">
+			<doc>
+				<summary>
+				Method bar is very interesting.
+				</summary>
+			</doc>
+		</member>
+		
+		<member name="baz(int)">
+			<doc>
+				<summary>
+				Method bar(int) is much better.
+				</summary>
+			</doc>
+		</member>
+		
+		<member name="baz(string, int)">
+			<doc>
+				<summary>
+				Method bar(string, int) is the one.
+				</summary>
+			</doc>
+		</member>		
+		
+		<member name="BAZ">
+			<doc>
+				<summary>
+				it works for fields too.
+				</summary>
+			</doc>
+		</member>
+	</type>
+	
+	<type name="javadoc.IEventInterface">
+		<doc>
+			<summary>
+			This was overlaid here.
+			
+			And this is the IEventInterface.
+			</summary>
+		</doc>
+		
+		<member name="queryStarted">
+			<doc>
+				<summary>
+				A query started.
+				</summary>
+			</doc>
+		</member>
+	</type>
+</doc>

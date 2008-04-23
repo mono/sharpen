@@ -25,10 +25,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author rodrigob
- *
- */
 public class CSArrayInitializerExpression extends CSExpression {
 
 	private List<CSExpression> _expressions = new ArrayList<CSExpression>();

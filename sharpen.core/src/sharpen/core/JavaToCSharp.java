@@ -27,8 +27,6 @@ import java.util.*;
 
 /**
  * The main plugin class to be used in the desktop.
- * 
- * @author Rodrigo B. de Oliveira
  */
 public class JavaToCSharp extends Plugin {
 	

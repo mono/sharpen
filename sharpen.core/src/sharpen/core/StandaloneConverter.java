@@ -27,10 +27,6 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
-/**
- * @author Rodrigo B. de Oliveira
- *
- */
 public class StandaloneConverter extends Converter {
 	
 	private ASTParser _parser;

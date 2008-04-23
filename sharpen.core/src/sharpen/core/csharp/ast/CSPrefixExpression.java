@@ -21,10 +21,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.core.csharp.ast;
 
-/**
- * @author rodrigob
- *
- */
 public class CSPrefixExpression extends CSUnaryExpression {
 
 	public CSPrefixExpression(String operator, CSExpression operand) {

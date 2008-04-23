@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Sharpen Builder Plug-in
+Bundle-SymbolicName: sharpen.builder;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-ClassPath: lib/xstream/xstream-1.1.2.jar,.
+Bundle-Activator: sharpen.builder.Activator
+Bundle-Vendor: Db4objects, Inc.
+Require-Bundle: javatocsharp.core,
+ org.eclipse.core.resources,
+ org.eclipse.jdt,
+ org.eclipse.jdt.core,
+ org.eclipse.ui,
+ org.eclipse.core.runtime
+Eclipse-LazyStart: true
+Export-Package: sharpen.builder

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+      <extension
+         id="sharpenBuilder"
+         name="Sharpen Project Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true">
+         <run
+               class="sharpen.builder.SharpenBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="sharpenNature"
+         name="Sharpen Project Nature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="sharpen.builder.SharpenNature">
+         </run>
+      </runtime>
+      <builder
+            id="sharpen.builder.sharpenBuilder">
+      </builder>
+   </extension>
+	
+	<extension point="org.eclipse.core.runtime.adapters">
+		<factory class="sharpen.builder.SharpenProjectAdapterFactory"
+			adaptableType="org.eclipse.core.resources.IProject">
+			<adapter type="sharpen.builder.ISharpenProject" />
+		</factory>
+	</extension>
+
+
+</plugin>

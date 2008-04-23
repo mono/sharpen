@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="sharpen.core"
+   name="Java To C# Core Plug-in"
+   version="1.0.0"
+   provider-name="db4objects Inc."
+   class="sharpen.core.JavaToCSharp">
+
+   <runtime>
+      <library name="sharpen.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/xstream/xstream-1.1.2.jar">
+         <export
+               name="*">
+         </export>
+      </library>
+   </runtime>
+
+   <requires>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.jdt.core"/>
+      <import plugin="org.eclipse.jdt.launching"/>
+   </requires>
+   
+   <extension
+         id="application"
+         name="Java To C# Converter"
+         point="org.eclipse.core.runtime.applications">
+         <application>
+	         <run class="sharpen.core.JavaToCSharpApplication">
+	         </run>
+	     </application>
+   </extension>
+   <extension
+         id="problem"
+         name="Conversion Problem"
+         point="org.eclipse.core.resources.markers">
+         <super type="org.eclipse.core.resources.problemmarker" />
+         <super type="org.eclipse.core.resources.textmarker" />
+         <persistent value="false" />
+   </extension>
+
+</plugin>

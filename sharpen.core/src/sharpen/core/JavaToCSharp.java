@@ -28,25 +28,25 @@ import java.util.*;
 /**
  * The main plugin class to be used in the desktop.
  */
-public class JavaToCSharp extends Plugin {
+public class Sharpen extends Plugin {
 	
 	public static final String PLUGIN_ID = "sharpen.core";
 	
 	public static final String PROBLEM_MARKER = PLUGIN_ID + ".problem";
 	
 	//The shared instance.
-	private static JavaToCSharp plugin;
+	private static Sharpen plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
 	
 	/**
 	 * The constructor.
 	 */
-	public JavaToCSharp() {
+	public Sharpen() {
 		super();
 		plugin = this;
 		try {
-			resourceBundle = ResourceBundle.getBundle("sharpen.JavaToCSharpPluginResources");
+			resourceBundle = ResourceBundle.getBundle("sharpen.SharpenPluginResources");
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
@@ -69,7 +69,7 @@ public class JavaToCSharp extends Plugin {
 	/**
 	 * Returns the shared instance.
 	 */
-	public static JavaToCSharp getDefault() {
+	public static Sharpen getDefault() {
 		return plugin;
 	}
 
@@ -78,7 +78,7 @@ public class JavaToCSharp extends Plugin {
 	 * or 'key' if not found.
 	 */
 	public static String getResourceString(String key) {
-		ResourceBundle bundle = JavaToCSharp.getDefault().getResourceBundle();
+		ResourceBundle bundle = Sharpen.getDefault().getResourceBundle();
 		try {
 			return (bundle != null) ? bundle.getString(key) : key;
 		} catch (MissingResourceException e) {

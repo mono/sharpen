@@ -155,7 +155,7 @@ public class Converter {
 	private void deleteProblemMarkers() {
 		if (createProblemMarkers()) {
 			try {
-				_source.getCorrespondingResource().deleteMarkers(JavaToCSharp.PROBLEM_MARKER, false, IResource.DEPTH_ONE);
+				_source.getCorrespondingResource().deleteMarkers(Sharpen.PROBLEM_MARKER, false, IResource.DEPTH_ONE);
 			} catch (CoreException e) {
 				e.printStackTrace();
 			}
@@ -167,7 +167,7 @@ public class Converter {
 			return;
 		}			
 		try {
-			IMarker marker = _source.getCorrespondingResource().createMarker(JavaToCSharp.PROBLEM_MARKER);			
+			IMarker marker = _source.getCorrespondingResource().createMarker(Sharpen.PROBLEM_MARKER);			
 			Map<String, Object> attributes = new HashMap<String, Object>();
 			attributes.put(IMarker.MESSAGE, message);
 			attributes.put(IMarker.CHAR_START, new Integer(node.getStartPosition()));

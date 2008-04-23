@@ -94,7 +94,7 @@ public class WorkspaceUtilities {
 	}
 
 	public static void throwCoreException(IOException e) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, JavaToCSharp.PLUGIN_ID, -1, e.getLocalizedMessage(), e));
+		throw new CoreException(new Status(IStatus.ERROR, Sharpen.PLUGIN_ID, -1, e.getLocalizedMessage(), e));
 	}
 
 	public static IProject getProject(String name) {

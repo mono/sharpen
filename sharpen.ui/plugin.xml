@@ -5,7 +5,7 @@
    name="Java To C# UI Plug-in"
    version="1.0.0"
    provider-name="db4objects Inc."
-   class="sharpen.ui.JavaToCSharpUI">
+   class="sharpen.ui.SharpenUI">
 
    <runtime>
       <library name="sharpenui.jar">

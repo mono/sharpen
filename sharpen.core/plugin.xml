@@ -5,7 +5,7 @@
    name="Java To C# Core Plug-in"
    version="1.0.0"
    provider-name="db4objects Inc."
-   class="sharpen.core.JavaToCSharp">
+   class="sharpen.core.Sharpen">
 
    <runtime>
       <library name="sharpen.jar">
@@ -30,7 +30,7 @@
          name="Java To C# Converter"
          point="org.eclipse.core.runtime.applications">
          <application>
-	         <run class="sharpen.core.JavaToCSharpApplication">
+	         <run class="sharpen.core.SharpenApplication">
 	         </run>
 	     </application>
    </extension>

@@ -28,20 +28,20 @@ import java.util.*;
 /**
  * The main plugin class to be used in the desktop.
  */
-public class JavaToCSharpUITests extends Plugin {
+public class SharpenUITests extends Plugin {
 	//The shared instance.
-	private static JavaToCSharpUITests plugin;
+	private static SharpenUITests plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
 	
 	/**
 	 * The constructor.
 	 */
-	public JavaToCSharpUITests() {
+	public SharpenUITests() {
 		super();
 		plugin = this;
 		try {
-			resourceBundle = ResourceBundle.getBundle("sharpen.ui.tests.JavaToCSharpUITestsResources");
+			resourceBundle = ResourceBundle.getBundle("sharpen.ui.tests.SharpenUITestsResources");
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
@@ -64,7 +64,7 @@ public class JavaToCSharpUITests extends Plugin {
 	/**
 	 * Returns the shared instance.
 	 */
-	public static JavaToCSharpUITests getDefault() {
+	public static SharpenUITests getDefault() {
 		return plugin;
 	}
 
@@ -73,7 +73,7 @@ public class JavaToCSharpUITests extends Plugin {
 	 * or 'key' if not found.
 	 */
 	public static String getResourceString(String key) {
-		ResourceBundle bundle = JavaToCSharpUITests.getDefault().getResourceBundle();
+		ResourceBundle bundle = SharpenUITests.getDefault().getResourceBundle();
 		try {
 			return (bundle != null) ? bundle.getString(key) : key;
 		} catch (MissingResourceException e) {

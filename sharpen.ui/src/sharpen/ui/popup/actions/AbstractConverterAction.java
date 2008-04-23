@@ -94,10 +94,10 @@ public abstract class AbstractConverterAction implements IObjectActionDelegate{
 					configuration.setCreateProblemMarkers(true);
 					converter.run();
 					int status = monitor.isCanceled() ? IStatus.CANCEL : IStatus.OK;
-					return new Status(status, JavaToCSharpUI.ID, status, "conversion finished", null);
+					return new Status(status, SharpenUI.ID, status, "conversion finished", null);
 				} catch (Exception x) {
 					x.printStackTrace();
-					return new Status(IStatus.ERROR, JavaToCSharpUI.ID, IStatus.ERROR, "conversion finished with errors", x);
+					return new Status(IStatus.ERROR, SharpenUI.ID, IStatus.ERROR, "conversion finished with errors", x);
 				}
 			}
 		};

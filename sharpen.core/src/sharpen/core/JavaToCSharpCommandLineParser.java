@@ -25,18 +25,18 @@ package sharpen.core;
 
 import sharpen.core.io.IO;
 
-class JavaToCSharpCommandLineParser {
+class SharpenCommandLineParser {
 	
-	private final JavaToCSharpCommandLine _cmdLine;
+	private final SharpenCommandLine _cmdLine;
 	private final String[] _args;
 	private int _current;
 
-	public JavaToCSharpCommandLineParser(String[] args) {		
-		this(args, new JavaToCSharpCommandLine());
+	public SharpenCommandLineParser(String[] args) {		
+		this(args, new SharpenCommandLine());
 		validate();
 	}
 
-	private JavaToCSharpCommandLineParser(String[] args, JavaToCSharpCommandLine cmdLine) {
+	private SharpenCommandLineParser(String[] args, SharpenCommandLine cmdLine) {
 		if (null == args) illegalArgument("args cannot be null");
 		_args = args;		
 		_cmdLine = cmdLine;
@@ -61,7 +61,7 @@ class JavaToCSharpCommandLineParser {
 	}
 
 	private void processResponseFile(String arg) {
-		new JavaToCSharpCommandLineParser(
+		new SharpenCommandLineParser(
 				IO.linesFromFile(arg.substring(1)),
 				_cmdLine);
 	}
@@ -90,9 +90,9 @@ class JavaToCSharpCommandLineParser {
 
 	private void processOption(String arg) {
 		if (areEqual(arg, "-pascalCase")) {
-			_cmdLine.pascalCase = JavaToCSharpCommandLine.PascalCaseOptions.Identifiers;
+			_cmdLine.pascalCase = SharpenCommandLine.PascalCaseOptions.Identifiers;
 		} else if (areEqual(arg, "-pascalCase+")) {
-			_cmdLine.pascalCase = JavaToCSharpCommandLine.PascalCaseOptions.NamespaceAndIdentifiers;			 
+			_cmdLine.pascalCase = SharpenCommandLine.PascalCaseOptions.NamespaceAndIdentifiers;			 
 		} else if (areEqual(arg, "-cp")) {
 			_cmdLine.classpath.add(consumeNext());
 		} else if (areEqual(arg, "-srcfolder")) {
@@ -144,7 +144,7 @@ class JavaToCSharpCommandLineParser {
 		throw new IllegalArgumentException(message);
 	}
 
-	public JavaToCSharpCommandLine commandLine() {
+	public SharpenCommandLine commandLine() {
 		return _cmdLine;
 	}
 

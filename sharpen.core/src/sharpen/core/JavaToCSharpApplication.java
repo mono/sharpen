@@ -35,7 +35,7 @@ import org.eclipse.jdt.core.*;
  * java -cp startup.jar org.eclipse.core.launcher.Main -application sharpen.core.application resourcePath
  * </code>
  */
-public class JavaToCSharpApplication implements IPlatformRunnable {
+public class SharpenApplication implements IPlatformRunnable {
 
 	private static class ConsoleProgressMonitor extends NullProgressMonitor {
 		public void subTask(String name) {
@@ -43,7 +43,7 @@ public class JavaToCSharpApplication implements IPlatformRunnable {
 		}
 	}
 
-	private JavaToCSharpCommandLine _args;
+	private SharpenCommandLine _args;
 
 	/*
 	 * (non-Javadoc)
@@ -52,7 +52,7 @@ public class JavaToCSharpApplication implements IPlatformRunnable {
 	 */
 	public Object run(final Object arg) throws Exception {
 		try {
-			_args = JavaToCSharpCommandLine.parse((String[]) arg);
+			_args = SharpenCommandLine.parse((String[]) arg);
 			safeRun();
 		} catch (Exception x) {
 			System.err.println("ERROR: " + x.getMessage());

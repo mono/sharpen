@@ -23,10 +23,10 @@ package sharpen.core;
 
 import java.util.*;
 
-public class JavaToCSharpCommandLine {
+public class SharpenCommandLine {
 	
-	public static JavaToCSharpCommandLine parse(String[] args) {
-		return new JavaToCSharpCommandLineParser(args).commandLine();
+	public static SharpenCommandLine parse(String[] args) {
+		return new SharpenCommandLineParser(args).commandLine();
 	}
 	
 	public static enum PascalCaseOptions {

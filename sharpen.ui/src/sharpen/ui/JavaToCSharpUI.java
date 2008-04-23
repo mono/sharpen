@@ -30,23 +30,23 @@ import java.util.*;
  * 
  * @author Rodrigo B. de Oliveira
  */
-public class JavaToCSharpUI extends AbstractUIPlugin {
+public class SharpenUI extends AbstractUIPlugin {
 	
 	public  static final String ID = "sharpen.ui";
 	
 	//The shared instance.
-	private static JavaToCSharpUI plugin;
+	private static SharpenUI plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
 	
 	/**
 	 * The constructor.
 	 */
-	public JavaToCSharpUI() {
+	public SharpenUI() {
 		super();
 		plugin = this;
 		try {
-			resourceBundle = ResourceBundle.getBundle("sharpen.ui.JavaToCSharpUIResources");
+			resourceBundle = ResourceBundle.getBundle("sharpen.ui.SharpenUIResources");
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
@@ -69,7 +69,7 @@ public class JavaToCSharpUI extends AbstractUIPlugin {
 	/**
 	 * Returns the shared instance.
 	 */
-	public static JavaToCSharpUI getDefault() {
+	public static SharpenUI getDefault() {
 		return plugin;
 	}
 
@@ -78,7 +78,7 @@ public class JavaToCSharpUI extends AbstractUIPlugin {
 	 * or 'key' if not found.
 	 */
 	public static String getResourceString(String key) {
-		ResourceBundle bundle = JavaToCSharpUI.getDefault().getResourceBundle();
+		ResourceBundle bundle = SharpenUI.getDefault().getResourceBundle();
 		try {
 			return (bundle != null) ? bundle.getString(key) : key;
 		} catch (MissingResourceException e) {

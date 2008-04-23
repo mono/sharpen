@@ -5,7 +5,7 @@
    name="Java To C# UI Tests Plug-in"
    version="1.0.0"
    provider-name="db4objects Inc."
-   class="sharpen.ui.tests.JavaToCSharpUITests">
+   class="sharpen.ui.tests.SharpenUITests">
 
    <runtime>
       <library name="sharpenuitests.jar">

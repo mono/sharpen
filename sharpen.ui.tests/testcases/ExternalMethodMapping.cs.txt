@@ -1,6 +1,6 @@
 public class ExternalMethodMapping
 {
-	public virtual void Foo(javatocsharp.ui.tests.BindingTestCaseSubject.Baz baz)
+	public virtual void Foo(sharpen.ui.tests.BindingTestCaseSubject.Baz baz)
 	{
 		baz.Mapped();
 	}

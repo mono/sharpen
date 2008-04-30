@@ -99,8 +99,11 @@
       <page
             class="sharpen.ui.properties.SharpenBuilderPropertyPage"
             id="sharpen.ui.properties.builderPropertyPage"
-            name="Sharpen Properties"
-            objectClass="sharpen.core.builder.ISharpenProject">
+            name="Sharpen Properties">
+            
+            <enabledWhen>
+            	<adapt type="sharpen.builder.ISharpenProject" />
+            </enabledWhen>
       </page>
    </extension>
 

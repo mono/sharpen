@@ -27,6 +27,7 @@ import sharpen.core.resources.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.launching.JavaRuntime;
 
@@ -73,7 +74,7 @@ public class JavaProject extends SimpleProject {
 	 */
 	public void joinBuild() {
 		try {
-			Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD,
+			Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD,
 					null);
 		} catch (InterruptedException e) {
 			// TODO: handle exception

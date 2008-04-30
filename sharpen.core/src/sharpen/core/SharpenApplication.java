@@ -28,6 +28,7 @@ import sharpen.core.io.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.app.*;
 import org.eclipse.jdt.core.*;
 
 /**
@@ -35,7 +36,7 @@ import org.eclipse.jdt.core.*;
  * java -cp startup.jar org.eclipse.core.launcher.Main -application sharpen.core.application resourcePath
  * </code>
  */
-public class SharpenApplication implements IPlatformRunnable {
+public class SharpenApplication implements IApplication {
 
 	private static class ConsoleProgressMonitor extends NullProgressMonitor {
 		public void subTask(String name) {
@@ -45,21 +46,21 @@ public class SharpenApplication implements IPlatformRunnable {
 
 	private SharpenCommandLine _args;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.IPlatformRunnable#run(java.lang.Object)
-	 */
-	public Object run(final Object arg) throws Exception {
+	public Object start(IApplicationContext context) throws Exception {
 		try {
-			_args = SharpenCommandLine.parse((String[]) arg);
+			String[] args = (String[])context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
+			_args = SharpenCommandLine.parse(args);
 			safeRun();
 		} catch (Exception x) {
 			System.err.println("ERROR: " + x.getMessage());
 			x.printStackTrace();
 			throw x;
 		}
-		return IPlatformRunnable.EXIT_OK;
+		return IApplication.EXIT_OK;
+	}
+	
+	public void stop() {
+		
 	}
 
 	void safeRun() throws Exception {

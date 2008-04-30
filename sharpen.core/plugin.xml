@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="sharpen.core"
+<plugin id="sharpen.core"
    name="Java To C# Core Plug-in"
    version="1.0.0"
    provider-name="db4objects Inc."
@@ -10,11 +9,6 @@
    <runtime>
       <library name="sharpen.jar">
          <export name="*"/>
-      </library>
-      <library name="lib/xstream/xstream-1.1.2.jar">
-         <export
-               name="*">
-         </export>
       </library>
    </runtime>
 

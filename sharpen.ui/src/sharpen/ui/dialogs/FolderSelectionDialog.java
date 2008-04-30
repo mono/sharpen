@@ -21,15 +21,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.ui.dialogs;
 
-import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
+import org.eclipse.jface.window.*;
+import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.views.navigator.ResourceComparator;
+import org.eclipse.ui.views.navigator.*;
 
 /**
   */

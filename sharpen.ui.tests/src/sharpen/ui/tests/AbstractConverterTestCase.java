@@ -23,15 +23,13 @@ package sharpen.ui.tests;
 
 import java.io.*;
 
-import sharpen.core.*;
+import junit.framework.*;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 
-import wheel.io.*;
-
-import junit.framework.TestCase;
+import sharpen.core.*;
 
 public abstract class AbstractConverterTestCase extends TestCase {
 

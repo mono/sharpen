@@ -1,0 +1,19 @@
+package generics;
+
+import java.util.*;
+
+class GenericRuntimeTypeParameters {
+	
+	static <T> Iterable<T> query(Class<T> clazz) {
+		print(clazz.getName());
+		return null;
+	}
+	
+	static void test() {
+		Iterable<String> items = query(String.class);
+	}
+	
+	static void print(String s) {
+		
+	}
+}

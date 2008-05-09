@@ -981,30 +981,31 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 	}
 
 	private void processMethodDeclaration(MethodDeclaration node) {
-		CSMethodBase method = null;
-		
 		if (isDestructor(node)) {
-			method = new CSDestructor();
-		} else {
-			if (node.isConstructor()) {
-				method = new CSConstructor();
-			} else {
-				CSMethod m = new CSMethod(mappedMethodDeclarationName(node));
-				m.returnType(mappedReturnType(node));
-				m.modifier(mapMethodModifier(node));
-				mapTypeParameters(node.typeParameters(), m);
-				method = m;
-			}
-			mapVisibility(node, method);
+			mapMethodParts(node, new CSDestructor());
+			return;
+		} 
+		
+		if (node.isConstructor()) {
+			mapMethodParts(node, new CSConstructor());
+			return;
 		}
+		
+		CSMethod method = new CSMethod(mappedMethodDeclarationName(node));
+		method.returnType(mappedReturnType(node));
+		method.modifier(mapMethodModifier(node));
+		mapTypeParameters(node.typeParameters(), method);
+		mapMethodParts(node, method);
+	}
 
-		method.startPosition(node.getStartPosition());
+	private void mapMethodParts(MethodDeclaration node, CSMethodBase method) {
 		
-		mapParameters(node, method);
-		
-		mapDocumentation(node, method);
 		_currentType.addMember(method);
 		
+		method.startPosition(node.getStartPosition());
+		mapVisibility(node, method);
+		mapParameters(node, method);
+		mapDocumentation(node, method);
 		visitBodyDeclarationBlock(node, node.getBody(), method);
 	}
 
@@ -1017,9 +1018,46 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 	}
 
 	private void mapParameters(MethodDeclaration node, CSParameterized method) {
-		for (Object p : node.parameters()) {
-			method.addParameter(createParameter((SingleVariableDeclaration) p));
+		if (method instanceof CSMethod) {
+			mapMethodParameters(node, (CSMethod)method);
+			return;
 		}
+		for (Object p : node.parameters()) {
+			mapParameter((SingleVariableDeclaration) p, method);
+		}
+	}
+
+	private void mapParameter(SingleVariableDeclaration parameter, CSParameterized method) {
+		method.addParameter(createParameter(parameter));
+	}
+
+	private void mapMethodParameters(MethodDeclaration node, CSMethod method) {
+		for (Object o : node.parameters()) {
+			SingleVariableDeclaration p = (SingleVariableDeclaration)o;
+			ITypeBinding parameterType = p.getType().resolveBinding();
+			if (isGenericRuntimeParameterIdiom(node.resolveBinding(), parameterType)) {
+				
+				// System.Type <p.name> = typeof(<T>);
+				method.body().addStatement(
+					new CSDeclarationStatement(
+						p.getStartPosition(),
+						new CSVariableDeclaration(
+							identifier(p.getName()),
+							new CSTypeReference("System.Type"),
+							new CSTypeofExpression(mappedTypeReference(parameterType.getTypeArguments()[0])))));
+			
+			} else {
+			
+				mapParameter(p, method);
+			}
+		}
+	}
+
+	private boolean isGenericRuntimeParameterIdiom(IMethodBinding method,
+			ITypeBinding parameterType) {
+		return parameterType.isParameterizedType()
+			&& "java.lang.Class".equals(qualifiedName(parameterType))
+			&& parameterType.getTypeArguments()[0].getDeclaringMethod() == method;
 	}
 
 	private CSTypeReferenceExpression mappedReturnType(MethodDeclaration node) {
@@ -1268,7 +1306,7 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 
 	private void addChainedConstructorInvocation(CSExpression target, List arguments) {
 		CSConstructorInvocationExpression cie = new CSConstructorInvocationExpression(target);
-		addArguments(cie, arguments);
+		mapArguments(cie, arguments);
 		((CSConstructor)_currentMethod).chainedConstructorInvocation(cie);
 	}
 	
@@ -1786,7 +1824,7 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 			expression.addArgument(new CSThisExpression());
 		}
 		
-		addArguments(expression, node.arguments());
+		mapArguments(expression, node.arguments());
 		pushExpression(expression);
 		return false;
 	}
@@ -1863,7 +1901,7 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 		}
 		
 		CSMethodInvocationExpression mie = new CSMethodInvocationExpression(target);
-		addArguments(mie, node.arguments());
+		mapArguments(mie, node.arguments());
 		pushExpression(mie);
 		return false;
 	}
@@ -1918,8 +1956,22 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 			? new CSReferenceExpression(name)
 			: new CSMemberReferenceExpression(targetExpression, name);
 		CSMethodInvocationExpression mie = new CSMethodInvocationExpression(target);
-		addArguments(mie, node.arguments());
+		mapMethodInvocationArguments(mie, node);
 		pushExpression(mie);
+	}
+
+	private void mapMethodInvocationArguments(CSMethodInvocationExpression mie, MethodInvocation node) {
+		List arguments = node.arguments();
+		IMethodBinding method = node.resolveMethodBinding();
+		ITypeBinding[] types = method.getParameterTypes();
+		for (int i=0; i<types.length; ++i) {
+			Expression arg = (Expression) arguments.get(i);
+			if (isGenericRuntimeParameterIdiom(method, types[i])) {
+				notImplemented(arg);
+			} else {
+				addArgument(mie, arg);
+			}
+		}
 	}
 
 	private void processEventSubscription(MethodInvocation node) {
@@ -2079,7 +2131,7 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 				mie.addArgument(expression);
 			}
 		}
-		addArguments(mie, arguments);
+		mapArguments(mie, arguments);
 		pushExpression(mie);
 	}
 
@@ -2122,10 +2174,14 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 		return -1 != name.indexOf('.');
 	}
 
-	protected void addArguments(CSMethodInvocationExpression mie, List arguments) {
+	protected void mapArguments(CSMethodInvocationExpression mie, List arguments) {
 		for (Object arg : arguments) {
-			mie.addArgument(mapExpression((Expression)arg));
+			addArgument(mie, (Expression)arg);
 		}
+	}
+
+	private void addArgument(CSMethodInvocationExpression mie, Expression arg) {
+		mie.addArgument(mapExpression(arg));
 	}
 	
 	public boolean visit(FieldAccess node) {

@@ -23,8 +23,16 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.ui.tests;
 
+import sharpen.core.*;
+
 
 public class GenericsTestCase extends AbstractConverterTestCase {
+	
+	public void testGenericRuntimeTypeParameters() throws Throwable {
+		Configuration config = newPascalCasePlusConfiguration();
+		config.enableNativeTypeSystem();
+		runResourceTestCase(config, "generics/GenericRuntimeTypeParameters");
+	}
 	
 	public void testCollectionMappings() throws Throwable {
 		runResourceTestCase("generics/CollectionMappings");

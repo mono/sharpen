@@ -1,0 +1,21 @@
+namespace Generics
+{
+	internal class GenericRuntimeTypeParameters
+	{
+		internal static System.Collections.Generic.IEnumerable<T> Query<T>()
+		{
+			System.Type clazz = typeof(T);
+			Print(clazz.FullName);
+			return null;
+		}
+
+		internal static void Test()
+		{
+			System.Collections.Generic.IEnumerable<string> items = Query<string>();
+		}
+
+		internal static void Print(string s)
+		{
+		}
+	}
+}

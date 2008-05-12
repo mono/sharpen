@@ -257,14 +257,6 @@ public class ConverterTestCase extends AbstractConverterTestCase {
 		runResourceTestCase("InterfaceImplementation3");
 	}
 	
-	public void testInterfaceImplementationWithQualifiedName() throws Throwable {
-		runResourceTestCase("InterfaceImplementation2");
-	}
-	
-	public void testInterfaceImplementation() throws Throwable {
-		runResourceTestCase("InterfaceImplementation1");
-	}
-	
 	public void testSerializableSimpleClass() throws Throwable {
 		runResourceTestCase("Serializable1");
 	}

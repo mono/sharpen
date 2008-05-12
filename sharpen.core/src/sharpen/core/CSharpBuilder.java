@@ -291,7 +291,35 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 		processConversionJavadocTags(node, type);
 		mapMembers(node, type);
 		
+		autoImplementCloneable(node, type);
+		
 		return type;
+	}
+
+	private void autoImplementCloneable(TypeDeclaration node, CSTypeDeclaration type) {
+		
+		if (!implementsCloneable(type)) {
+			return;
+		}
+		
+		CSMethod clone = new CSMethod("System.ICloneable.Clone");
+		clone.returnType(OBJECT_TYPE_REFERENCE);
+		clone.body().addStatement(
+				new CSReturnStatement(
+					-1,
+					new CSMethodInvocationExpression(
+						new CSReferenceExpression("MemberwiseClone"))));
+		
+		type.addMember(clone);
+	}
+
+	private boolean implementsCloneable(CSTypeDeclaration node) {
+		for (CSTypeReferenceExpression typeRef : node.baseTypes()) {
+			if (typeRef.toString().equals("System.ICloneable")) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void mapSuperTypes(TypeDeclaration node, CSTypeDeclaration type) {
@@ -1449,17 +1477,32 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 		CSTryStatement stmt = new CSTryStatement(node.getStartPosition());
 		visitBlock(stmt.body(), node.getBody());
 		for (Object o : node.catchClauses()) {
-			stmt.addCatchClause(mapCatchClause((CatchClause)o));
+			CatchClause clause = (CatchClause)o;
+			if (!isIgnoredExceptionType(clause.getException().getType().resolveBinding())) {
+				stmt.addCatchClause(mapCatchClause(clause));
+			}
 		}
 		if (null != node.getFinally()) {
 			CSBlock finallyBlock = new CSBlock();
 			visitBlock(finallyBlock, node.getFinally());
 			stmt.finallyBlock(finallyBlock);
 		}
-		addStatement(stmt);
+		
+		if (null != stmt.finallyBlock()
+			|| !stmt.catchClauses().isEmpty()) {
+			
+			addStatement(stmt);
+		} else {
+
+			_currentBlock.addAll(stmt.body());
+		}
 		return false;
 	}
 	
+	private boolean isIgnoredExceptionType(ITypeBinding exceptionType) {
+		return qualifiedName(exceptionType).equals("java.lang.CloneNotSupportedException");
+	}
+
 	private CSCatchClause mapCatchClause(CatchClause node) {
 		IVariableBinding oldExceptionVariable = _currentExceptionVariable;
 		_currentExceptionVariable = node.getException().resolveBinding();

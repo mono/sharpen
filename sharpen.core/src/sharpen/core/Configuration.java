@@ -123,6 +123,8 @@ public class Configuration {
 	    
 	    setUpCollectionMappings();
 	    
+	    mapType("java.lang.Cloneable", "System.ICloneable");
+	    
 	    mapType("java.util.Date", "System.DateTime");
 	
 	    mapMethod("java.lang.Object.toString", "ToString");

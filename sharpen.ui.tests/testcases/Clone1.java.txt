@@ -2,7 +2,11 @@ public class Clone1 implements Cloneable {
 	public Clone1 copy1() throws Exception {
 		return (Clone1)clone();
 	}
-	public static Clone1 copy2(Clone1 o) throws Exception {
-		return (Clone1)o.clone();
+	public static Clone1 copy2(Clone1 o) {
+		try {
+			return (Clone1)o.clone();
+		} catch (CloneNotSupportedException x) {
+			return null;
+		}
 	}
 }

@@ -57,4 +57,8 @@ public class CSBlock extends CSNode {
 	public void accept(CSVisitor visitor) {
 		visitor.visit(this);
 	}
+
+	public void addAll(CSBlock body) {
+		_statements.addAll(body._statements);
+	}
 }

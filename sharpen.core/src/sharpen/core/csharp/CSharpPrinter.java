@@ -214,9 +214,16 @@ public class CSharpPrinter extends CSVisitor {
 
 	private void writeVisibility(CSMember member) {
 		writeIndentation();
+		
+		if (isExplicitMember(member)) return;
+		
 		CSVisibility visibility = member.visibility();
 		write(visibility.toString().toLowerCase());
 		write(" ");
+	}
+
+	private boolean isExplicitMember(CSMember member) {
+		return member.name().indexOf('.') != -1;
 	}
 	
 	public void visit(CSVariableDeclaration node) {

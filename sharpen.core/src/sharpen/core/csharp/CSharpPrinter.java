@@ -137,6 +137,10 @@ public class CSharpPrinter extends CSVisitor {
 	
 	public void visit(CSTypeReference node) {
 		write(node.typeName());
+		writeTypeArguments(node);
+	}
+
+	private void writeTypeArguments(CSTypeArgumentProvider node) {
 		final List<CSTypeReferenceExpression> typeArgs = node.typeArguments();
 		if (!typeArgs.isEmpty()) {
 			writeGenericParameters(typeArgs);
@@ -562,6 +566,7 @@ public class CSharpPrinter extends CSVisitor {
 
 	protected void writeMethodInvocation(CSMethodInvocationExpression node) {
 		node.expression().accept(this);
+		writeTypeArguments(node);
 		writeParameterList(node.arguments());
 	}
 	

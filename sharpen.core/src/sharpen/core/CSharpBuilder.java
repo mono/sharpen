@@ -1044,13 +1044,18 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 						new CSVariableDeclaration(
 							identifier(p.getName()),
 							new CSTypeReference("System.Type"),
-							new CSTypeofExpression(mappedTypeReference(parameterType.getTypeArguments()[0])))));
+							new CSTypeofExpression(genericRuntimeTypeIdiomType(parameterType)))));
 			
 			} else {
 			
 				mapParameter(p, method);
 			}
 		}
+	}
+
+	private CSTypeReferenceExpression genericRuntimeTypeIdiomType(
+			ITypeBinding parameterType) {
+		return mappedTypeReference(parameterType.getTypeArguments()[0]);
 	}
 
 	private boolean isGenericRuntimeParameterIdiom(IMethodBinding method,
@@ -1943,10 +1948,7 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 		}
 		
 		if (isRemovedMethodInvocation(node)) {
-			TagElement element = getJavadocTag(findMethodDeclaration(node), Annotations.SHARPEN_REMOVE);
-			
-			String exchangeValue = getSingleTextFragment(element);			
-			pushExpression(new CSReferenceExpression(exchangeValue));
+			processRemovedInvocation(node);
 			return;
 		}
 		
@@ -1960,14 +1962,23 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 		pushExpression(mie);
 	}
 
+	private void processRemovedInvocation(MethodInvocation node) {
+		TagElement element = getJavadocTag(findMethodDeclaration(node), Annotations.SHARPEN_REMOVE);
+		
+		String exchangeValue = getSingleTextFragment(element);			
+		pushExpression(new CSReferenceExpression(exchangeValue));
+	}
+
 	private void mapMethodInvocationArguments(CSMethodInvocationExpression mie, MethodInvocation node) {
 		List arguments = node.arguments();
-		IMethodBinding method = node.resolveMethodBinding();
-		ITypeBinding[] types = method.getParameterTypes();
-		for (int i=0; i<types.length; ++i) {
+		IMethodBinding actualMethod = node.resolveMethodBinding();
+		ITypeBinding[] actualTypes = actualMethod.getParameterTypes();
+		IMethodBinding originalMethod = actualMethod.getMethodDeclaration();
+		ITypeBinding[] originalTypes = originalMethod.getParameterTypes();
+		for (int i=0; i<originalTypes.length; ++i) {
 			Expression arg = (Expression) arguments.get(i);
-			if (isGenericRuntimeParameterIdiom(method, types[i])) {
-				notImplemented(arg);
+			if (isGenericRuntimeParameterIdiom(originalMethod, originalTypes[i])) {
+				mie.addTypeArgument(genericRuntimeTypeIdiomType(actualTypes[i]));
 			} else {
 				addArgument(mie, arg);
 			}

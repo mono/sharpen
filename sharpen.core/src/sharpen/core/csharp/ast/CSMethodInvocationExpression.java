@@ -21,10 +21,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.core.csharp.ast;
 
+import java.util.*;
 
-public class CSMethodInvocationExpression extends CSAbstractInvocation {
+
+public class CSMethodInvocationExpression extends CSAbstractInvocation implements CSTypeArgumentProvider {
 	
 	private CSExpression _expression;
+	
+	private final CSTypeArgumentProvider _typeArguments = new CSTypeArgumentSupport();
 	
 	public CSMethodInvocationExpression(CSExpression expression, CSExpression ...args) {
 		super(args);
@@ -37,6 +41,14 @@ public class CSMethodInvocationExpression extends CSAbstractInvocation {
 
 	public CSNode expression() {
 		return _expression;
+	}
+
+	public void addTypeArgument(CSTypeReferenceExpression typeArgument) {
+		_typeArguments.addTypeArgument(typeArgument);
+	}
+
+	public List<CSTypeReferenceExpression> typeArguments() {
+		return _typeArguments.typeArguments();
 	}
 
 }

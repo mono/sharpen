@@ -25,11 +25,11 @@ package sharpen.core.csharp.ast;
 
 import java.util.*;
 
-public class CSTypeReference extends CSTypeReferenceExpression {
+public class CSTypeReference extends CSTypeReferenceExpression implements CSTypeArgumentProvider {
 
 	private final String _typeName;
-	private List<CSTypeReferenceExpression> _arguments;
-
+	private final CSTypeArgumentSupport _typeArguments = new CSTypeArgumentSupport();
+	
 	public CSTypeReference(String typeName) {
 		_typeName = typeName;
 	}
@@ -50,17 +50,14 @@ public class CSTypeReference extends CSTypeReferenceExpression {
 	
 	@SuppressWarnings("unchecked")
 	public List<CSTypeReferenceExpression> typeArguments() {
-		if (null == _arguments) {
-			return Collections.EMPTY_LIST;
-		}
-		return Collections.unmodifiableList(_arguments);
+		return _typeArguments.typeArguments();
+		
 	}
 
 	public void addTypeArgument(CSTypeReferenceExpression typeArgument) {
-		if (null == _arguments) {
-			_arguments = new ArrayList<CSTypeReferenceExpression>();
-		}
-		_arguments.add(typeArgument);
+		
+		_typeArguments.addTypeArgument(typeArgument);
+		
 	}
 
 }

@@ -52,6 +52,14 @@ public class SharpenCommandLine {
 		public abstract NamingStrategy getNamingStrategy();
 	}
 
+	/**
+	 * Name of the runtime class. The runtime class provides implementation for
+	 * methods that don't have a direct mapping or that are simpler to map at the
+	 * language level than at the sharpen level. For instance: String.substring,
+	 * String.valueOf, Exception.printStackTrace, etc. For a complete list of all the
+	 * method that can be mapped to the runtime class see {@link Configuration#runtimeMethod}
+	 * call hierarchy. 
+	 */
 	public String runtimeTypeName = Configuration.DEFAULT_RUNTIME_TYPE_NAME;
 	public boolean nativeTypeSystem;
 	public PascalCaseOptions pascalCase = PascalCaseOptions.None;

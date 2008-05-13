@@ -36,8 +36,17 @@ public class Annotations {
 	
 	static final String SHARPEN_EVENT = "@sharpen.event";	
 	
+	/**
+	 * Marks the method as an event subscription method. Invocations
+	 * to the method in the form <target>.method(<argument>) will be replaced by
+	 * the c# event subscription idiom: <target> += <argument>
+	 */
 	static final String SHARPEN_EVENT_ADD = "@sharpen.event.add";
 	
+	/**
+	 * Valid for event declaration only ({@link SHARPEN_EVENT}). Configures the method
+	 * to be invoked whenever a new event handler is subscribed to the event.
+	 */
 	static final String SHARPEN_EVENT_ON_ADD = "@sharpen.event.onAdd";
 	
 	static final String SHARPEN_IF = "@sharpen.if";

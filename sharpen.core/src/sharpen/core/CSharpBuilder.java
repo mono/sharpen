@@ -2013,11 +2013,11 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 	}
 
 	private void mapMethodInvocationArguments(CSMethodInvocationExpression mie, MethodInvocation node) {
-		List arguments = node.arguments();
-		IMethodBinding actualMethod = node.resolveMethodBinding();
-		ITypeBinding[] actualTypes = actualMethod.getParameterTypes();
-		IMethodBinding originalMethod = actualMethod.getMethodDeclaration();
-		ITypeBinding[] originalTypes = originalMethod.getParameterTypes();
+		final List arguments = node.arguments();
+		final IMethodBinding actualMethod = node.resolveMethodBinding();
+		final ITypeBinding[] actualTypes = actualMethod.getParameterTypes();
+		final IMethodBinding originalMethod = actualMethod.getMethodDeclaration();
+		final ITypeBinding[] originalTypes = originalMethod.getParameterTypes();
 		for (int i=0; i<originalTypes.length; ++i) {
 			Expression arg = (Expression) arguments.get(i);
 			if (isGenericRuntimeParameterIdiom(originalMethod, originalTypes[i])) {

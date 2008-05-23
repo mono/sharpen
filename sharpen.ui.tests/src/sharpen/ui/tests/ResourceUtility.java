@@ -26,7 +26,7 @@ package sharpen.ui.tests;
 import java.io.*;
 import java.net.*;
 
-import wheel.io.*;
+import sharpen.util.*;
 
 
 public class ResourceUtility {

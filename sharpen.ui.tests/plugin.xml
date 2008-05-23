@@ -22,7 +22,6 @@
       <import plugin="org.eclipse.jdt.core"/>
       <import plugin="org.eclipse.jdt.launching"/>
       <import plugin="sharpen.builder"/>
-      <import plugin="wheel"/>
    </requires>
 
 </plugin>

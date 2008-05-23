@@ -28,7 +28,7 @@ import junit.framework.Assert;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
-import wheel.io.*;
+import sharpen.util.*;
 
 
 /**

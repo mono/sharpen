@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.*;
 
 import sharpen.builder.*;
 
-public class SharpenBuilderTestCase extends AbstractConverterTestCase {
+public class SharpenBuilderTestCase extends AbstractConversionTestCase {
 	
 	@Override
 	protected void setUp() throws Exception {

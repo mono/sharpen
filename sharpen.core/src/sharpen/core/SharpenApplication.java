@@ -94,7 +94,7 @@ public class SharpenApplication implements IApplication {
 
 	private void convertTo(List<ICompilationUnit> units, IFolder targetFolder)
 			throws IOException, CoreException, InterruptedException {
-		BatchConverter converter = new BatchConverter(getConfiguration());		
+		SharpenConversionBatch converter = new SharpenConversionBatch(getConfiguration());		
 		converter.setProgressMonitor(newProgressMonitor());
 		converter.setTargetFolder(targetFolder);
 		converter.setSource(units);

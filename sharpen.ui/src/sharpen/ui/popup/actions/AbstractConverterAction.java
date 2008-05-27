@@ -85,7 +85,7 @@ public abstract class AbstractConverterAction implements IObjectActionDelegate{
 					}
 					
 					monitor.beginTask(jobName, compilationUnits.size());
-					BatchConverter converter = new BatchConverter();
+					SharpenConversionBatch converter = new SharpenConversionBatch();
 					converter.setSource((ICompilationUnit[])compilationUnits.toArray(new ICompilationUnit[compilationUnits.size()]));
 					converter.setProgressMonitor(monitor);
 					converter.setTargetFolder(targetFolder);

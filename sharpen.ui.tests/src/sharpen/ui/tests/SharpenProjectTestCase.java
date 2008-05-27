@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.*;
 
 import sharpen.builder.*;
 
-public class SharpenProjectTestCase extends AbstractConverterTestCase {
+public class SharpenProjectTestCase extends AbstractConversionTestCase {
 	
 	public void testCreateReturnsNullForInvalidNature() throws CoreException {
 		

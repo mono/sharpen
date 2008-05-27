@@ -21,7 +21,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.ui.tests;
 
-public class CollectionConversionTestCase extends AbstractConverterTestCase {
+public class CollectionConversionTestCase extends AbstractConversionTestCase {
 	
 	public void testMap1() throws Throwable {
 		runResourceTestCase("collections/Map1");

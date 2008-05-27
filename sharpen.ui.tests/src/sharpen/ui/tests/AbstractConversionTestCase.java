@@ -31,7 +31,7 @@ import org.eclipse.jdt.core.*;
 
 import sharpen.core.*;
 
-public abstract class AbstractConverterTestCase extends TestCase {
+public abstract class AbstractConversionTestCase extends TestCase {
 
 	protected JavaProject _project;
 
@@ -108,7 +108,7 @@ public abstract class AbstractConverterTestCase extends TestCase {
 		
 		IFolder targetFolder = _project.createFolder("converted");
 	
-		BatchConverter converter = new BatchConverter(configuration);
+		SharpenConversionBatch converter = new SharpenConversionBatch(configuration);
 		converter.setSource(units);
 		converter.setTargetFolder(targetFolder);
 		converter.run();
@@ -134,7 +134,7 @@ public abstract class AbstractConverterTestCase extends TestCase {
 	}
 
 	private String pathFromNamespace(String s) {
-		return BatchConverter.cleanupNamespace(s).replace('.', '/');
+		return SharpenConversionBatch.cleanupNamespace(s).replace('.', '/');
 	}
 
 	private String getNamespace(ICompilationUnit cu) throws CoreException {

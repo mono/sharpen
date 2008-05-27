@@ -23,7 +23,7 @@ package sharpen.ui.tests;
 
 import sharpen.core.Configuration;
 
-public class OrganizeUsingsTestCase extends AbstractConverterTestCase {
+public class OrganizeUsingsTestCase extends AbstractConversionTestCase {
 	
 	public void testGenerics() throws Throwable {
 		runResourceTestCase(newOrganizeUsingsConfiguration(), "usings/Generics");

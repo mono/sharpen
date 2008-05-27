@@ -26,7 +26,7 @@ package sharpen.ui.tests;
 import sharpen.core.*;
 
 
-public class GenericsTestCase extends AbstractConverterTestCase {
+public class GenericsTestCase extends AbstractConversionTestCase {
 	
 	public void testGenericRuntimeTypeParameters() throws Throwable {
 		Configuration config = newPascalCasePlusConfiguration();

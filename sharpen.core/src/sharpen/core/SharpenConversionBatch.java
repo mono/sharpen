@@ -40,7 +40,7 @@ import org.eclipse.jdt.core.dom.*;
  * corresponding java source files.
  *  
  */
-public class BatchConverter { 
+public class SharpenConversionBatch { 
 	
 	private ICompilationUnit[] _source;
 
@@ -48,15 +48,15 @@ public class BatchConverter {
 
 	private IProgressMonitor _progressMonitor = new NullProgressMonitor();
 
-	private ASTParser _parser;
+	private final ASTParser _parser;
 
 	private final Configuration _configuration;	
 
-	public BatchConverter() {
+	public SharpenConversionBatch() {
 		this(new Configuration());
 	}
 	
-	public BatchConverter(Configuration configuration) {
+	public SharpenConversionBatch(Configuration configuration) {
 		if (null == configuration) {
 			throw new IllegalArgumentException("configuration");
 		}
@@ -138,7 +138,7 @@ public class BatchConverter {
 
 	private void convertCompilationUnit(ASTResolver resolver, ICompilationUnit source, CompilationUnit ast)
 			throws CoreException, IOException {
-		Converter converter = new Converter(_configuration);
+		SharpenConversion converter = new SharpenConversion(_configuration);
 		final StringWriter writer = new StringWriter();
 		converter.setTargetWriter(writer);
 		converter.setSource(source);

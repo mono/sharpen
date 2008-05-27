@@ -23,7 +23,7 @@ package sharpen.ui.tests;
 
 import sharpen.core.Configuration;
 
-public class RenamingConversionsTestCase extends AbstractConverterTestCase {
+public class RenamingConversionsTestCase extends AbstractConversionTestCase {
 
 	public void testRenamingMethods() throws Throwable {
 		runResourceTestCase("renaming/SimpleMethodRenaming");

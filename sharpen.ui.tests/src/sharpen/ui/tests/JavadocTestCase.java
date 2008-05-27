@@ -26,7 +26,7 @@ package sharpen.ui.tests;
 import sharpen.core.*;
 
 
-public class JavadocTestCase extends AbstractConverterTestCase {
+public class JavadocTestCase extends AbstractConversionTestCase {
 	
 	public void testJavadoc() throws Throwable {
 		runResourceTestCase("javadoc/Javadoc1");

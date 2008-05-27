@@ -23,7 +23,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.ui.tests;
 
-public class InnerClassesTestCase extends AbstractConverterTestCase {
+public class InnerClassesTestCase extends AbstractConversionTestCase {
 	
 	public void testNestedThis() throws Throwable {
 		runResourceTestCase("NestedThis");

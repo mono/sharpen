@@ -27,7 +27,7 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
-public class StandaloneConverter extends Converter {
+public class StandaloneConverter extends SharpenConversion {
 	
 	private ASTParser _parser;
 	

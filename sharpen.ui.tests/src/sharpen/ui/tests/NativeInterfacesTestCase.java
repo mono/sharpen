@@ -23,7 +23,7 @@ package sharpen.ui.tests;
 
 import sharpen.core.Configuration;
 
-public class NativeInterfacesTestCase extends AbstractConverterTestCase {
+public class NativeInterfacesTestCase extends AbstractConversionTestCase {
 
 	public void testNativeInterfaces() throws Throwable {
 		runResourceTestCase(newNativeInterfacesConfiguration(), "interfaces/Foo", "interfaces/IFoo");

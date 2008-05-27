@@ -109,7 +109,7 @@ public class SharpenBuilder extends IncrementalProjectBuilder {
 
 	private void sharpen(List<ICompilationUnit> compilationUnits,
 			IProgressMonitor monitor) throws CoreException, IOException {
-		BatchConverter converter = new BatchConverter();
+		SharpenConversionBatch converter = new SharpenConversionBatch();
 		converter.setTargetFolder(getTargetFolder(monitor));
 		converter.setSource(compilationUnits);
 		converter.setProgressMonitor(monitor);

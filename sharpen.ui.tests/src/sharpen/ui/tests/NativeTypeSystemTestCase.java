@@ -23,7 +23,7 @@ package sharpen.ui.tests;
 
 import sharpen.core.Configuration;
 
-public class NativeTypeSystemTestCase extends AbstractConverterTestCase {
+public class NativeTypeSystemTestCase extends AbstractConversionTestCase {
 	public void testClassToType() throws Throwable {
 		runResourceTestCase("nativeTypeSystem/ClassToType");
 	}

@@ -23,7 +23,7 @@ package sharpen.ui.tests;
 
 import sharpen.core.*;
 
-public class ConverterTestCase extends AbstractConverterTestCase {
+public class UnclassifiedConversionTestCase extends AbstractConversionTestCase {
 	
 	public void testHeader() throws Exception {
 		Configuration configuration = getConfiguration();

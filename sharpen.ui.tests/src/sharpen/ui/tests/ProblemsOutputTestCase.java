@@ -25,7 +25,7 @@ package sharpen.ui.tests;
 
 import java.io.*;
 
-public class ProblemsOutputTestCase extends AbstractConverterTestCase {
+public class ProblemsOutputTestCase extends AbstractConversionTestCase {
 	
 	public void testProblemsGoToStderr() throws Throwable {		
 		final ByteArrayOutputStream stderr = new ByteArrayOutputStream();

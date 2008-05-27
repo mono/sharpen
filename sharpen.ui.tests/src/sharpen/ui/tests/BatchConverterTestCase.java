@@ -23,14 +23,14 @@ package sharpen.ui.tests;
 
 import java.io.IOException;
 
-import sharpen.core.BatchConverter;
+import sharpen.core.SharpenConversionBatch;
 import sharpen.core.resources.SimpleProject;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.ICompilationUnit;
 
-public class BatchConverterTestCase extends AbstractConverterTestCase {
+public class BatchConverterTestCase extends AbstractConversionTestCase {
 
 	public void testSingleClassEmptyPackage() throws Throwable {
 		runBatchConverterTestCase("EmptyClass");
@@ -78,7 +78,7 @@ public class BatchConverterTestCase extends AbstractConverterTestCase {
 
 		try {
 
-			BatchConverter converter = new BatchConverter(getConfiguration());
+			SharpenConversionBatch converter = new SharpenConversionBatch(getConfiguration());
 			converter.setSource(new ICompilationUnit[] {cu});
 			converter.setTargetFolder(targetFolder);
 			converter.run();

@@ -28,7 +28,7 @@ import sharpen.core.*;
 /**
  * @exclude
  */
-public class NamespaceMappingTestCase extends AbstractConverterTestCase {
+public class NamespaceMappingTestCase extends AbstractConversionTestCase {
 	
 	public void testPascalCaseNamespaces() throws Throwable {
 		runBatchConverterTestCase(

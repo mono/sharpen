@@ -23,7 +23,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.ui.tests;
 
-public class CommentConversionTestCase extends AbstractConverterTestCase {
+public class CommentConversionTestCase extends AbstractConversionTestCase {
 	
 
 	public void testStatements() throws Throwable {

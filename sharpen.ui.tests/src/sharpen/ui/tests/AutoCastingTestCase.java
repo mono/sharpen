@@ -23,7 +23,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.ui.tests;
 
-public class AutoCastingTestCase extends AbstractConverterTestCase {
+public class AutoCastingTestCase extends AbstractConversionTestCase {
 	
 	public void testChar() throws Throwable {
 		runResourceTestCase("autocasting/Char");

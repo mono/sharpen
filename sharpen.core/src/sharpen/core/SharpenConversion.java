@@ -38,7 +38,7 @@ import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
-public class Converter {
+public class SharpenConversion {
 
 	private CSharpPrinter _printer;
 	protected ICompilationUnit _source;
@@ -46,7 +46,7 @@ public class Converter {
 	protected final Configuration _configuration;
 	private ASTResolver _resolver;
 
-	public Converter(Configuration configuration) {
+	public SharpenConversion(Configuration configuration) {
 		_configuration = configuration;
 	}
 

@@ -25,7 +25,7 @@ package sharpen.ui.tests;
 
 import sharpen.core.*;
 
-public class RemoveTestCase extends AbstractConverterTestCase {
+public class RemoveTestCase extends AbstractConversionTestCase {
 
 	public void testRemoveMethod() throws Throwable {
 		runResourceTestCase("remove/RemoveMethod");

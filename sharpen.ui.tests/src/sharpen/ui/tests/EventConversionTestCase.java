@@ -23,7 +23,7 @@ package sharpen.ui.tests;
 
 import sharpen.core.*;
 
-public class EventConversionTestCase extends AbstractConverterTestCase {
+public class EventConversionTestCase extends AbstractConversionTestCase {
 
 	public void testInterfaceWithEvents() throws Throwable {
 		runResourceTestCase("events/EventInterface");

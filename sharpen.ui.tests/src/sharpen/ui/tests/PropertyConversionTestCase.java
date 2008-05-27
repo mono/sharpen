@@ -23,7 +23,7 @@ package sharpen.ui.tests;
 
 import sharpen.core.*;
 
-public class PropertyConversionTestCase extends AbstractConverterTestCase {
+public class PropertyConversionTestCase extends AbstractConversionTestCase {
 	
 	public void testStaticGetter() throws Throwable {
 		runResourceTestCase("properties/StaticGetter");

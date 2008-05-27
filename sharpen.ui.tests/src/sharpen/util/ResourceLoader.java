@@ -3,8 +3,6 @@ package sharpen.util;
 
 import java.io.*;
 
-import sharpen.util.*;
-
 
 public class ResourceLoader {
 	

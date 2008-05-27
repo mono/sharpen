@@ -15,7 +15,7 @@ public class CSTypeArgumentSupport implements CSTypeArgumentProvider {
 
 	public List<CSTypeReferenceExpression> typeArguments() {
 		if (null == _arguments) {
-			return Collections.EMPTY_LIST;
+			return Collections.emptyList();
 		}
 		return Collections.unmodifiableList(_arguments);
 	}

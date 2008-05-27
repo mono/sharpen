@@ -21,6 +21,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.core;
 
+import java.io.*;
 import java.util.*;
 
 import sharpen.core.resources.*;
@@ -32,6 +33,35 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.launching.JavaRuntime;
 
 public class JavaProject extends SimpleProject {
+	
+	static class Builder {
+
+		public final IProgressMonitor progressMonitor;
+		public final JavaProject project;
+
+		public Builder(IProgressMonitor pm, String projectName) throws CoreException {
+			this.progressMonitor = pm;
+			this.project = new JavaProject(projectName);
+		}
+
+		public Builder sourceFolders(Iterable<String> sourceFolders) throws CoreException {
+			for (String srcFolder : sourceFolders) {
+				progressMonitor.subTask("source folder: " + srcFolder);
+				project.addSourceFolder(srcFolder);
+			}
+			return this;
+		}
+
+		public Builder classpath(Iterable<String> classpath) throws JavaModelException {
+			for (String cp : classpath) {
+				progressMonitor.subTask("classpath entry: " + cp);
+				if (!new File(cp).exists()) throw new IllegalArgumentException("'" + cp + "' not found.");
+				project.addClasspathEntry(cp);
+			}
+			return this;
+		}
+		
+	}
 	
 	private IJavaProject _javaProject;
 

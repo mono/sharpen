@@ -48,7 +48,7 @@ public class SharpenApplication implements IApplication {
 
 	public Object start(IApplicationContext context) throws Exception {
 		try {
-			String[] args = (String[])context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
+			String[] args = argv(context);
 			_args = SharpenCommandLine.parse(args);
 			safeRun();
 		} catch (Exception x) {
@@ -57,6 +57,10 @@ public class SharpenApplication implements IApplication {
 			throw x;
 		}
 		return IApplication.EXIT_OK;
+	}
+
+	private String[] argv(IApplicationContext context) {
+		return (String[])context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
 	}
 	
 	public void stop() {
@@ -91,7 +95,7 @@ public class SharpenApplication implements IApplication {
 	private void convertTo(List<ICompilationUnit> units, IFolder targetFolder)
 			throws IOException, CoreException, InterruptedException {
 		BatchConverter converter = new BatchConverter(getConfiguration());		
-		converter.setProgressMonitor(getProgressMonitor());
+		converter.setProgressMonitor(newProgressMonitor());
 		converter.setTargetFolder(targetFolder);
 		converter.setSource(units);
 		converter.run();
@@ -154,34 +158,19 @@ public class SharpenApplication implements IApplication {
 		return units;
 	}
 
-	private IProgressMonitor getProgressMonitor() {
+	private IProgressMonitor newProgressMonitor() {
 		return new ConsoleProgressMonitor();
 	}
 
 	JavaProject setUpJavaProject() throws CoreException {
 		ods("project: " + _args.project);
-		JavaProject project = new JavaProject(_args.project);
-		initializeClassPath(project);
-		initializeSourceFolders(project);
-		return project;
-	}
-
-	private void initializeSourceFolders(JavaProject project) throws CoreException {
-		for (String srcFolder : _args.sourceFolders) {
-			ods("source folder: " + srcFolder);
-			project.addSourceFolder(srcFolder);
-		}
-	}
-
-	private void initializeClassPath(JavaProject project) throws JavaModelException {
-		for (String cp : _args.classpath) {
-			ods("classpath entry: " + cp);
-			if (!new File(cp).exists()) throw new IllegalArgumentException("'" + cp + "' not found.");
-			project.addClasspathEntry(cp);
-		}
+		return new JavaProject.Builder(newProgressMonitor(), _args.project)
+			.classpath(_args.classpath)
+			.sourceFolders(_args.sourceFolders)
+			.project;
 	}
 	
-	private void ods(String message) {
+	private static void ods(String message) {
 		System.out.println(message);
 	}	
 }

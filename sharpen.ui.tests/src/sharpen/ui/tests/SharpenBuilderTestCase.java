@@ -133,6 +133,6 @@ public class SharpenBuilderTestCase extends AbstractConversionTestCase {
 	}
 	
 	private void waitForBuild() {
-		_project.joinBuild();
+		_project.joinAutoBuild();
 	}
 }

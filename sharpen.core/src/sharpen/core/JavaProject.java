@@ -98,6 +98,10 @@ public class JavaProject extends SimpleProject {
 	public void buildProject(IProgressMonitor monitor) throws CoreException {
 		_project.build(IncrementalProjectBuilder.FULL_BUILD, monitor);
 	}
+	
+	public void joinAutoBuild() {
+		joinBuild(ResourcesPlugin.FAMILY_AUTO_BUILD);
+	}
 
 	public void joinBuild() {
 		joinBuild(ResourcesPlugin.FAMILY_MANUAL_BUILD);

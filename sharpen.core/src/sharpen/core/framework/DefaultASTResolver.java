@@ -19,18 +19,26 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
-package sharpen.core;
+package sharpen.core.framework;
 
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.dom.CompilationUnit;
+import java.util.*;
 
-public class CompilationUnitPair {
+import org.eclipse.jdt.core.dom.*;
+
+public class DefaultASTResolver implements ASTResolver {
 	
-	public CompilationUnitPair(ICompilationUnit source, CompilationUnit ast) {
-		this.source = source;
-		this.ast = ast;
+	private final List<CompilationUnitPair> _pairs;
+	
+	public DefaultASTResolver(List<CompilationUnitPair> pairs) {
+		_pairs = pairs;
 	}
-	
-	public ICompilationUnit source;
-	public CompilationUnit ast;
+
+	public ASTNode findDeclaringNode(IBinding binding) {
+		for (CompilationUnitPair pair : _pairs) {
+			ASTNode node = pair.ast.findDeclaringNode(binding);
+			if (null != node) return node;
+		}
+		
+		return null;
+	}
 }

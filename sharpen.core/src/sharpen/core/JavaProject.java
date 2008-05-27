@@ -95,17 +95,17 @@ public class JavaProject extends SimpleProject {
 	/**
 	 * @throws CoreException
 	 */
-	public void buildProject() throws CoreException {
-		_project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
+	public void buildProject(IProgressMonitor monitor) throws CoreException {
+		_project.build(IncrementalProjectBuilder.FULL_BUILD, monitor);
 	}
 
-	/**
-	 *  
-	 */
 	public void joinBuild() {
+		joinBuild(ResourcesPlugin.FAMILY_MANUAL_BUILD);
+	}
+
+	public void joinBuild(Object buildFamily) {
 		try {
-			Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD,
-					null);
+			Job.getJobManager().join(buildFamily, null);
 		} catch (InterruptedException e) {
 			// TODO: handle exception
 			e.printStackTrace();

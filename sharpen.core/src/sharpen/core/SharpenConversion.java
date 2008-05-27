@@ -28,6 +28,7 @@ import java.util.Map;
 
 import sharpen.core.csharp.CSharpPrinter;
 import sharpen.core.csharp.ast.CSCompilationUnit;
+import sharpen.core.framework.*;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;

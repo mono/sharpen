@@ -24,6 +24,7 @@ package sharpen.core;
 import java.io.*;
 import java.util.*;
 
+import sharpen.core.framework.*;
 import sharpen.core.io.*;
 
 import org.eclipse.core.resources.*;
@@ -37,12 +38,6 @@ import org.eclipse.jdt.core.*;
  * </code>
  */
 public class SharpenApplication implements IApplication {
-
-	private static class ConsoleProgressMonitor extends NullProgressMonitor {
-		public void subTask(String name) {
-			System.out.println(name);
-		}
-	}
 
 	private SharpenCommandLine _args;
 

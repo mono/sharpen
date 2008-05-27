@@ -26,6 +26,7 @@ import java.util.regex.*;
 
 import sharpen.core.Configuration.MemberMapping;
 import sharpen.core.csharp.ast.*;
+import sharpen.core.framework.*;
 import sharpen.core.util.*;
 
 import org.eclipse.jdt.core.*;

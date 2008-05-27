@@ -19,10 +19,18 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
-package sharpen.core;
+package sharpen.core.framework;
 
+import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.dom.*;
 
-public interface ASTResolver {
-	ASTNode findDeclaringNode(IBinding binding);
+public class CompilationUnitPair {
+	
+	public CompilationUnitPair(ICompilationUnit source, CompilationUnit ast) {
+		this.source = source;
+		this.ast = ast;
+	}
+	
+	public final ICompilationUnit source;
+	public final CompilationUnit ast;
 }

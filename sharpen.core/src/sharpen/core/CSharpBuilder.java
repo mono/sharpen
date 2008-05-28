@@ -255,7 +255,7 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 	}
 
 	private boolean isEnum(TypeDeclaration node) {
-		return containsJavadoc(node, Annotations.SHARPEN_ENUM);
+		return JavadocUtility.containsJavadoc(node, Annotations.SHARPEN_ENUM);
 	}
 
 	private boolean processIgnoredType(TypeDeclaration node) {
@@ -333,11 +333,11 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 	}
 
 	private boolean ignoreImplements(TypeDeclaration node) {
-		return containsJavadoc(node, Annotations.SHARPEN_IGNORE_IMPLEMENTS);
+		return JavadocUtility.containsJavadoc(node, Annotations.SHARPEN_IGNORE_IMPLEMENTS);
 	}
 
 	private boolean ignoreExtends(TypeDeclaration node) {
-		return containsJavadoc(node, Annotations.SHARPEN_IGNORE_EXTENDS);
+		return JavadocUtility.containsJavadoc(node, Annotations.SHARPEN_IGNORE_EXTENDS);
 	}
 
 	private void processConversionJavadocTags(TypeDeclaration node, CSTypeDeclaration type) {
@@ -381,7 +381,7 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 	}
 
 	private boolean isStruct(TypeDeclaration node) {
-		return containsJavadoc(node, Annotations.SHARPEN_STRUCT);
+		return JavadocUtility.containsJavadoc(node, Annotations.SHARPEN_STRUCT);
 	}
 
 	private CSTypeDeclaration checkForMainType(TypeDeclaration node, CSTypeDeclaration type) {
@@ -633,12 +633,12 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 	}
 
 	private void processPartialTagElement(TypeDeclaration node, CSTypeDeclaration member) {
-		TagElement element = getJavadocTag(node, Annotations.SHARPEN_PARTIAL);
+		TagElement element = JavadocUtility.getJavadocTag(node, Annotations.SHARPEN_PARTIAL);
 		if (null == element) return;
 		((CSTypeDeclaration)member).partial(true);
 	}
 	private void processExtendsTagElement(TypeDeclaration node, CSTypeDeclaration member) {
-		TagElement element = getJavadocTag(node, Annotations.SHARPEN_EXTENDS);
+		TagElement element = JavadocUtility.getJavadocTag(node, Annotations.SHARPEN_EXTENDS);
 		if (null == element) return;
 		
 		if (!(member instanceof CSInterface)) {
@@ -933,7 +933,7 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 	}
 
 	private boolean isRemoved(MethodDeclaration node) {
-		return containsJavadoc(node, Annotations.SHARPEN_REMOVE)
+		return JavadocUtility.containsJavadoc(node, Annotations.SHARPEN_REMOVE)
 			|| isRemoved(node.resolveBinding());
 	}
 
@@ -942,11 +942,11 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 	}
 
 	private boolean isIgnored(BodyDeclaration node) {
-		return containsJavadoc(node, Annotations.SHARPEN_IGNORE);
+		return JavadocUtility.containsJavadoc(node, Annotations.SHARPEN_IGNORE);
 	}
 
-	private boolean containsJavadoc(BodyDeclaration node, final String tag) {
-		return null != getJavadocTag(node, tag);
+	public static boolean containsJavadoc(BodyDeclaration node, final String tag) {
+		return JavadocUtility.containsJavadoc(node, tag);
 	}
 
 	private void processPropertyDeclaration(MethodDeclaration node) {
@@ -1001,12 +1001,12 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 	}
 
 	private boolean isTaggedDeclaration(MethodDeclaration node, final String tag) {
-		if (null != getJavadocTag(node, tag)) return true;
+		if (null != JavadocUtility.getJavadocTag(node, tag)) return true;
 		
 		MethodDeclaration originalMethod = findOriginalMethodDeclaration(node);
 		if (null == originalMethod) return false;
 		
-		return null != getJavadocTag(originalMethod, tag);
+		return null != JavadocUtility.getJavadocTag(originalMethod, tag);
 	}
 
 	private void processMethodDeclaration(MethodDeclaration node) {
@@ -1124,7 +1124,7 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 	}
 
 	private String getEventOnAddMethod(MethodDeclaration node) {
-		final TagElement onAddTag = getJavadocTag(node, Annotations.SHARPEN_EVENT_ON_ADD);
+		final TagElement onAddTag = JavadocUtility.getJavadocTag(node, Annotations.SHARPEN_EVENT_ON_ADD);
 		if (null == onAddTag) return null;
 		return methodName(getSingleTextFragment(onAddTag));
 	}
@@ -1280,20 +1280,7 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 	}
 
 	private TagElement getEventTag(MethodDeclaration node) {
-		return getJavadocTag(node, Annotations.SHARPEN_EVENT);
-	}
-
-	private TagElement getJavadocTag(BodyDeclaration node, String tagName) {
-		Javadoc javadoc = node.getJavadoc();
-		if (null != javadoc) {
-			for (Object tag : javadoc.tags()) {
-				TagElement element = (TagElement)tag;
-				if (tagName.equals(element.getTagName())) {
-					return element;
-				}
-			}
-		}
-		return null;
+		return JavadocUtility.getJavadocTag(node, Annotations.SHARPEN_EVENT);
 	}
 
 	private void visitBodyDeclarationBlock(BodyDeclaration node, Block block, CSMethodBase method) {
@@ -1307,7 +1294,7 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 	}
 
 	private void processDisableTags(BodyDeclaration node, CSMethodBase method) {
-		TagElement tag = getJavadocTag(node, Annotations.SHARPEN_IF);
+		TagElement tag = JavadocUtility.getJavadocTag(node, Annotations.SHARPEN_IF);
 		if (null == tag) return;
 		
 		method.addEnclosingIfDef(getSingleTextFragment(tag));
@@ -2007,7 +1994,7 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 	}
 
 	private void processRemovedInvocation(MethodInvocation node) {
-		TagElement element = getJavadocTag(findMethodDeclaration(node), Annotations.SHARPEN_REMOVE);
+		TagElement element = JavadocUtility.getJavadocTag(findMethodDeclaration(node), Annotations.SHARPEN_REMOVE);
 		
 		String exchangeValue = getSingleTextFragment(element);			
 		pushExpression(new CSReferenceExpression(exchangeValue));
@@ -2113,7 +2100,7 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 			final String tag) {
 		final MethodDeclaration method = findMethodDeclaration(node);
 		if (null == method) return false;
-		return null != getJavadocTag(method, tag);
+		return null != JavadocUtility.getJavadocTag(method, tag);
 	}
 
 	private MethodDeclaration findMethodDeclaration(MethodInvocation node) {
@@ -2533,9 +2520,9 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 	}
 	
 	CSVisibility mapVisibility(BodyDeclaration node) {
-		if (null != getJavadocTag(node, Annotations.SHARPEN_INTERNAL)) {
+		if (null != JavadocUtility.getJavadocTag(node, Annotations.SHARPEN_INTERNAL)) {
 			return CSVisibility.Internal;
-		} else if (null != getJavadocTag(node, Annotations.SHARPEN_PRIVATE)) {
+		} else if (null != JavadocUtility.getJavadocTag(node, Annotations.SHARPEN_PRIVATE)) {
 			return CSVisibility.Private;
 		}
 		
@@ -2685,7 +2672,7 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 	}
 	
 	private String renamedName(BodyDeclaration node) {
-		TagElement renameTag = getJavadocTag(node, Annotations.SHARPEN_RENAME);
+		TagElement renameTag = JavadocUtility.getJavadocTag(node, Annotations.SHARPEN_RENAME);
 		if (null == renameTag) return null;
 		return getSingleTextFragment(renameTag);
 	}

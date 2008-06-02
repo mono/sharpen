@@ -1,0 +1,20 @@
+using Usings.Deep.Tree;
+
+namespace Usings.Deep.Tree
+{
+	public sealed class InnerStaticClass
+	{
+		public class FirstLevel
+		{
+			public class SecondLevel
+			{
+				public static string Message = "Opps!";
+			}
+		}
+
+		public void Test()
+		{
+			string msg = InnerStaticClass.FirstLevel.SecondLevel.Message;
+		}
+	}
+}

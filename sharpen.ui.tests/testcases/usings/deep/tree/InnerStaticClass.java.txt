@@ -1,0 +1,13 @@
+package usings.deep.tree;
+
+public final class InnerStaticClass {
+	public static class FirstLevel {
+		public static class SecondLevel {
+			public static String MESSAGE  = "Opps!";
+		}
+	}
+	
+	public void test() {
+		String msg = InnerStaticClass.FirstLevel.SecondLevel.MESSAGE;
+	}
+}

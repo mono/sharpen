@@ -39,6 +39,10 @@ public class OrganizeUsingsTestCase extends AbstractConversionTestCase {
 		runResourceTestCase(conf, "usings/FullyQualifiedType");
 	}
 
+	public void testNestedStaticType() throws Throwable {
+		runResourceTestCase(newOrganizeUsingsConfiguration(), "usings/deep/tree/InnerStaticClass");
+	}
+	
 	public void testNestedType() throws Throwable {
 		runResourceTestCase(newOrganizeUsingsConfiguration(), "usings/deep/tree/NestedType");
 	}

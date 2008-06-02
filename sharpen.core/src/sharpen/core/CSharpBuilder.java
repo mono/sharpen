@@ -2615,8 +2615,10 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 		int pos = fullName.lastIndexOf(".");
 		if (pos == -1) return fullName;
 
-		if (type.isNested() && !hasMapping(type)) pos = fullName.lastIndexOf(".", pos - 1);
-
+		if(!hasMapping(type)){
+			pos = nameSpaceLength(type, fullName, pos);
+		}
+		
 		String namespace = fullName.substring(0, pos);
 		registerNamespace(namespace);
 		String name = fullName.substring(pos + 1);
@@ -2625,6 +2627,14 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 		
 		_compilationUnit.addUsing(new CSUsing(namespace));
 		return name;
+	}
+
+	private int nameSpaceLength(ITypeBinding type, String fullName, int pos) {
+		while (type.isNested()) {		
+			pos = fullName.lastIndexOf(".", pos -1);
+			type = type.getDeclaringClass();
+		}		
+		return pos;
 	}
 
 	private boolean isConflicting(String name) {

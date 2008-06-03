@@ -65,6 +65,7 @@ public class SimpleProject {
 	}
 	
 	public void addReferencedProject(IProject reference, IProgressMonitor monitor) throws CoreException {
+		if (null == reference) throw new IllegalArgumentException("reference");
 		WorkspaceUtilities.addProjectReference(_project, reference, monitor);
 	}
 

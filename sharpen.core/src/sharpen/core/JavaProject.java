@@ -34,7 +34,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 
 public class JavaProject extends SimpleProject {
 	
-	static class Builder {
+	public static class Builder {
 
 		public final IProgressMonitor progressMonitor;
 		public final JavaProject project;
@@ -46,9 +46,14 @@ public class JavaProject extends SimpleProject {
 
 		public Builder sourceFolders(Iterable<String> sourceFolders) throws CoreException {
 			for (String srcFolder : sourceFolders) {
-				progressMonitor.subTask("source folder: " + srcFolder);
-				project.addSourceFolder(srcFolder);
+				sourceFolder(srcFolder);
 			}
+			return this;
+		}
+
+		public Builder sourceFolder(String srcFolder) throws CoreException {
+			progressMonitor.subTask("source folder: " + srcFolder);
+			project.addSourceFolder(srcFolder);
 			return this;
 		}
 
@@ -57,6 +62,19 @@ public class JavaProject extends SimpleProject {
 				progressMonitor.subTask("classpath entry: " + cp);
 				if (!new File(cp).exists()) throw new IllegalArgumentException("'" + cp + "' not found.");
 				project.addClasspathEntry(cp);
+			}
+			return this;
+		}
+
+		public Builder nature(String natureId) throws CoreException {
+			project.addNature(natureId);
+			return this;
+		}
+
+		public Builder projectReferences(Iterable<String> projectReferences) throws CoreException {
+			for (String projectReference : projectReferences) {
+				final IProject reference = WorkspaceUtilities.getProject(projectReference);
+				project.addClasspathEntry(JavaCore.newProjectEntry(reference.getFullPath(), true));
 			}
 			return this;
 		}
@@ -248,8 +266,7 @@ public class JavaProject extends SimpleProject {
 	 * @throws JavaModelException
 	 */
 	private void addSystemLibraries() throws JavaModelException {
-		addClasspathEntry(JavaRuntime
-						.getDefaultJREContainerEntry());
+		addClasspathEntry(JavaRuntime.getDefaultJREContainerEntry());
 	}
 
 	public List<ICompilationUnit> getAllCompilationUnits() throws CoreException {

@@ -654,16 +654,15 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 		if (fragments.size() != 1 || !isTextFragment(fragments, 0)) {
 			throw new IllegalArgumentException(sourceInformation(element) + ": expecting a single textual argument");
 		}
-		return getTextFragment(fragments, 0);
+		return textFragment(fragments, 0);
 	}
 
 	private boolean isTextFragment(List fragments, int index) {
 		return (fragments.get(index) instanceof TextElement);
 	}
 
-	private String getTextFragment(List fragments, final int index) {
-		String text = ((TextElement)fragments.get(index)).getText();
-		return text.trim();
+	public static String textFragment(List fragments, final int index) {
+		return JavadocUtility.textFragment(fragments, index);
 	}
 
 	private void mapJavadocSummary(final CSMember member, TagElement element) {
@@ -762,7 +761,7 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 		if (fragments.size() != 2) return false;
 		if (!isTextFragment(fragments, 1)) return false;
 		final String link = linkTarget.toString();
-		final String label = getTextFragment(fragments, 1);
+		final String label = JavadocUtility.textFragment(fragments, 1);
 		return label.equals(link) || label.equals(unqualifiedName(link));
 	}
 

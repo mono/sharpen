@@ -23,56 +23,39 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.core;
 
+import sharpen.core.framework.*;
 import sharpen.core.io.IO;
 
-class SharpenCommandLineParser {
+class SharpenCommandLineParser extends CommandLineParser {
 	
 	private final SharpenCommandLine _cmdLine;
-	private final String[] _args;
-	private int _current;
-
-	public SharpenCommandLineParser(String[] args) {		
+	
+	public SharpenCommandLineParser(String[] args) {
 		this(args, new SharpenCommandLine());
-		validate();
 	}
-
+	
 	private SharpenCommandLineParser(String[] args, SharpenCommandLine cmdLine) {
-		if (null == args) illegalArgument("args cannot be null");
-		_args = args;		
+		super(args);		
 		_cmdLine = cmdLine;
-		_current = 0; 
 		parse();
 	}
 
-	private void parse() {
-		for (; _current<_args.length; ++_current) {
-			parseArgument(_args[_current]);
-		}
-	}
-
-	private void parseArgument(String arg) {
-		if (arg.startsWith("@")) {
-			processResponseFile(arg);
-		} else if (arg.startsWith("-")) {
-			processOption(arg);
-		} else {
-			processProject(arg);
-		}
-	}
-
-	private void processResponseFile(String arg) {
+	@Override
+	protected void processResponseFile(String arg) {
 		new SharpenCommandLineParser(
 				IO.linesFromFile(arg.substring(1)),
 				_cmdLine);
 	}
 
-	private void validate() {
+	@Override
+	protected void validate() {
 		if (_cmdLine.project == null) {
 			illegalArgument("unspecified source folder");
 		}
 	}
 
-	private void processProject(String arg) {
+	@Override
+	protected void processArgument(String arg) {
 		if (_cmdLine.project != null) {
 			illegalArgument(arg);
 		}
@@ -88,7 +71,8 @@ class SharpenCommandLineParser {
 		}
 	}
 
-	private void processOption(String arg) {
+	@Override
+	protected void processOption(String arg) {
 		if (areEqual(arg, "-pascalCase")) {
 			_cmdLine.pascalCase = SharpenCommandLine.PascalCaseOptions.Identifiers;
 		} else if (areEqual(arg, "-pascalCase+")) {
@@ -130,18 +114,6 @@ class SharpenCommandLineParser {
 		} else {
 			illegalArgument(arg);
 		}
-	}
-
-	private boolean areEqual(String arg, String value) {
-		return arg.equals(value);
-	}
-
-	private String consumeNext() {
-		return _args[++_current];
-	}
-	
-	private static void illegalArgument(String message) {
-		throw new IllegalArgumentException(message);
 	}
 
 	public SharpenCommandLine commandLine() {

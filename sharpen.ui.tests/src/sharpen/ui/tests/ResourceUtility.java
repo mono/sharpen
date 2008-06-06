@@ -40,7 +40,7 @@ public class ResourceUtility {
 	}	
 
 	public static String getResourceUri(String resourceName) {
-		URL url = ResourceUtility.class.getResource("/" + resourceName);
+		final URL url = ResourceUtility.class.getResource("/" + resourceName);
 		if (null == url) ResourceLoader.resourceNotFound(resourceName);
 		try {
 			return url.toURI().toString();

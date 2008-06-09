@@ -40,38 +40,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
  *  *******************************************************************************
  */
 
-package sharpen.core;
+package sharpen.core.framework;
 
-import org.eclipse.jdt.core.dom.IMethodBinding;
-import org.eclipse.jdt.core.dom.IPackageBinding;
-import org.eclipse.jdt.core.dom.ITypeBinding;
-import org.eclipse.jdt.core.dom.Modifier;
+import org.eclipse.jdt.core.dom.*;
 
 public class Bindings {	
-		
-	/**
-	 * Finds the method specified by <code>methodName<code> and </code>parameters</code> in
-	 * the given <code>type</code>. Returns <code>null</code> if no such method exits.
-	 * @param type The type to search the method in
-	 * @param methodName The name of the method to find
-	 * @param parameters The parameter types of the method to find. If <code>null</code> is passed, only the name is matched and parameters are ignored.
-	 * @return the method binding representing the method
-	 */
-	public static IMethodBinding findMethodInType(ITypeBinding type, String methodName, ITypeBinding[] parameters) {
-		if (type.isPrimitive())
-			return null;
-		IMethodBinding[] methods= type.getDeclaredMethods();
-		for (int i= 0; i < methods.length; i++) {
-			if (parameters == null) {
-				if (methodName.equals(methods[i].getName()))
-					return methods[i];
-			} else {
-				if (isEqualMethod(methods[i], methodName, parameters))
-					return methods[i];
-			}
-		}
-		return null;
-	}
 	
 	/**
 	 * Finds the method in the given <code>type</code> that is overrideen by the specified <code>method<code> . Returns <code>null</code> if no such method exits.
@@ -80,18 +53,25 @@ public class Bindings {
 	 * @return the method binding representing the method oevrriding the specified <code>method<code>
 	 */
 	public static IMethodBinding findOverriddenMethodInType(ITypeBinding type, IMethodBinding method) {
-		return findMethodInType(type, method.getName(), method.getParameterTypes());
+		for (Object o : type.getDeclaredMethods()) {
+			IMethodBinding existing = (IMethodBinding)o;
+			if (method.isSubsignature(existing)) {
+				return existing;
+			}
+		}
+		return null;
 	}
 	
 	public static IMethodBinding findOverriddenMethodInTypeOrSuperclasses(ITypeBinding type, IMethodBinding method) {
 		IMethodBinding found = findOverriddenMethodInType(type, method);
-		if (null == found) {
-			ITypeBinding superClass = type.getSuperclass();
-			if (null != superClass) {
-				found = findOverriddenMethodInTypeOrSuperclasses(superClass, method);
-			}
+		if (null != found) {
+			return found;
 		}
-		return found;
+		ITypeBinding superClass = type.getSuperclass();
+		if (null != superClass) {
+			return findOverriddenMethodInTypeOrSuperclasses(superClass, method);
+		}
+		return null;
 	}
 
 
@@ -107,23 +87,19 @@ public class Bindings {
 	}
 	
 	public static IMethodBinding findOverriddenMethodInHierarchy(ITypeBinding type, IMethodBinding binding, boolean considerInterfaces) {
-		IMethodBinding method = null;
-		ITypeBinding superClass= type.getSuperclass();
+		final ITypeBinding superClass= type.getSuperclass();
 		if (superClass != null) {
-			method= findOverriddenMethodInHierarchy(superClass, binding);
-			if (method != null)
-				return method;			
+			final IMethodBinding superClassMethod= findOverriddenMethodInHierarchy(superClass, binding);
+			if (superClassMethod != null) return superClassMethod;			
 		}
-		method = findOverriddenMethodInType(type, binding);
-		if (method != null) {			
-			return method;
-		}
+		final IMethodBinding method = findOverriddenMethodInType(type, binding);
+		if (method != null) return method;
+		
 		if (considerInterfaces) {
-			ITypeBinding[] interfaces= type.getInterfaces();
+			final ITypeBinding[] interfaces= type.getInterfaces();
 			for (int i= 0; i < interfaces.length; i++) {
-				method= findOverriddenMethodInHierarchy(interfaces[i], binding);
-				if (method != null)
-					return method;
+				final IMethodBinding interfaceMethod= findOverriddenMethodInHierarchy(interfaces[i], binding);
+				if (interfaceMethod != null) return interfaceMethod;
 			}
 		}
 		
@@ -137,7 +113,7 @@ public class Bindings {
 	 * @param typeResolver TODO
 	 * @return the method binding representing the method
 	 */
-	public static IMethodBinding findMethodDefininition(IMethodBinding method, WellKnownTypeResolver typeResolver) {
+	public static IMethodBinding findMethodDefininition(IMethodBinding method, AST typeResolver) {
 		if (null == method) {
 			return null;
 		}
@@ -184,20 +160,6 @@ public class Bindings {
 		return pack == declaringType.getPackage();
 	}
 	
-	public static boolean isEqualMethod(IMethodBinding method, String methodName, ITypeBinding[] parameters) {
-		if (!method.getName().equals(methodName))
-			return false;
-			
-		ITypeBinding[] methodParameters= method.getParameterTypes();
-		if (methodParameters.length != parameters.length)
-			return false;
-		for (int i= 0; i < parameters.length; i++) {
-			if (parameters[i].getErasure() != methodParameters[i].getErasure())
-				return false;
-		}
-		return true;
-	}
-
 	public static String qualifiedName(IMethodBinding binding) {
 		return qualifiedName(binding.getDeclaringClass()) + "."
 				+ binding.getName();

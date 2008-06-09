@@ -21,8 +21,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.ui.tests;
 
-import sharpen.core.Bindings;
 import sharpen.core.JavaProject;
+import sharpen.core.framework.*;
 import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.CoreException;

@@ -32,7 +32,7 @@ import sharpen.core.util.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.dom.*;
 
-public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {	
+public class CSharpBuilder extends ASTVisitor  {	
 	
 	private static final String JAVA_LANG_VOID_TYPE = "java.lang.Void.TYPE";
 	
@@ -436,6 +436,10 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 		}
 	}
 	
+	private ITypeBinding resolveWellKnownType(String typeName) {
+		return _ast.getAST().resolveWellKnownType(typeName);
+	}
+
 	private void mapMembers(TypeDeclaration node, CSTypeDeclaration type) {
 		CSTypeDeclaration saved = _currentType;
 		_currentType = type;
@@ -1266,7 +1270,7 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 	}
 	
 	private MethodDeclaration findOriginalMethodDeclaration(IMethodBinding binding) {
-		IMethodBinding definition = Bindings.findMethodDefininition(binding, this);
+		IMethodBinding definition = Bindings.findMethodDefininition(binding, _ast.getAST());
 		if (null == definition) return null;
 		return (MethodDeclaration)findDeclaringNode(definition);
 	}
@@ -1893,10 +1897,6 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 		}
 		return false;
 	}
-
-	public ITypeBinding resolveWellKnownType(String typeName) {
-		return _ast.getAST().resolveWellKnownType(typeName);
-	}
 	
 	public boolean visit(TypeLiteral node) {
 		pushTypeOfExpression(mappedTypeReference(node.getType()));
@@ -1966,7 +1966,7 @@ public class CSharpBuilder extends ASTVisitor implements WellKnownTypeResolver {
 	}
 	
 	private IMethodBinding originalMethodBinding(IMethodBinding binding) {
-		IMethodBinding original = Bindings.findMethodDefininition(binding, this);
+		IMethodBinding original = Bindings.findMethodDefininition(binding, _ast.getAST());
 		if (null != original) return original;
 		return binding;
 	}

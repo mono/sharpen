@@ -2020,9 +2020,9 @@ public class CSharpBuilder extends ASTVisitor  {
 		final ITypeBinding[] actualTypes = actualMethod.getParameterTypes();
 		final IMethodBinding originalMethod = actualMethod.getMethodDeclaration();
 		final ITypeBinding[] originalTypes = originalMethod.getParameterTypes();
-		for (int i=0; i<originalTypes.length; ++i) {
+		for (int i=0; i<arguments.size(); ++i) {
 			Expression arg = (Expression) arguments.get(i);
-			if (isGenericRuntimeParameterIdiom(originalMethod, originalTypes[i])) {
+			if (i < originalTypes.length && isGenericRuntimeParameterIdiom(originalMethod, originalTypes[i])) {
 				mie.addTypeArgument(genericRuntimeTypeIdiomType(actualTypes[i]));
 			} else {
 				addArgument(mie, arg);

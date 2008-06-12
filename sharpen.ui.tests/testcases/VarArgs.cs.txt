@@ -7,4 +7,9 @@ public class VarArgs
 	public virtual void foo(int i, params string[] args)
 	{
 	}
+
+	internal static void run()
+	{
+		new VarArgs("foo", "bar").foo(42, "baz", "zong");
+	}
 }

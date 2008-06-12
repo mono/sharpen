@@ -5,4 +5,8 @@ public class VarArgs {
 	
 	public void foo(int i, String... args) {
 	}
+	
+	static void run() {
+		new VarArgs("foo", "bar").foo(42, "baz", "zong");
+	}
 }

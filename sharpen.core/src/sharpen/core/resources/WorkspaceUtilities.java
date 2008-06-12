@@ -138,4 +138,12 @@ public class WorkspaceUtilities {
 		return null;
 	}
 
+	public static void setAutoBuilding(final boolean autoBuilding)
+			throws CoreException {
+		IWorkspace workspace = WorkspaceUtilities.getWorkspaceRoot().getWorkspace();
+		IWorkspaceDescription workspaceDescription = workspace.getDescription();
+		workspaceDescription.setAutoBuilding(autoBuilding);
+		workspace.setDescription(workspaceDescription);
+	}
+
 }

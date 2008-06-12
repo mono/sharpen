@@ -31,6 +31,8 @@ public abstract class CSMethodBase extends CSMember implements CSParameterized {
 	
 	private CSBlock _body = new CSBlock();
 
+	private boolean _isVarArgs;
+
 	public CSMethodBase(String name) {
 		super(name);
 	}
@@ -72,5 +74,13 @@ public abstract class CSMethodBase extends CSMember implements CSParameterized {
 		}
 		buffer.append(")");
 		return buffer.toString();
+	}
+
+	public void isVarArgs(boolean value) {
+		_isVarArgs = value;
+	}
+	
+	public boolean isVarArgs() {
+		return _isVarArgs;
 	}
 }

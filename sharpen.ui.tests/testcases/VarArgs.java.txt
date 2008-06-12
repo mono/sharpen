@@ -1,0 +1,8 @@
+public class VarArgs {
+
+	public VarArgs(String... args) {
+	}
+	
+	public void foo(int i, String... args) {
+	}
+}

@@ -1035,6 +1035,7 @@ public class CSharpBuilder extends ASTVisitor  {
 		_currentType.addMember(method);
 		
 		method.startPosition(node.getStartPosition());
+		method.isVarArgs(node.isVarargs());
 		mapVisibility(node, method);
 		mapParameters(node, method);
 		mapDocumentation(node, method);

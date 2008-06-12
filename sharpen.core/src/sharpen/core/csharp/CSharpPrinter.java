@@ -665,7 +665,18 @@ public class CSharpPrinter extends CSVisitor {
 
 	protected void writeParameterList(CSMethodBase node) {
 		List<CSVariableDeclaration> parameters = node.parameters();
-		writeParameterList(parameters);
+		write("(");
+		if (node.isVarArgs()) {
+			if (parameters.size() > 1) {
+				writeCommaSeparatedList(parameters.subList(0, parameters.size()-1));
+				write(", ");
+			}
+			write("params ");
+			visit(parameters.get(parameters.size()-1));
+		} else {
+			writeCommaSeparatedList(parameters);
+		}
+		write(")");
 	}
 	
 	protected <T extends CSNode> void writeParameterList(Iterable<T> parameters) {

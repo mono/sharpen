@@ -1,0 +1,10 @@
+public class VarArgs
+{
+	public VarArgs(params string[] args)
+	{
+	}
+
+	public virtual void foo(int i, params string[] args)
+	{
+	}
+}

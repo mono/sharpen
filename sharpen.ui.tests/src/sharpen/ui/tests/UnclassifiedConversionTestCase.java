@@ -32,6 +32,10 @@ public class UnclassifiedConversionTestCase extends AbstractConversionTestCase {
 		runResourceTestCase(configuration, "HeaderSupport");
 	}
 	
+	public void testVarArgs() throws Throwable {
+		runResourceTestCase("VarArgs");
+	}
+	
 	public void testSharpenEnum() throws Throwable {
 		runResourceTestCase("Enum1");
 	}

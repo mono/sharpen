@@ -1,0 +1,21 @@
+package events;
+
+class EventConsumer {
+	public static void main(final String[] cmdLine) {
+		EventRegistry registry = eventRegistry();
+		registry.foo().addListener(new EventListener4() {
+			public void onEvent(Event4 e, EventArgs args) {
+				for (int i=0; i<cmdLine.length; ++i) {
+					print(cmdLine[i]);
+				}
+			}
+		});
+	}
+	
+	static EventRegistry eventRegistry() {
+		return null;
+	}
+	
+	static void print(String s) {
+	}
+}

@@ -74,4 +74,6 @@ public class SharpenCommandLine {
 	final public List<String> fullyQualifiedTypes = new ArrayList<String>();
 	public String headerFile;
 	public String xmldoc;
+	public final List<Configuration.NameMapping> eventMappings = new ArrayList<Configuration.NameMapping>();
+	public final List<String> eventAddMappings = new ArrayList<String>();
 }

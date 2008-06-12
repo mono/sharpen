@@ -39,6 +39,15 @@ public class SharpenCommandLineTestCase extends TestCase {
 		assertEquals(false, cmdLine.nativeTypeSystem);
 		assertEquals("Sharpen.Runtime", cmdLine.runtimeTypeName);
 		assertNull(cmdLine.headerFile);
+		assertEquals(0, cmdLine.eventMappings.size());
+		assertEquals(0, cmdLine.eventAddMappings.size());
+	}
+	
+	public void testEventMappings() {
+		SharpenCommandLine cmdLine = parse("-eventAddMapping", "foo.bar", "-eventMapping", "foo", "bar", "core/src");
+		assertEquals("core", cmdLine.project);
+		assertEquals(1, cmdLine.eventMappings.size());
+		assertEquals(1, cmdLine.eventAddMappings.size());
 	}
 	
 	public void testNativeInterfaces() {

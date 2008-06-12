@@ -69,7 +69,7 @@ public abstract class AbstractConversionTestCase extends TestCase {
 	protected String sharpenResource(final Configuration configuration,
 			TestCaseResource resource) throws CoreException, IOException {
 		ICompilationUnit cu = createCompilationUnit(resource);
-		
+	
 		StandaloneConverter converter = new StandaloneConverter(configuration);
 		converter.setSource(cu);
 		converter.setTargetWriter(new StringWriter());
@@ -99,23 +99,45 @@ public abstract class AbstractConversionTestCase extends TestCase {
 	}
 
 	protected void runBatchConverterTestCase(Configuration configuration, String... resourceNames) throws CoreException, IOException, Throwable {
-		TestCaseResource[] resources = new TestCaseResource[resourceNames.length];
-		ICompilationUnit[] units = new ICompilationUnit[resourceNames.length];
+		runBatchConverterTestCase(configuration, toTestCaseResources(resourceNames));
+	}
+
+	private TestCaseResource[] toTestCaseResources(String... resourceNames) {
+		final TestCaseResource[] resources = new TestCaseResource[resourceNames.length];
 		for (int i=0; i<resourceNames.length; ++i) {
 			resources[i] = new TestCaseResource(resourceNames[i]);
-			units[i] = createCompilationUnit(resources[i]);
-		} 
+		}
+		return resources;
+	}
+
+	protected void runBatchConverterTestCase(Configuration configuration,
+			TestCaseResource... resources) throws CoreException,
+			IOException, Throwable {
+		final ICompilationUnit[] units = createCompilationUnits(resources); 
 		
-		IFolder targetFolder = _project.createFolder("converted");
+		final IFolder targetFolder = _project.createFolder("converted");
 	
-		SharpenConversionBatch converter = new SharpenConversionBatch(configuration);
+		final SharpenConversionBatch converter = new SharpenConversionBatch(configuration);
 		converter.setSource(units);
 		converter.setTargetFolder(targetFolder);
 		converter.run();
 	
-		for (int i=0; i<resourceNames.length; ++i) { 
-			checkConversionResult(configuration, targetFolder, units[i], resources[i]);
+		for (int i=0; i<resources.length; ++i) { 
+			final TestCaseResource resource = resources[i];
+			if (resource.isSupportingLibrary()) {
+				continue;
+			}
+			checkConversionResult(configuration, targetFolder, units[i], resource);
 		}
+	}
+
+	private ICompilationUnit[] createCompilationUnits(
+			TestCaseResource... resources) throws CoreException, IOException {
+		final ICompilationUnit[] units = new ICompilationUnit[resources.length];
+		for (int i=0; i<resources.length; ++i) {		
+			units[i] = createCompilationUnit(resources[i]);
+		}
+		return units;
 	}
 
 	/**

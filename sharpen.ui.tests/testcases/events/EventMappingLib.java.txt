@@ -1,0 +1,19 @@
+package events;
+
+interface Event4 {
+	void addListener(EventListener4 listener);
+}
+
+class EventArgs {
+}
+
+interface EventListener4 {
+	void onEvent(Event4 e, EventArgs args);
+}
+
+class FooEventArgs extends EventArgs {
+}
+
+interface EventRegistry {
+	Event4 foo();
+}

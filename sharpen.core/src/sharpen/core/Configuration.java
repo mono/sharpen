@@ -21,10 +21,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.core;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Configuration {
 	
@@ -102,6 +99,10 @@ public class Configuration {
 	private DocumentationOverlay _docOverlay = NullDocumentationOverlay.DEFAULT;
 
 	private final List<String> _removedMethods = new ArrayList<String>();
+
+	private final Set<String> _mappedEventAdds = new HashSet<String>();
+
+	private final Map<String, String> _mappedEvents = new HashMap<String, String>();
 	
 	public Configuration() {
 		this(DEFAULT_RUNTIME_TYPE_NAME);
@@ -560,5 +561,41 @@ public class Configuration {
 
 	public boolean isRemoved(String qualifiedName) {
 		return _removedMethods.contains(qualifiedName);
+	}
+
+	public void mapEventAdd(String qualifiedMethodName) {
+		_mappedEventAdds.add(qualifiedMethodName);
+	}
+	
+	public boolean isMappedEventAdd(String qualifiedMethodName) {
+		return _mappedEventAdds.contains(qualifiedMethodName);
+	}
+
+	public void mapEvent(String qualifiedMethodName, String eventArgsTypeName) {
+		mapProperty(qualifiedMethodName, unqualify(qualifiedMethodName));
+		_mappedEvents.put(qualifiedMethodName, eventArgsTypeName);
+	}
+	
+	public String mappedEvent(String qualifiedMethodName) {
+		return _mappedEvents.get(qualifiedMethodName);
+	}
+
+	private String unqualify(String qualifiedMethodName) {
+		final int lastDot = qualifiedMethodName.lastIndexOf('.');
+		return lastDot == -1
+			? qualifiedMethodName
+			: qualifiedMethodName.substring(lastDot+1);
+	}
+
+	public void mapEventAdds(Iterable<String> eventAddMappings) {
+		for (String m : eventAddMappings) {
+			mapEventAdd(m);
+		}
+	}
+
+	public void mapEvents(Iterable<NameMapping> eventMappings) {
+		for (NameMapping m : eventMappings) {
+			mapEvent(m.from, m.to);
+		}
 	}
 }

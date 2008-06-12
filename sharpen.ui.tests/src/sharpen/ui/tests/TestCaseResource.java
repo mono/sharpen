@@ -122,4 +122,8 @@ public class TestCaseResource {
 			stream.close();
 		}
 	}
+
+	public boolean isSupportingLibrary() {
+		return false;
+	}
 }

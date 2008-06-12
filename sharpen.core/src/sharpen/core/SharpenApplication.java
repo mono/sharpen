@@ -131,6 +131,8 @@ public class SharpenApplication implements IApplication {
 			ods("Xml documentation: " + _args.xmldoc);
 			configuration.setDocumentationOverlay(new XmlDocumentationOverlay(_args.xmldoc));
 		}
+		configuration.mapEventAdds(_args.eventAddMappings);
+		configuration.mapEvents(_args.eventMappings);
 		configuration.mapNamespaces(_args.namespaceMappings);
 		configuration.mapMembers(_args.memberMappings);
 		

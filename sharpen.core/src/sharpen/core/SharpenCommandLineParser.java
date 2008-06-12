@@ -90,17 +90,13 @@ class SharpenCommandLineParser extends CommandLineParser {
 		} else if (areEqual(arg, "-fullyQualify")) {
 			_cmdLine.fullyQualifiedTypes.add(consumeNext());
 		} else if (areEqual(arg, "-namespaceMapping")) {
-			String from = consumeNext();
-			String to = consumeNext();
-			_cmdLine.namespaceMappings.add(new Configuration.NameMapping(from, to));
+			_cmdLine.namespaceMappings.add(consumeNameMapping());
 		} else if (areEqual(arg, "-methodMapping")) {
 			String from = consumeNext();
 			String to = consumeNext();
 			_cmdLine.memberMappings.put(from, new Configuration.MemberMapping(to, MemberKind.Method));
 		} else if (areEqual(arg, "-typeMapping")) {
-			String from = consumeNext();
-			String to = consumeNext();
-			_cmdLine.typeMappings.add(new Configuration.NameMapping(from, to));
+			_cmdLine.typeMappings.add(consumeNameMapping());
 		} else if (areEqual(arg, "-propertyMapping")) {
 			String from = consumeNext();
 			String to = consumeNext();
@@ -111,9 +107,20 @@ class SharpenCommandLineParser extends CommandLineParser {
 			_cmdLine.headerFile = consumeNext();
 		} else if (areEqual(arg, "-xmldoc")){
 			_cmdLine.xmldoc = consumeNext();
+		} else if (areEqual(arg, "-eventMapping")){
+			_cmdLine.eventMappings.add(consumeNameMapping());
+		} else if (areEqual(arg, "-eventAddMapping")){
+			_cmdLine.eventAddMappings.add(consumeNext());
 		} else {
 			illegalArgument(arg);
 		}
+	}
+
+	private Configuration.NameMapping consumeNameMapping() {
+		final String from = consumeNext();
+		final String to = consumeNext();
+		final Configuration.NameMapping nameMapping = new Configuration.NameMapping(from, to);
+		return nameMapping;
 	}
 
 	public SharpenCommandLine commandLine() {

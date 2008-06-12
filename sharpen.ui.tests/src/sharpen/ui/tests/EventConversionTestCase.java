@@ -24,6 +24,21 @@ package sharpen.ui.tests;
 import sharpen.core.*;
 
 public class EventConversionTestCase extends AbstractConversionTestCase {
+	
+	public void testEventMapping() throws Throwable {
+		
+		final Configuration config = getConfiguration();
+		config.mapEventAdd("events.Event4.addListener");
+		config.mapEvent("events.EventRegistry.foo", "events.FooEventArgs");
+		runBatchConverterTestCase(config,
+				new TestCaseResource("events/EventMapping"),
+				new TestCaseResource("events/EventMappingLib") {
+					@Override
+					public boolean isSupportingLibrary() {
+						return true;
+					}
+				});
+	}
 
 	public void testInterfaceWithEvents() throws Throwable {
 		runResourceTestCase("events/EventInterface");

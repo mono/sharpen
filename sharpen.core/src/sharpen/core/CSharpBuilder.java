@@ -1972,6 +1972,12 @@ public class CSharpBuilder extends ASTVisitor  {
 	}
 	
 	private void processUnmappedMethodInvocation(MethodInvocation node) {
+		
+		if (isMappedEventSubscription(node)) {
+			processMappedEventSubscription(node);
+			return;
+		}
+		
 		if (isEventSubscription(node)) {
 			processEventSubscription(node);
 			return;
@@ -1990,6 +1996,14 @@ public class CSharpBuilder extends ASTVisitor  {
 		CSMethodInvocationExpression mie = new CSMethodInvocationExpression(target);
 		mapMethodInvocationArguments(mie, node);
 		pushExpression(mie);
+	}
+
+	private void processMappedEventSubscription(MethodInvocation node) {
+		
+		final MethodInvocation event = (MethodInvocation) node.getExpression();
+		final String eventArgsType = _configuration.mappedEvent(qualifiedName(event));
+		final String eventHandlerType = buildEventHandlerTypeName(node, eventArgsType);
+		mapEventSubscription(node, eventArgsType, eventHandlerType);
 	}
 
 	private void processRemovedInvocation(MethodInvocation node) {
@@ -2020,18 +2034,23 @@ public class CSharpBuilder extends ASTVisitor  {
 		final MethodDeclaration addListener = findMethodDeclaration(node);
 		assertValidEventAddListener(node, addListener);
 		
+		final MethodInvocation eventInvocation = (MethodInvocation)node.getExpression();
+		
+		final MethodDeclaration eventDeclaration = findMethodDeclaration(eventInvocation);
+		mapEventSubscription(node, getEventArgsType(eventDeclaration), getEventHandlerTypeName(eventDeclaration));
+	}
+
+	private void mapEventSubscription(MethodInvocation node,
+			final String eventArgsType, final String eventHandlerType) {
 		final CSAnonymousClassBuilder listenerBuilder = mapAnonymousEventListener(node);
 		final CSMemberReferenceExpression handlerMethodRef = new CSMemberReferenceExpression(
 								listenerBuilder.createConstructorInvocation(),
 								eventListenerMethodName(listenerBuilder));
 		
-		MethodInvocation eventInvocation = (MethodInvocation)node.getExpression();
+	
+		final CSReferenceExpression delegateType = new CSReferenceExpression(eventHandlerType);
 		
-		final MethodDeclaration eventDeclaration = findMethodDeclaration(eventInvocation);
-		CSReferenceExpression delegateType = new CSReferenceExpression(
-				getEventHandlerTypeName(eventDeclaration));
-		
-		patchEventListener(listenerBuilder, getEventArgsType(eventDeclaration));
+		patchEventListener(listenerBuilder, eventArgsType);
 		
 		CSConstructorInvocationExpression delegateConstruction = new CSConstructorInvocationExpression(delegateType);
 		delegateConstruction.addArgument(handlerMethodRef);
@@ -2093,6 +2112,14 @@ public class CSharpBuilder extends ASTVisitor  {
 
 	private boolean isEventSubscription(MethodInvocation node) {
 		return isTaggedMethodInvocation(node, Annotations.SHARPEN_EVENT_ADD);
+	}
+
+	private boolean isMappedEventSubscription(MethodInvocation node) {
+		return _configuration.isMappedEventAdd(qualifiedName(node));
+	}
+
+	private String qualifiedName(MethodInvocation node) {
+		return qualifiedName(node.resolveMethodBinding());
 	}
 
 	private boolean isTaggedMethodInvocation(MethodInvocation node,

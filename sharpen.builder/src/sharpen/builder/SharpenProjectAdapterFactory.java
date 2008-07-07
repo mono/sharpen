@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.*;
 
 public class SharpenProjectAdapterFactory implements IAdapterFactory {
 
-	@SuppressWarnings("unchecked")
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (adapterType != ISharpenProject.class) {
 			return null;
@@ -39,7 +38,6 @@ public class SharpenProjectAdapterFactory implements IAdapterFactory {
 		return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public Class[] getAdapterList() {
 		return new Class[] { ISharpenProject.class };
 	}

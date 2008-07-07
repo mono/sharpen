@@ -74,7 +74,6 @@ public class SharpenBuilder extends IncrementalProjectBuilder {
 	
 	public static final String BUILDER_ID = Activator.PLUGIN_ID + ".sharpenBuilder";
 
-	@SuppressWarnings("unchecked")
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 			throws CoreException {
 		try {

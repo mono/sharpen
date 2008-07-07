@@ -48,7 +48,6 @@ public class CSTypeReference extends CSTypeReferenceExpression implements CSType
 		return _typeName;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<CSTypeReferenceExpression> typeArguments() {
 		return _typeArguments.typeArguments();
 		

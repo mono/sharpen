@@ -1,0 +1,17 @@
+package generics;
+
+interface Map<K,V> {
+   V put(K key, V value);
+}
+
+abstract class MapImpl<K,V> implements Map<K,V> {
+   public V put(K key, V value) {
+   	 return value;
+   }
+}
+
+abstract class Hashtable implements Map<Object, Object> {
+   public Object put(Object key, Object value) {
+   	 return value;
+   }
+}

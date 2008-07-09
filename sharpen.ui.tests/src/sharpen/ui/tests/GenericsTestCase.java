@@ -37,6 +37,10 @@ public class GenericsTestCase extends AbstractConversionTestCase {
 	public void testCollectionMappings() throws Throwable {
 		runResourceTestCase("generics/CollectionMappings");
 	}
+
+	public void testGenericMethodImpl() throws Throwable {
+		runResourceTestCase("generics/GenericMethodImpl");
+	}
 	
 	public void testWildcardTypes() throws Throwable {
 		runResourceTestCase("generics/WildcardTypes");

@@ -1,0 +1,23 @@
+namespace generics
+{
+	internal interface Map<K, V>
+	{
+		V put(K key, V value);
+	}
+
+	internal abstract class MapImpl<K, V> : generics.Map<K, V>
+	{
+		public virtual V put(K key, V value)
+		{
+			return value;
+		}
+	}
+
+	internal abstract class Hashtable : generics.Map<object, object>
+	{
+		public virtual object put(object key, object value)
+		{
+			return value;
+		}
+	}
+}

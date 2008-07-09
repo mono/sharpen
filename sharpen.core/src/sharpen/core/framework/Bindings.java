@@ -55,7 +55,9 @@ public class Bindings {
 	public static IMethodBinding findOverriddenMethodInType(ITypeBinding type, IMethodBinding method) {
 		for (Object o : type.getDeclaredMethods()) {
 			IMethodBinding existing = (IMethodBinding)o;
-			if (method.isSubsignature(existing)) {
+			
+			if (existing.isSubsignature(method) 
+				|| method.isSubsignature(existing)) {
 				return existing;
 			}
 		}

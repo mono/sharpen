@@ -2432,6 +2432,7 @@ public class CSharpBuilder extends ASTVisitor  {
 		if (node.isInterface()) return;
 		
 		ITypeBinding binding = node.resolveBinding();
+		if (!Modifier.isAbstract(node.getModifiers())) return;
 
 		Set<ITypeBinding> interfaces = new LinkedHashSet<ITypeBinding>();
 		collectInterfaces(interfaces, binding);

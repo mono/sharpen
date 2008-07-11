@@ -78,6 +78,11 @@ public class JavaProject extends SimpleProject {
 			}
 			return this;
 		}
+
+		public Builder persistentProperty(QualifiedName key, String value) throws CoreException {
+			project.getProject().setPersistentProperty(key, value);
+			return this;
+		}
 		
 	}
 	

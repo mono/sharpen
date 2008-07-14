@@ -24,7 +24,7 @@ package sharpen.ui.tests;
 import java.io.IOException;
 
 import sharpen.core.SharpenConversionBatch;
-import sharpen.core.resources.SimpleProject;
+import sharpen.core.framework.resources.*;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;

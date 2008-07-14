@@ -23,7 +23,7 @@ package sharpen.core;
 
 import java.util.*;
 
-import sharpen.core.resources.SimpleProject;
+import sharpen.core.framework.resources.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;

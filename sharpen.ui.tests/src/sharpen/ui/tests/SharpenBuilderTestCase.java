@@ -23,13 +23,12 @@ package sharpen.ui.tests;
 
 import java.io.*;
 
-import sharpen.core.*;
-import sharpen.core.resources.*;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
 import sharpen.builder.*;
+import sharpen.core.*;
+import sharpen.core.framework.resources.*;
 
 public class SharpenBuilderTestCase extends AbstractConversionTestCase {
 	

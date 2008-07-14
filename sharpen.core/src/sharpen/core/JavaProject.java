@@ -24,13 +24,13 @@ package sharpen.core;
 import java.io.*;
 import java.util.*;
 
-import sharpen.core.resources.*;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.*;
+
+import sharpen.core.framework.resources.*;
 
 public class JavaProject extends SimpleProject {
 	

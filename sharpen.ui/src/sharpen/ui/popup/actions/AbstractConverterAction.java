@@ -23,10 +23,6 @@ package sharpen.ui.popup.actions;
 
 import java.util.*;
 
-import sharpen.core.*;
-import sharpen.core.resources.*;
-import sharpen.ui.*;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
@@ -37,6 +33,9 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.progress.*;
 
 import sharpen.builder.*;
+import sharpen.core.*;
+import sharpen.core.framework.resources.*;
+import sharpen.ui.*;
 
 public abstract class AbstractConverterAction implements IObjectActionDelegate{
 

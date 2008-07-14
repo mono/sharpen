@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.util.*;
 
 import sharpen.core.*;
-import sharpen.core.resources.WorkspaceUtilities;
+import sharpen.core.framework.resources.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;

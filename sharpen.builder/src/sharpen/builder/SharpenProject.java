@@ -24,7 +24,7 @@ package sharpen.builder;
 import java.io.*;
 
 import sharpen.core.SharpenConstants;
-import sharpen.core.resources.WorkspaceUtilities;
+import sharpen.core.framework.resources.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;

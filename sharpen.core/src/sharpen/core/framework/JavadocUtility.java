@@ -20,15 +20,17 @@ public class JavadocUtility {
 		if (null == javadoc) {
 			return Collections.emptyList();
 		}
-		
-		final ArrayList<TagElement> found = new ArrayList<TagElement>();
-		for (Object tag : javadoc.tags()) {
+		return collectTags(javadoc.tags(), tagName, new ArrayList<TagElement>());
+	}
+
+	public static ArrayList<TagElement> collectTags(final List tags, String tagName, final ArrayList<TagElement> accumulator) {
+		for (Object tag : tags) {
 			TagElement element = (TagElement)tag;
 			if (tagName.equals(element.getTagName())) {
-				found.add(element);
+				accumulator.add(element);
 			}
 		}
-		return found;
+		return accumulator;
 	}
 
 	public static String textFragment(List fragments, final int index) {

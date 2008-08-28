@@ -12,6 +12,8 @@ namespace Generics
 		internal static void Test()
 		{
 			System.Collections.Generic.IEnumerable<string> items = Query<string>();
+			System.Type stringClass = typeof(string);
+			System.Collections.IEnumerable items2 = Query(stringClass);
 		}
 
 		internal static void Print(string s)

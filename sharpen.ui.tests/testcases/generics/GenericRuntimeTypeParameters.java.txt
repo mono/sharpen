@@ -11,6 +11,8 @@ class GenericRuntimeTypeParameters {
 	
 	static void test() {
 		Iterable<String> items = query(String.class);
+		Class stringClass = String.class;
+		Iterable items2 = query(stringClass);
 	}
 	
 	static void print(String s) {

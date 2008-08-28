@@ -1,0 +1,22 @@
+namespace properties
+{
+	internal class CustomIterator : System.Collections.IEnumerator
+	{
+		public virtual bool MoveNext()
+		{
+			return false;
+		}
+
+		public virtual object Current
+		{
+			get
+			{
+				return null;
+			}
+		}
+
+		public virtual void Remove()
+		{
+		}
+	}
+}

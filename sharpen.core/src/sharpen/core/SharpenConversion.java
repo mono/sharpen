@@ -35,7 +35,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
@@ -108,9 +107,7 @@ public class SharpenConversion {
 	}
 
 	protected void processProblems(CompilationUnit ast) {
-		if (dumpProblems(ast)) {
-			throw new RuntimeException("'" + ASTUtility.compilationUnitPath(ast) + "' has errors, check stderr for details.");
-		}
+		ASTUtility.checkForProblems(ast, !ignoringErrors());
 	}
 
 	private CSCompilationUnit convert(final CompilationUnit ast) {
@@ -122,24 +119,8 @@ public class SharpenConversion {
 		return builder.compilationUnit();
 	}
 	
-	protected boolean dumpProblems(CompilationUnit ast) {
-		boolean hasErrors = false;
-		for (IProblem problem : ast.getProblems()) {
-			if (problem.isError()) {
-				dumpProblem(problem);
-				hasErrors = true;
-			}
-		} 
-		return ignoringErrors() ? false : hasErrors;
-	}
-
 	private boolean ignoringErrors() {
 		return _configuration.getIgnoreErrors();
-	}
-
-	private void dumpProblem(IProblem problem) {
-		System.err.print(problem.getOriginatingFileName());
-		System.err.println("(" + problem.getSourceLineNumber() + "): " + problem.getMessage());
 	}
 
 	private void prepareForConversion(final CompilationUnit ast) {

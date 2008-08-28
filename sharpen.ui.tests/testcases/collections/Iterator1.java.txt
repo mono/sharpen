@@ -10,5 +10,12 @@ public class Iterator1 {
 			print(it.next());
 		}
 	}
+	
+	public static void printAll(Iterable<String> lines) {
+		Iterator<String> it = lines.iterator();
+		while (it.hasNext()) {
+			print(it.next());
+		}
+	}
 	public static void print(Object o) {}
 }

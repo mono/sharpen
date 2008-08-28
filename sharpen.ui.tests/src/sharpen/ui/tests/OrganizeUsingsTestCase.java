@@ -21,39 +21,56 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.ui.tests;
 
+import java.io.*;
+
+import org.eclipse.core.runtime.*;
+
 import sharpen.core.Configuration;
 
 public class OrganizeUsingsTestCase extends AbstractConversionTestCase {
 	
 	public void testGenerics() throws Throwable {
-		runResourceTestCase(newOrganizeUsingsConfiguration(), "usings/Generics");
+		runResourceTestCase("Generics");
 	}
-	
+
 	public void testSimpleUsing() throws Throwable {
-		runResourceTestCase(newOrganizeUsingsConfiguration(), "usings/SimpleTest");
+		runResourceTestCase("SimpleTest");
 	}
 
 	public void testFullyQualifiedName() throws Throwable {
 		Configuration conf = newOrganizeUsingsConfiguration();
 		conf.addFullyQualifiedTypeName("Test");
-		runResourceTestCase(conf, "usings/FullyQualifiedType");
+		runResourceTestCase(conf, "FullyQualifiedType");
 	}
 
 	public void testNestedStaticType() throws Throwable {
-		runResourceTestCase(newOrganizeUsingsConfiguration(), "usings/deep/tree/InnerStaticClass");
+		runResourceTestCase("deep/tree/InnerStaticClass");
 	}
 	
 	public void testNestedType() throws Throwable {
-		runResourceTestCase(newOrganizeUsingsConfiguration(), "usings/deep/tree/NestedType");
+		runResourceTestCase("deep/tree/NestedType");
 	}
 
 	public void testNamespaceConflict() throws Throwable {
-		runResourceTestCase(newOrganizeUsingsConfiguration(), "usings/NamespaceConflict");
+		runResourceTestCase("NamespaceConflict");
 	}
 	
 	public void testMethodNameConflict() throws Throwable {
-		runResourceTestCase(newOrganizeUsingsConfiguration(), "usings/MethodNameConflict");
+		runResourceTestCase("MethodNameConflict");
 	}	
+	
+	@Override
+	protected void runResourceTestCase(final String resource)
+			throws CoreException, IOException {
+		runResourceTestCase(newOrganizeUsingsConfiguration(), resource);
+	}
+
+	@Override
+	protected void runResourceTestCase(final Configuration config,
+			final String resource) throws CoreException, IOException {
+		super.runResourceTestCase(config, "usings/" + resource);
+	}
+	
 	
 	public Configuration newOrganizeUsingsConfiguration() {
 		Configuration configuration = newPascalCasePlusConfiguration();

@@ -23,18 +23,23 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.ui.tests;
 
+
 public class IgnoreAnnotationsTestCase extends AbstractConversionTestCase {
 	
+	public void testIgnoreAbstractMethod() throws Throwable {
+		runResourceTestCase("IgnoreAbstractMethod");
+	}
+	
 	public void testIgnoreImplements() throws Throwable {
-		runResourceTestCase("ignore/IgnoreImplements");
+		runResourceTestCase("IgnoreImplements");
 	}
 
 	public void testIgnoreExtendsOverride() throws Throwable {
-		runResourceTestCase("ignore/IgnoreExtendsOverride");
+		runResourceTestCase("IgnoreExtendsOverride");
 	}
 	
 	public void testIgnoreExtends() throws Throwable {
-		runResourceTestCase("ignore/IgnoreExtends");
+		runResourceTestCase("IgnoreExtends");
 	}
 	
 	public void testIgnore() throws Throwable {
@@ -43,10 +48,15 @@ public class IgnoreAnnotationsTestCase extends AbstractConversionTestCase {
 	}
 	
 	public void testIgnoreMethod() throws Throwable {
-		runResourceTestCase("ignore/IgnoreMethod");
+		runResourceTestCase("IgnoreMethod");
 	}
 	
 	public void testIgnoreField() throws Throwable {
-		runResourceTestCase("ignore/IgnoreField");
+		runResourceTestCase("IgnoreField");
+	}
+	
+	@Override
+	protected void runResourceTestCase(String expectedResourceName) throws Throwable {
+		super.runResourceTestCase("ignore/" + expectedResourceName);
 	}
 }

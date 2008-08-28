@@ -1,0 +1,17 @@
+package ignore;
+
+interface IFoo {
+
+	/**
+	 * @sharpen.ignore
+	 */
+	void baz();
+}
+
+abstract class IgnoreAbstractMethod implements IFoo {
+
+	public void bar() {
+	}
+
+	
+}

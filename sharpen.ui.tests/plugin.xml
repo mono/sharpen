@@ -17,11 +17,11 @@
       <import plugin="sharpen.core"/>
       <import plugin="sharpen.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.junit"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.jdt.core"/>
       <import plugin="org.eclipse.jdt.launching"/>
       <import plugin="sharpen.builder"/>
+      <import plugin="org.junit4"/>
    </requires>
 
 </plugin>

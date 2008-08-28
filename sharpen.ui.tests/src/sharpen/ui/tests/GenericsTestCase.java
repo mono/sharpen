@@ -35,46 +35,51 @@ public class GenericsTestCase extends AbstractConversionTestCase {
 	}
 	
 	public void testCollectionMappings() throws Throwable {
-		runResourceTestCase("generics/CollectionMappings");
+		runResourceTestCase("CollectionMappings");
 	}
 
 	public void testGenericMethodImpl() throws Throwable {
-		runResourceTestCase("generics/GenericMethodImpl");
+		runResourceTestCase("GenericMethodImpl");
 	}
 	
 	public void testWildcardTypes() throws Throwable {
-		runResourceTestCase("generics/WildcardTypes");
+		runResourceTestCase("WildcardTypes");
 	}
 
 	public void testSimpleInterface() throws Throwable {
-		runResourceTestCase("generics/GenericInterface");
+		runResourceTestCase("GenericInterface");
 	}
 	
 	public void testSimpleClass() throws Throwable {
-		runResourceTestCase("generics/GenericClass");
+		runResourceTestCase("GenericClass");
 	}
 	
 	public void testGenericImplements() throws Throwable {
-		runResourceTestCase("generics/GenericImplements");
+		runResourceTestCase("GenericImplements");
 	}
 	
 	public void testGenericExtends() throws Throwable {
-		runResourceTestCase("generics/GenericExtends");
+		runResourceTestCase("GenericExtends");
 	}
 	
 	public void testGenericReturnTypes() throws Throwable {
-		runResourceTestCase("generics/GenericReturnTypes");
+		runResourceTestCase("GenericReturnTypes");
 	}
 	
 	public void testGenericMethodParameters() throws Throwable {
-		runResourceTestCase("generics/GenericMethodParameters");
+		runResourceTestCase("GenericMethodParameters");
 	}
 	
 	public void testGenericObjectConstruction() throws Throwable {
-		runResourceTestCase("generics/GenericObjectConstruction");
+		runResourceTestCase("GenericObjectConstruction");
 	}
 	
 	public void testGenericMethods() throws Throwable {
-		runResourceTestCase("generics/GenericMethods");
+		runResourceTestCase("GenericMethods");
+	}
+	
+	@Override
+	protected void runResourceTestCase(String resourceName) throws Throwable {
+		super.runResourceTestCase("generics/" + resourceName);
 	}
 }

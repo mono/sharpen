@@ -12,6 +12,15 @@ namespace collections
 			}
 		}
 
+		public static void printAll(System.Collections.Generic.IEnumerable<string> lines)
+		{
+			System.Collections.Collection.IEnumerator<string> it = lines.GetEnumerator();
+			while (it.MoveNext())
+			{
+				print(it.Current);
+			}
+		}
+
 		public static void print(object o)
 		{
 		}

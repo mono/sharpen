@@ -1,0 +1,13 @@
+namespace ignore
+{
+	internal interface IFoo
+	{
+	}
+
+	internal abstract class IgnoreAbstractMethod : ignore.IFoo
+	{
+		public virtual void bar()
+		{
+		}
+	}
+}

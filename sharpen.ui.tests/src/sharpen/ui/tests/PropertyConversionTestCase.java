@@ -21,9 +21,16 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.ui.tests;
 
+import org.junit.*;
+
 import sharpen.core.*;
 
 public class PropertyConversionTestCase extends AbstractConversionTestCase {
+	
+	@Ignore
+	public void testMappedProperties() throws Throwable {
+		runResourceTestCase("properties/MappedProperties");
+	}
 	
 	public void testStaticGetter() throws Throwable {
 		runResourceTestCase("properties/StaticGetter");

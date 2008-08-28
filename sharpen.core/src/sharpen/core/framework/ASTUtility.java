@@ -21,9 +21,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 /* Copyright (C) 2006 db4objects Inc. http://www.db4o.com */
 
-package sharpen.core;
+package sharpen.core.framework;
 
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.compiler.*;
 import org.eclipse.jdt.core.dom.*;
 
 /**
@@ -45,6 +46,26 @@ public class ASTUtility {
 	public static int lineNumber(CompilationUnit ast, ASTNode node) {
 		return ast.lineNumber(node.getStartPosition());
 	}
+	
+	public static void checkForProblems(CompilationUnit ast, boolean throwOnError) {
+		if (dumpProblemsToStdErr(ast) && throwOnError) {
+			throw new RuntimeException("'" + compilationUnitPath(ast) + "' has errors, check stderr for details.");
+		}
+	}
 
+	private static void dumpProblem(IProblem problem) {
+		System.err.print(problem.getOriginatingFileName());
+		System.err.println("(" + problem.getSourceLineNumber() + "): " + problem.getMessage());
+	}
 
+	private static boolean dumpProblemsToStdErr(CompilationUnit ast) {
+		boolean hasErrors = false;
+		for (IProblem problem : ast.getProblems()) {
+			if (problem.isError()) {
+				dumpProblem(problem);
+				hasErrors = true;
+			}
+		}
+		return hasErrors;
+	}
 }

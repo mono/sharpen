@@ -2636,13 +2636,21 @@ public class CSharpBuilder extends ASTVisitor  {
 			return mappedWildcardTypeReference(type);
 		}
 		final CSTypeReference typeRef = new CSTypeReference(mappedTypeName(type));
-		if (typeRef.typeName().equals("System.Type")) {
+		if (isJavaLangClass(type)) {
 			return typeRef;
 		}
 		for (ITypeBinding arg : type.getTypeArguments()) {
 			typeRef.addTypeArgument(mappedTypeReference(arg));
 		}
 		return typeRef;
+	}
+
+	private boolean isJavaLangClass(ITypeBinding type) {
+		return type.getErasure() == javaLangClassBinding();
+	}
+
+	private ITypeBinding javaLangClassBinding() {
+		return resolveWellKnownType("java.lang.Class");
 	}
 
 	private CSTypeReferenceExpression mappedWildcardTypeReference(ITypeBinding type) {

@@ -9,6 +9,8 @@ public class Generics {
 			print(e.getKey());
 			print(e.getValue());
 		}
+		Class<?> klass = m.getClass();
+		print(klass);
 	}
 	
 	static void print(Object o) {

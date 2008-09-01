@@ -22,7 +22,20 @@ namespace nativeTypeSystem
 			run(typeof(void));
 		}
 
+		public virtual void runAll(System.Type[] classes)
+		{
+			foreach (System.Type c in classes)
+			{
+				run(c);
+			}
+		}
+
 		public virtual void run(System.Type clazz)
+		{
+			run2(clazz);
+		}
+
+		private void run2(System.Type clazz)
 		{
 			string foo = clazz.FullName;
 			bool bar = clazz.IsInstanceOfType("foo");

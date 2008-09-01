@@ -20,7 +20,17 @@ public class ClassToType {
 		run(Void.TYPE);
 	}
 	
+	public void runAll(Class<?>[] classes) {
+		for (Class<?> c : classes) {
+			run(c);
+		}
+	}
+	
 	public void run(Class clazz) {
+		run2(clazz);
+	}
+	
+	private void run2(Class<?> clazz) {
 		String foo = clazz.getName();
 		boolean bar = clazz.isInstance("foo");
 		boolean primitive = clazz.isPrimitive();

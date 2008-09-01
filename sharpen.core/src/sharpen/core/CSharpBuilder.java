@@ -2636,6 +2636,9 @@ public class CSharpBuilder extends ASTVisitor  {
 			return mappedWildcardTypeReference(type);
 		}
 		final CSTypeReference typeRef = new CSTypeReference(mappedTypeName(type));
+		if (typeRef.typeName().equals("System.Type")) {
+			return typeRef;
+		}
 		for (ITypeBinding arg : type.getTypeArguments()) {
 			typeRef.addTypeArgument(mappedTypeReference(arg));
 		}

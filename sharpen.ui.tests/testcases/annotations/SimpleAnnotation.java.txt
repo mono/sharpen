@@ -1,0 +1,9 @@
+package annotations;
+
+@interface Indexed {
+}
+
+class Annotated {
+	@Indexed
+	public String field;
+}

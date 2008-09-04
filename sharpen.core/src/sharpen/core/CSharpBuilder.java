@@ -32,34 +32,34 @@ import sharpen.core.util.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.dom.*;
 
-public class CSharpBuilder extends ASTVisitor  {	
-	
+public class CSharpBuilder extends ASTVisitor {
+
 	private static final String JAVA_LANG_VOID_TYPE = "java.lang.Void.TYPE";
-	
+
 	private static final String JAVA_LANG_BOOLEAN_TYPE = "java.lang.Boolean.TYPE";
-	
+
 	private static final String JAVA_LANG_CHARACTER_TYPE = "java.lang.Character.TYPE";
-	
+
 	private static final String JAVA_LANG_INTEGER_TYPE = "java.lang.Integer.TYPE";
-	
+
 	private static final String JAVA_LANG_LONG_TYPE = "java.lang.Long.TYPE";
-	
+
 	private static final String JAVA_LANG_BYTE_TYPE = "java.lang.Byte.TYPE";
-	
+
 	private static final String JAVA_LANG_SHORT_TYPE = "java.lang.Short.TYPE";
-	
+
 	private static final String JAVA_LANG_FLOAT_TYPE = "java.lang.Float.TYPE";
-	
+
 	private static final String JAVA_LANG_DOUBLE_TYPE = "java.lang.Double.TYPE";
-	
+
 	private static final CSTypeReference OBJECT_TYPE_REFERENCE = new CSTypeReference("object");
 
 	private final CSCompilationUnit _compilationUnit;
-	
+
 	private final static List<String> _namespaces = new ArrayList<String>();
 
 	protected CSTypeDeclaration _currentType;
-	
+
 	protected List<String> _mappedMethodDeclarations = new ArrayList<String>();
 
 	private CSBlock _currentBlock;
@@ -69,9 +69,9 @@ public class CSharpBuilder extends ASTVisitor  {
 	protected CSMethodBase _currentMethod;
 
 	protected BodyDeclaration _currentBodyDeclaration;
-	
+
 	private static final Pattern SUMMARY_CLOSURE_PATTERN = Pattern.compile("\\.(\\s|$)");
-	
+
 	private static final Pattern HTML_ANCHOR_PATTERN = Pattern.compile("<([aA])\\s+.+>");
 
 	protected CompilationUnit _ast;
@@ -81,13 +81,13 @@ public class CSharpBuilder extends ASTVisitor  {
 	private ASTResolver _resolver;
 
 	private IVariableBinding _currentExceptionVariable;
-	
+
 	private final ContextVariable<Boolean> _ignoreExtends = new ContextVariable<Boolean>(Boolean.FALSE);
-	
+
 	protected NamingStrategy namingStrategy() {
 		return _configuration.getNamingStrategy();
 	}
-	
+
 	protected WarningHandler warningHandler() {
 		return _configuration.getWarningHandler();
 	}
@@ -96,7 +96,7 @@ public class CSharpBuilder extends ASTVisitor  {
 		_compilationUnit = new CSCompilationUnit();
 		_configuration = configuration;
 	}
-	
+
 	protected CSharpBuilder(CSharpBuilder other) {
 		_ast = other._ast;
 		_compilationUnit = other._compilationUnit;
@@ -109,11 +109,11 @@ public class CSharpBuilder extends ASTVisitor  {
 		_configuration = other._configuration;
 		_resolver = other._resolver;
 	}
-	
+
 	public void setSourceCompilationUnit(CompilationUnit ast) {
 		_ast = ast;
 	}
-	
+
 	public void run() {
 		if (null == warningHandler() || null == _ast) {
 			throw new IllegalStateException();
@@ -121,19 +121,17 @@ public class CSharpBuilder extends ASTVisitor  {
 		_ast.accept(this);
 		visit(_ast.getCommentList());
 	}
-	
+
 	@Override
 	public boolean visit(LineComment node) {
-		_compilationUnit.addComment(
-				new CSLineComment(
-						node.getStartPosition(),
-						getText(node.getStartPosition(), node.getLength())));
+		_compilationUnit.addComment(new CSLineComment(node.getStartPosition(), getText(node.getStartPosition(), node
+		        .getLength())));
 		return false;
 	}
 
 	private String getText(int startPosition, int length) {
 		try {
-			return ((ICompilationUnit)_ast.getJavaElement()).getBuffer().getText(startPosition, length);
+			return ((ICompilationUnit) _ast.getJavaElement()).getBuffer().getText(startPosition, length);
 		} catch (JavaModelException e) {
 			throw new RuntimeException(e);
 		}
@@ -142,67 +140,67 @@ public class CSharpBuilder extends ASTVisitor  {
 	public CSCompilationUnit compilationUnit() {
 		return _compilationUnit;
 	}
-	
+
 	public boolean visit(ImportDeclaration node) {
 		return false;
 	}
-	
+
 	public boolean visit(EnumDeclaration node) {
 		if (!isIgnored(node)) {
 			notImplemented(node);
 		}
 		return false;
 	}
-	
+
 	@Override
 	public boolean visit(AnnotationTypeDeclaration node) {
 		// TODO: SHA-51
 		return false;
 	}
-	
+
 	@Override
 	public boolean visit(MarkerAnnotation node) {
 		// TODO: SHA-51
 		return false;
 	}
-	
+
 	@Override
 	public boolean visit(NormalAnnotation node) {
 		// TODO: SHA-51
 		return false;
 	}
-	
+
 	public boolean visit(LabeledStatement node) {
 		notImplemented(node);
 		return false;
 	}
-	
+
 	public boolean visit(SuperFieldAccess node) {
 		notImplemented(node);
 		return false;
 	}
-	
+
 	public boolean visit(MemberRef node) {
 		notImplemented(node);
 		return false;
 	}
-	
+
 	@Override
 	public boolean visit(WildcardType node) {
 		notImplemented(node);
 		return false;
 	}
-	
+
 	private void notImplemented(ASTNode node) {
 		throw new IllegalArgumentException(sourceInformation(node) + ": " + node.toString());
 	}
-	
+
 	public boolean visit(PackageDeclaration node) {
 		String namespace = node.getName().toString();
 		_compilationUnit.namespace(mappedNamespace(namespace));
 		return false;
 	}
-	
+
 	public boolean visit(AnonymousClassDeclaration node) {
 		CSAnonymousClassBuilder builder = mapAnonymousClass(node);
 		pushExpression(builder.createConstructorInvocation());
@@ -214,27 +212,27 @@ public class CSharpBuilder extends ASTVisitor  {
 		_currentType.addMember(builder.type());
 		return builder;
 	}
-	
+
 	public boolean visit(final TypeDeclaration node) {
 		if (processEnumType(node)) {
 			return false;
 		}
-		
+
 		if (processIgnoredType(node)) {
 			return false;
 		}
-		
+
 		registerMappedMethodNames(node);
-		
+
 		_ignoreExtends.using(ignoreExtends(node), new Runnable() {
 			public void run() {
-				
+
 				if (isNonStaticNestedType(node)) {
 					processNonStaticNestedTypeDeclaration(node);
 				} else {
 					processTypeDeclaration(node);
 				}
-				
+
 			}
 		});
 
@@ -249,13 +247,13 @@ public class CSharpBuilder extends ASTVisitor  {
 		mapVisibility(node, theEnum);
 		mapJavadoc(node, theEnum);
 		addType(theEnum);
-		
+
 		node.accept(new ASTVisitor() {
 			public boolean visit(VariableDeclarationFragment node) {
 				theEnum.addValue(identifier(node.getName()));
 				return false;
 			}
-			
+
 			@Override
 			public boolean visit(MethodDeclaration node) {
 				if (node.isConstructor() && isPrivate(node)) {
@@ -266,7 +264,7 @@ public class CSharpBuilder extends ASTVisitor  {
 			}
 		});
 		return true;
-	} 
+	}
 
 	protected boolean isPrivate(MethodDeclaration node) {
 		return Modifier.isPrivate(node.getModifiers());
@@ -289,7 +287,8 @@ public class CSharpBuilder extends ASTVisitor  {
 	private void registerMappedMethodNames(TypeDeclaration node) {
 		_mappedMethodDeclarations.clear();
 		for (MethodDeclaration meth : node.getMethods()) {
-			if (isIgnored(meth)) continue;
+			if (isIgnored(meth))
+				continue;
 			_mappedMethodDeclarations.add(mappedMethodName(meth));
 		}
 	}
@@ -300,35 +299,33 @@ public class CSharpBuilder extends ASTVisitor  {
 
 	protected CSTypeDeclaration processTypeDeclaration(TypeDeclaration node) {
 		CSTypeDeclaration type = mapTypeDeclaration(node);
-		
+
 		addType(type);
-		
+
 		mapSuperTypes(node, type);
-		
+
 		mapVisibility(node, type);
 		mapDocumentation(node, type);
 		processConversionJavadocTags(node, type);
 		mapMembers(node, type);
-		
+
 		autoImplementCloneable(node, type);
-		
+
 		return type;
 	}
 
 	private void autoImplementCloneable(TypeDeclaration node, CSTypeDeclaration type) {
-		
+
 		if (!implementsCloneable(type)) {
 			return;
 		}
-		
+
 		CSMethod clone = new CSMethod("System.ICloneable.Clone");
 		clone.returnType(OBJECT_TYPE_REFERENCE);
 		clone.body().addStatement(
-				new CSReturnStatement(
-					-1,
-					new CSMethodInvocationExpression(
-						new CSReferenceExpression("MemberwiseClone"))));
-		
+		        new CSReturnStatement(-1,
+		                new CSMethodInvocationExpression(new CSReferenceExpression("MemberwiseClone"))));
+
 		type.addMember(clone);
 	}
 
@@ -373,7 +370,7 @@ public class CSharpBuilder extends ASTVisitor  {
 
 	private void mapTypeParameters(final List typeParameters, CSTypeParameterProvider type) {
 		for (Object item : typeParameters) {
-			type.addTypeParameter(mapTypeParameter((TypeParameter)item));
+			type.addTypeParameter(mapTypeParameter((TypeParameter) item));
 		}
 	}
 
@@ -384,7 +381,7 @@ public class CSharpBuilder extends ASTVisitor  {
 	private CSTypeDeclaration typeDeclarationFor(TypeDeclaration node) {
 		if (node.isInterface()) {
 			return new CSInterface(processInterfaceName(node));
-		}		
+		}
 		final String typeName = typeName(node);
 		if (isStruct(node)) {
 			return new CSStruct(typeName);
@@ -394,7 +391,8 @@ public class CSharpBuilder extends ASTVisitor  {
 
 	private String typeName(TypeDeclaration node) {
 		final String renamed = renamedName(node);
-		if (renamed != null) return renamed;
+		if (renamed != null)
+			return renamed;
 		return node.getName().toString();
 	}
 
@@ -422,9 +420,7 @@ public class CSharpBuilder extends ASTVisitor  {
 	}
 
 	private boolean isMainType(TypeDeclaration node) {
-		return
-			node.isPackageMemberTypeDeclaration()
-			&& Modifier.isPublic(node.getModifiers());
+		return node.isPackageMemberTypeDeclaration() && Modifier.isPublic(node.getModifiers());
 	}
 
 	private void mapSuperClass(TypeDeclaration node, CSTypeDeclaration type) {
@@ -447,13 +443,12 @@ public class CSharpBuilder extends ASTVisitor  {
 			}
 			type.addBaseType(mappedTypeReference(iface));
 		}
-		
-		if (!type.isInterface()
-			&& node.resolveBinding().isSubTypeCompatible(serializable)) {
+
+		if (!type.isInterface() && node.resolveBinding().isSubTypeCompatible(serializable)) {
 			type.addAttribute(new CSAttribute("System.Serializable"));
 		}
 	}
-	
+
 	private ITypeBinding resolveWellKnownType(String typeName) {
 		return _ast.getAST().resolveWellKnownType(typeName);
 	}
@@ -475,8 +470,10 @@ public class CSharpBuilder extends ASTVisitor  {
 	}
 
 	private boolean isNonStaticNestedType(ITypeBinding binding) {
-		if (binding.isInterface()) return false;
-		if (!binding.isNested()) return false;
+		if (binding.isInterface())
+			return false;
+		if (!binding.isNested())
+			return false;
 		return !Modifier.isStatic(binding.getModifiers());
 	}
 
@@ -492,44 +489,46 @@ public class CSharpBuilder extends ASTVisitor  {
 		if (processDocumentationOverlay(member)) {
 			return;
 		}
-		
+
 		mapJavadoc(bodyDecl, member);
 		mapDeclaredExceptions(bodyDecl, member);
 	}
 
 	private void mapDeclaredExceptions(BodyDeclaration bodyDecl, CSMember member) {
-		if (!(bodyDecl instanceof MethodDeclaration)) return;
-		
+		if (!(bodyDecl instanceof MethodDeclaration))
+			return;
+
 		MethodDeclaration method = (MethodDeclaration) bodyDecl;
 		mapThrownExceptions(method.thrownExceptions(), member);
 	}
 
 	private void mapThrownExceptions(List thrownExceptions, CSMember member) {
 		for (Object exception : thrownExceptions) {
-			mapThrownException((Name)exception, member);
+			mapThrownException((Name) exception, member);
 		}
 	}
 
 	private void mapThrownException(Name exception, CSMember member) {
 		final String typeName = mappedTypeName(exception.resolveTypeBinding());
-		if (containsExceptionTagWithCRef(member, typeName)) return;
-		
+		if (containsExceptionTagWithCRef(member, typeName))
+			return;
+
 		member.addDoc(newTagWithCRef("exception", typeName));
 	}
 
 	private boolean containsExceptionTagWithCRef(CSMember member, String cref) {
 		for (CSDocNode node : member.docs()) {
-			if (!(node instanceof CSDocTagNode)) continue;
-			
-			if (cref.equals(((CSDocTagNode)node).getAttribute("cref"))) {
+			if (!(node instanceof CSDocTagNode))
+				continue;
+
+			if (cref.equals(((CSDocTagNode) node).getAttribute("cref"))) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	private void mapJavadoc(final BodyDeclaration bodyDecl,
-			final CSMember member) {
+	private void mapJavadoc(final BodyDeclaration bodyDecl, final CSMember member) {
 		final Javadoc javadoc = bodyDecl.getJavadoc();
 		if (null == javadoc) {
 			return;
@@ -584,7 +583,7 @@ public class CSharpBuilder extends ASTVisitor  {
 	private void mapJavadocTags(final Javadoc javadoc, final CSMember member) {
 		for (Object tag : javadoc.tags()) {
 			try {
-				TagElement element = (TagElement)tag;
+				TagElement element = (TagElement) tag;
 				String tagName = element.getTagName();
 				if (null == tagName) {
 					mapJavadocSummary(member, element);
@@ -592,7 +591,7 @@ public class CSharpBuilder extends ASTVisitor  {
 					processTagElement(member, element);
 				}
 			} catch (Exception x) {
-				warning((ASTNode)tag, x.getMessage());
+				warning((ASTNode) tag, x.getMessage());
 				x.printStackTrace();
 			}
 		}
@@ -607,8 +606,7 @@ public class CSharpBuilder extends ASTVisitor  {
 		}
 	}
 
-	private boolean processSemanticallySignificantTagElement(CSMember member,
-			TagElement element) {
+	private boolean processSemanticallySignificantTagElement(CSMember member, TagElement element) {
 		if (element.getTagName().equals("@deprecated")) {
 			member.addAttribute(obsoleteAttributeFromDeprecatedTagElement(element));
 			return true;
@@ -616,16 +614,13 @@ public class CSharpBuilder extends ASTVisitor  {
 		return false;
 	}
 
-	private CSAttribute obsoleteAttributeFromDeprecatedTagElement(
-			TagElement element) {
-		
+	private CSAttribute obsoleteAttributeFromDeprecatedTagElement(TagElement element) {
+
 		CSAttribute attribute = new CSAttribute(mappedTypeName("System.ObsoleteAttribute"));
 		if (element.fragments().isEmpty()) {
 			return attribute;
 		}
-		attribute.addArgument(
-				new CSStringLiteralExpression(
-						toLiteralStringForm(getWholeText(element))));
+		attribute.addArgument(new CSStringLiteralExpression(toLiteralStringForm(getWholeText(element))));
 		return attribute;
 	}
 
@@ -634,7 +629,7 @@ public class CSharpBuilder extends ASTVisitor  {
 		final List fragments = element.fragments();
 		for (Object fragment : fragments) {
 			if (fragment instanceof TextElement) {
-				TextElement textElement = (TextElement)fragment;
+				TextElement textElement = (TextElement) fragment;
 				String text = textElement.getText();
 				builder.append(text);
 				builder.append(" ");
@@ -656,34 +651,38 @@ public class CSharpBuilder extends ASTVisitor  {
 
 	private void processPartialTagElement(TypeDeclaration node, CSTypeDeclaration member) {
 		TagElement element = JavadocUtility.getJavadocTag(node, Annotations.SHARPEN_PARTIAL);
-		if (null == element) return;
-		((CSTypeDeclaration)member).partial(true);
+		if (null == element)
+			return;
+		((CSTypeDeclaration) member).partial(true);
 	}
+
 	private void processExtendsTagElement(TypeDeclaration node, CSTypeDeclaration member) {
 		TagElement element = JavadocUtility.getJavadocTag(node, Annotations.SHARPEN_EXTENDS);
-		if (null == element) return;
-		
+		if (null == element)
+			return;
+
 		if (!(member instanceof CSTypeDeclaration)) {
-			throw new IllegalArgumentException(Annotations.SHARPEN_EXTENDS + " is only implemented for type declarations");
+			throw new IllegalArgumentException(Annotations.SHARPEN_EXTENDS
+			        + " is only implemented for type declarations");
 		}
-		
+
 		String baseType = getSingleTextFragment(element);
-		((CSTypeDeclaration)member).addBaseType(new CSTypeReference(baseType));
+		((CSTypeDeclaration) member).addBaseType(new CSTypeReference(baseType));
 	}
 
 	private String getSingleTextFragment(TagElement element) {
-		List fragments = element.fragments();
+		final List<ASTNode> fragments = Types.cast(element.fragments());
 		if (fragments.size() != 1 || !isTextFragment(fragments, 0)) {
 			throw new IllegalArgumentException(sourceInformation(element) + ": expecting a single textual argument");
 		}
 		return textFragment(fragments, 0);
 	}
 
-	private boolean isTextFragment(List fragments, int index) {
+	private boolean isTextFragment(List<ASTNode> fragments, int index) {
 		return (fragments.get(index) instanceof TextElement);
 	}
 
-	public static String textFragment(List fragments, final int index) {
+	public static String textFragment(List<ASTNode> fragments, final int index) {
 		return JavadocUtility.textFragment(fragments, index);
 	}
 
@@ -705,11 +704,11 @@ public class CSharpBuilder extends ASTVisitor  {
 		List<String> fragments = new LinkedList<String>();
 		for (Object fragment : element.fragments()) {
 			if (fragment instanceof TextElement) {
-				TextElement textElement = (TextElement)fragment;
+				TextElement textElement = (TextElement) fragment;
 				String text = textElement.getText();
 				int index = findSentenceClosure(text);
 				if (index > -1) {
-					fragments.add(text.substring(0, index+1));
+					fragments.add(text.substring(0, index + 1));
 					return fragments;
 				} else {
 					fragments.add(text);
@@ -720,7 +719,7 @@ public class CSharpBuilder extends ASTVisitor  {
 		}
 		return null;
 	}
-	
+
 	private int findSentenceClosure(String text) {
 		Matcher matcher = SUMMARY_CLOSURE_PATTERN.matcher(text);
 		return matcher.find() ? matcher.start() : -1;
@@ -729,7 +728,7 @@ public class CSharpBuilder extends ASTVisitor  {
 	private CSDocNode mapTagElement(TagElement element) {
 		String tagName = element.getTagName();
 		if (TagElement.TAG_PARAM.equals(tagName)) {
-			return mapTagParam(element); 
+			return mapTagParam(element);
 		} else if (TagElement.TAG_RETURN.equals(tagName)) {
 			return createTagNode("returns", element);
 		} else if (TagElement.TAG_LINK.equals(tagName)) {
@@ -741,21 +740,21 @@ public class CSharpBuilder extends ASTVisitor  {
 		}
 		return createTagNode(tagName.substring(1), element);
 	}
-	
+
 	private CSDocNode mapTagThrows(TagElement element) {
 		return mapTagWithCRef("exception", element);
 	}
-	
+
 	private CSDocNode mapTagLink(TagElement element) {
 		return mapTagWithCRef("see", element);
 	}
-	
+
 	private CSDocNode mapTagWithCRef(String tagName, TagElement element) {
 		final List fragments = element.fragments();
 		if (fragments.isEmpty()) {
 			return invalidTagWithCRef(element, tagName, element);
 		}
-		final ASTNode linkTarget = (ASTNode)fragments.get(0);
+		final ASTNode linkTarget = (ASTNode) fragments.get(0);
 		String cref = mapCRefTarget(linkTarget);
 		if (null == cref) {
 			return invalidTagWithCRef(linkTarget, tagName, element);
@@ -773,8 +772,7 @@ public class CSharpBuilder extends ASTVisitor  {
 		return node;
 	}
 
-	private CSDocNode invalidTagWithCRef(final ASTNode linkTarget,
-			String tagName, TagElement element) {
+	private CSDocNode invalidTagWithCRef(final ASTNode linkTarget, String tagName, TagElement element) {
 		warning(linkTarget, "Tag '" + element.getTagName() + "' demands a valid cref target.");
 		CSDocNode newTag = createTagNode(tagName, element);
 		return newTag;
@@ -786,10 +784,11 @@ public class CSharpBuilder extends ASTVisitor  {
 		return node;
 	}
 
-	private boolean isLinkWithSimpleLabel(List fragments,
-			final ASTNode linkTarget) {
-		if (fragments.size() != 2) return false;
-		if (!isTextFragment(fragments, 1)) return false;
+	private boolean isLinkWithSimpleLabel(List<ASTNode> fragments, final ASTNode linkTarget) {
+		if (fragments.size() != 2)
+			return false;
+		if (!isTextFragment(fragments, 1))
+			return false;
 		final String link = linkTarget.toString();
 		final String label = JavadocUtility.textFragment(fragments, 1);
 		return label.equals(link) || label.equals(unqualifiedName(link));
@@ -799,23 +798,23 @@ public class CSharpBuilder extends ASTVisitor  {
 		switch (crefTarget.getNodeType()) {
 		case ASTNode.SIMPLE_NAME:
 		case ASTNode.QUALIFIED_NAME:
-			return mapCRefTarget(crefTarget, ((Name)crefTarget).resolveBinding());
+			return mapCRefTarget(crefTarget, ((Name) crefTarget).resolveBinding());
 		case ASTNode.MEMBER_REF:
-			return mapCRefTarget(crefTarget, ((MemberRef)crefTarget).resolveBinding());
+			return mapCRefTarget(crefTarget, ((MemberRef) crefTarget).resolveBinding());
 		case ASTNode.METHOD_REF:
-			return mapCRefTarget(crefTarget, ((MethodRef)crefTarget).resolveBinding());
+			return mapCRefTarget(crefTarget, ((MethodRef) crefTarget).resolveBinding());
 		}
 		return null;
 	}
 
 	private String mapCRefTarget(ASTNode node, IBinding binding) {
-		if (null == binding) {	
+		if (null == binding) {
 			warning(node, "Unresolved cref target");
 			return node.toString();
 		}
 		return mappedQualifiedName(binding);
 	}
-	
+
 	private CSDocNode mapTagParam(TagElement element) {
 		List fragments = element.fragments();
 		SimpleName name = (SimpleName) fragments.get(0);
@@ -829,8 +828,8 @@ public class CSharpBuilder extends ASTVisitor  {
 	}
 
 	private void collectFragments(CSDocTagNode node, List fragments, int index) {
-		for (int i=index; i<fragments.size(); ++i) {
-			node.addFragment(mapTagElementFragment((ASTNode)fragments.get(i)));
+		for (int i = index; i < fragments.size(); ++i) {
+			node.addFragment(mapTagElementFragment((ASTNode) fragments.get(i)));
 		}
 	}
 
@@ -845,7 +844,7 @@ public class CSharpBuilder extends ASTVisitor  {
 	private CSDocNode createTagNode(String tagName, TagElement element) {
 		CSDocTagNode summary = new CSDocTagNode(tagName);
 		for (Object f : element.fragments()) {
-			summary.addFragment(mapTagElementFragment((ASTNode)f));
+			summary.addFragment(mapTagElementFragment((ASTNode) f));
 		}
 		return summary;
 	}
@@ -853,37 +852,68 @@ public class CSharpBuilder extends ASTVisitor  {
 	private CSDocNode mapTagElementFragment(ASTNode node) {
 		switch (node.getNodeType()) {
 		case ASTNode.TAG_ELEMENT:
-			return mapTagElement((TagElement)node);
+			return mapTagElement((TagElement) node);
 		case ASTNode.TEXT_ELEMENT:
-			return mapTextElement((TextElement)node);
+			return mapTextElement((TextElement) node);
 		}
 		warning(node, "Documentation node not supported: " + node.getClass() + ": " + node);
 		return new CSDocTextNode(node.toString());
 	}
 
 	public boolean visit(FieldDeclaration node) {
-		
+
 		if (isIgnored(node)) {
 			return false;
 		}
-		
+
 		CSTypeReferenceExpression typeName = mappedTypeReference(node.getType());
 		CSVisibility visibility = mapVisibility(node);
 
 		for (Object item : node.fragments()) {
 			VariableDeclarationFragment fragment = (VariableDeclarationFragment) item;
-			CSField field = new CSField(fieldName(fragment), typeName, visibility, mapFieldInitializer(fragment));
-			if (isConstField(node, fragment)) {
-				field.addModifier(CSFieldModifier.Const);
-			} else {
-				processFieldModifiers(field, node.getModifiers());
-			}
-			mapDocumentation(node, field);
+			CSField field = mapFieldDeclarationFragment(node, fragment, typeName, visibility);
 			_currentType.addMember(field);
 		}
 
 		return false;
 	}
+
+	private CSField mapFieldDeclarationFragment(FieldDeclaration node, VariableDeclarationFragment fragment,
+	        CSTypeReferenceExpression fieldType, CSVisibility fieldVisibility) {
+		CSField field = new CSField(fieldName(fragment), fieldType, fieldVisibility, mapFieldInitializer(fragment));
+		if (isConstField(node, fragment)) {
+			field.addModifier(CSFieldModifier.Const);
+		} else {
+			processFieldModifiers(field, node.getModifiers());
+		}
+		mapDocumentation(node, field);
+		mapAnnotations(node, field);
+		return field;
+	}
+
+	private void mapAnnotations(BodyDeclaration node, CSMember member) {
+		for (Object m : node.modifiers()) {
+			if (!(m instanceof Annotation)) {
+				continue;
+			}
+			if (isIgnoredAnnotation((Annotation)m)) {
+				continue;
+			}
+			if (m instanceof MarkerAnnotation) {
+				mapMarkerAnnotation((MarkerAnnotation)m, member);
+			}
+		}
+	}
+
+	private boolean isIgnoredAnnotation(Annotation m) {
+		return _configuration.isIgnoredAnnotation(qualifiedName(m.resolveAnnotationBinding().getAnnotationType()));
+    }
+
+	private void mapMarkerAnnotation(MarkerAnnotation annotation, CSMember member) {
+		final IAnnotationBinding binding = annotation.resolveAnnotationBinding();
+		final CSAttribute attribute = new CSAttribute(mappedTypeName(binding.getAnnotationType()));
+		member.addAttribute(attribute);
+    }
 
 	protected String fieldName(VariableDeclarationFragment fragment) {
 		return identifier(fragment.getName());
@@ -892,8 +922,8 @@ public class CSharpBuilder extends ASTVisitor  {
 	protected CSExpression mapFieldInitializer(VariableDeclarationFragment fragment) {
 		return mapExpression(fragment.getInitializer());
 	}
-	
-    private boolean isConstField(FieldDeclaration node, VariableDeclarationFragment fragment) {
+
+	private boolean isConstField(FieldDeclaration node, VariableDeclarationFragment fragment) {
 		return Modifier.isFinal(node.getModifiers()) && node.getType().isPrimitiveType() && hasConstValue(fragment);
 	}
 
@@ -914,13 +944,13 @@ public class CSharpBuilder extends ASTVisitor  {
 		if (Modifier.isVolatile(modifiers)) {
 			field.addModifier(CSFieldModifier.Volatile);
 		}
-		
+
 	}
 
 	private boolean isDestructor(MethodDeclaration node) {
 		return node.getName().toString().equals("finalize");
 	}
-	
+
 	public boolean visit(Initializer node) {
 		CSConstructor ctor = new CSConstructor(CSConstructorModifier.Static);
 		_currentType.addMember(ctor);
@@ -932,27 +962,27 @@ public class CSharpBuilder extends ASTVisitor  {
 		if (isIgnored(node) || isRemoved(node)) {
 			return false;
 		}
-		
+
 		if (isEvent(node)) {
 			processEventDeclaration(node);
 			return false;
 		}
-		
+
 		if (isProperty(node)) {
 			processPropertyDeclaration(node);
 			return false;
 		}
-		
+
 		if (isIndexer(node)) {
 			processIndexerDeclaration(node);
 			return false;
 		}
-		
+
 		processMethodDeclaration(node);
-		
+
 		return false;
 	}
-	
+
 	private void processIndexerDeclaration(MethodDeclaration node) {
 		processPropertyDeclaration(node, CSProperty.INDEXER);
 	}
@@ -962,8 +992,7 @@ public class CSharpBuilder extends ASTVisitor  {
 	}
 
 	private boolean isRemoved(MethodDeclaration node) {
-		return JavadocUtility.containsJavadoc(node, Annotations.SHARPEN_REMOVE)
-			|| isRemoved(node.resolveBinding());
+		return JavadocUtility.containsJavadoc(node, Annotations.SHARPEN_REMOVE) || isRemoved(node.resolveBinding());
 	}
 
 	private boolean isRemoved(final IMethodBinding binding) {
@@ -982,21 +1011,18 @@ public class CSharpBuilder extends ASTVisitor  {
 		processPropertyDeclaration(node, propertyName(node));
 	}
 
-	private void processPropertyDeclaration(MethodDeclaration node,
-			final String name) {
+	private void processPropertyDeclaration(MethodDeclaration node, final String name) {
 		_currentType.addMember(mapPropertyDeclaration(node, name));
 	}
 
-	private CSProperty mapPropertyDeclaration(MethodDeclaration node,
-			final String propName) {
+	private CSProperty mapPropertyDeclaration(MethodDeclaration node, final String propName) {
 		final boolean isGetter = isGetter(node);
-		final CSTypeReferenceExpression propertyType = isGetter
-			? mappedReturnType(node)
-			: mappedTypeReference(lastParameter(node).getType());
-			
+		final CSTypeReferenceExpression propertyType = isGetter ? mappedReturnType(node)
+		        : mappedTypeReference(lastParameter(node).getType());
+
 		final CSBlock block = mapBody(node);
-			
-		final CSProperty property = new CSProperty(propName, propertyType);		
+
+		final CSProperty property = new CSProperty(propName, propertyType);
 		if (isGetter) {
 			property.getter(block);
 		} else {
@@ -1018,24 +1044,25 @@ public class CSharpBuilder extends ASTVisitor  {
 	}
 
 	private SingleVariableDeclaration lastParameter(MethodDeclaration node) {
-		return parameter(node, node.parameters().size()-1);
+		return parameter(node, node.parameters().size() - 1);
 	}
-	
+
 	private String propertyName(MethodDeclaration node) {
 		return mappedMethodName(node);
 	}
 
 	private boolean isProperty(MethodDeclaration node) {
-		return isTaggedDeclaration(node, Annotations.SHARPEN_PROPERTY)
-			|| isMappedToProperty(node);
+		return isTaggedDeclaration(node, Annotations.SHARPEN_PROPERTY) || isMappedToProperty(node);
 	}
 
 	private boolean isTaggedDeclaration(MethodDeclaration node, final String tag) {
-		if (null != JavadocUtility.getJavadocTag(node, tag)) return true;
-		
+		if (null != JavadocUtility.getJavadocTag(node, tag))
+			return true;
+
 		MethodDeclaration originalMethod = findOriginalMethodDeclaration(node);
-		if (null == originalMethod) return false;
-		
+		if (null == originalMethod)
+			return false;
+
 		return null != JavadocUtility.getJavadocTag(originalMethod, tag);
 	}
 
@@ -1043,13 +1070,13 @@ public class CSharpBuilder extends ASTVisitor  {
 		if (isDestructor(node)) {
 			mapMethodParts(node, new CSDestructor());
 			return;
-		} 
-		
+		}
+
 		if (node.isConstructor()) {
 			mapMethodParts(node, new CSConstructor());
 			return;
 		}
-		
+
 		CSMethod method = new CSMethod(mappedMethodDeclarationName(node));
 		method.returnType(mappedReturnType(node));
 		method.modifier(mapMethodModifier(node));
@@ -1058,14 +1085,15 @@ public class CSharpBuilder extends ASTVisitor  {
 	}
 
 	private void mapMethodParts(MethodDeclaration node, CSMethodBase method) {
-		
+
 		_currentType.addMember(method);
-		
+
 		method.startPosition(node.getStartPosition());
 		method.isVarArgs(node.isVarargs());
 		mapVisibility(node, method);
 		mapParameters(node, method);
 		mapDocumentation(node, method);
+		mapAnnotations(node, method);
 		visitBodyDeclarationBlock(node, node.getBody(), method);
 	}
 
@@ -1079,7 +1107,7 @@ public class CSharpBuilder extends ASTVisitor  {
 
 	private void mapParameters(MethodDeclaration node, CSParameterized method) {
 		if (method instanceof CSMethod) {
-			mapMethodParameters(node, (CSMethod)method);
+			mapMethodParameters(node, (CSMethod) method);
 			return;
 		}
 		for (Object p : node.parameters()) {
@@ -1093,40 +1121,35 @@ public class CSharpBuilder extends ASTVisitor  {
 
 	private void mapMethodParameters(MethodDeclaration node, CSMethod method) {
 		for (Object o : node.parameters()) {
-			SingleVariableDeclaration p = (SingleVariableDeclaration)o;
+			SingleVariableDeclaration p = (SingleVariableDeclaration) o;
 			ITypeBinding parameterType = p.getType().resolveBinding();
 			if (isGenericRuntimeParameterIdiom(node.resolveBinding(), parameterType)) {
-				
+
 				// System.Type <p.name> = typeof(<T>);
 				method.body().addStatement(
-					new CSDeclarationStatement(
-						p.getStartPosition(),
-						new CSVariableDeclaration(
-							identifier(p.getName()),
-							new CSTypeReference("System.Type"),
-							new CSTypeofExpression(genericRuntimeTypeIdiomType(parameterType)))));
-			
+				        new CSDeclarationStatement(p.getStartPosition(), new CSVariableDeclaration(identifier(p
+				                .getName()), new CSTypeReference("System.Type"), new CSTypeofExpression(
+				                genericRuntimeTypeIdiomType(parameterType)))));
+
 			} else {
-			
+
 				mapParameter(p, method);
 			}
 		}
 	}
 
-	private CSTypeReferenceExpression genericRuntimeTypeIdiomType(
-			ITypeBinding parameterType) {
+	private CSTypeReferenceExpression genericRuntimeTypeIdiomType(ITypeBinding parameterType) {
 		return mappedTypeReference(parameterType.getTypeArguments()[0]);
 	}
 
-	private boolean isGenericRuntimeParameterIdiom(IMethodBinding method,
-			ITypeBinding parameterType) {
+	private boolean isGenericRuntimeParameterIdiom(IMethodBinding method, ITypeBinding parameterType) {
 		if (!parameterType.isParameterizedType()) {
 			return false;
 		}
 		if (!"java.lang.Class".equals(qualifiedName(parameterType))) {
 			return false;
 		}
-		// detecting if the T in Class<T> comes from the method itself 
+		// detecting if the T in Class<T> comes from the method itself
 		final ITypeBinding classTypeArgument = parameterType.getTypeArguments()[0];
 		return classTypeArgument.getDeclaringMethod() == method;
 	}
@@ -1139,22 +1162,21 @@ public class CSharpBuilder extends ASTVisitor  {
 		CSTypeReference eventHandlerType = new CSTypeReference(getEventHandlerTypeName(node));
 		CSEvent event = createEventFromMethod(node, eventHandlerType);
 		mapMetaMemberAttributes(node, event);
-		if (_currentType.isInterface()) return;
-		
+		if (_currentType.isInterface())
+			return;
+
 		VariableDeclarationFragment field = getEventBackingField(node);
-		CSField backingField = (CSField)_currentType.getMember(field.getName().toString());
+		CSField backingField = (CSField) _currentType.getMember(field.getName().toString());
 		backingField.type(eventHandlerType);
-		
+
 		// clean field
 		backingField.initializer(null);
 		backingField.removeModifier(CSFieldModifier.Readonly);
-		
+
 		final CSBlock addBlock = createEventBlock(backingField, "System.Delegate.Combine");
 		String onAddMethod = getEventOnAddMethod(node);
 		if (onAddMethod != null) {
-			addBlock.addStatement(
-					new CSMethodInvocationExpression(
-							new CSReferenceExpression(onAddMethod)));
+			addBlock.addStatement(new CSMethodInvocationExpression(new CSReferenceExpression(onAddMethod)));
 		}
 		event.setAddBlock(addBlock);
 		event.setRemoveBlock(createEventBlock(backingField, "System.Delegate.Remove"));
@@ -1162,7 +1184,8 @@ public class CSharpBuilder extends ASTVisitor  {
 
 	private String getEventOnAddMethod(MethodDeclaration node) {
 		final TagElement onAddTag = JavadocUtility.getJavadocTag(node, Annotations.SHARPEN_EVENT_ON_ADD);
-		if (null == onAddTag) return null;
+		if (null == onAddTag)
+			return null;
 		return methodName(getSingleTextFragment(onAddTag));
 	}
 
@@ -1175,23 +1198,17 @@ public class CSharpBuilder extends ASTVisitor  {
 		mapVisibility(node, metaMember);
 		metaMember.modifier(mapMethodModifier(node));
 		mapDocumentation(node, metaMember);
-	}	
-	
+	}
+
 	private CSBlock createEventBlock(CSField backingField, String delegateMethod) {
 		CSBlock block = new CSBlock();
-		block.addStatement(
-				new CSInfixExpression(
-						"=",
-						new CSReferenceExpression(backingField.name()),
-						new CSCastExpression(
-								backingField.type(),
-								new CSMethodInvocationExpression(
-										new CSReferenceExpression(delegateMethod),
-										new CSReferenceExpression(backingField.name()),
-										new CSReferenceExpression("value")))));
+		block.addStatement(new CSInfixExpression("=", new CSReferenceExpression(backingField.name()),
+		        new CSCastExpression(backingField.type(), new CSMethodInvocationExpression(new CSReferenceExpression(
+		                delegateMethod), new CSReferenceExpression(backingField.name()), new CSReferenceExpression(
+		                "value")))));
 		return block;
 	}
-	
+
 	private static final class CheckVariableUseVisitor extends ASTVisitor {
 
 		private final IVariableBinding _var;
@@ -1206,10 +1223,10 @@ public class CSharpBuilder extends ASTVisitor  {
 			if (name.resolveBinding().equals(_var)) {
 				_used = true;
 			}
-				
+
 			return false;
 		}
-		
+
 		public boolean used() {
 			return _used;
 		}
@@ -1224,11 +1241,11 @@ public class CSharpBuilder extends ASTVisitor  {
 			return false;
 		}
 	}
-	
+
 	private VariableDeclarationFragment getEventBackingField(MethodDeclaration node) {
 		FieldAccessFinder finder = new FieldAccessFinder();
 		node.accept(finder);
-		return (VariableDeclarationFragment)findDeclaringNode(finder.field);
+		return (VariableDeclarationFragment) findDeclaringNode(finder.field);
 	}
 
 	private CSEvent createEventFromMethod(MethodDeclaration node, CSTypeReference eventHandlerType) {
@@ -1245,23 +1262,26 @@ public class CSharpBuilder extends ASTVisitor  {
 
 	private void createEventTypeIfNeeded(CSTypeReference eventHandlerType) {
 		// the delegate is only generated along with the interface
-		if (!_currentType.isInterface()) return;
-		
+		if (!_currentType.isInterface())
+			return;
+
 		final String unqualifiedName = unqualifiedName(eventHandlerType.typeName());
 		for (CSType type : _compilationUnit.types()) {
-			if (type.name().equals(unqualifiedName)) return;
+			if (type.name().equals(unqualifiedName))
+				return;
 		}
-		
+
 		CSDelegate delegate = new CSDelegate(unqualifiedName);
 		delegate.visibility(CSVisibility.Public);
 		delegate.addParameter("sender", OBJECT_TYPE_REFERENCE);
 		delegate.addParameter("args", new CSTypeReference(buildEventArgsTypeName(eventHandlerType)));
 		_compilationUnit.insertTypeBefore(delegate, _currentType);
 	}
-	
+
 	private String unqualifiedName(String typeName) {
 		int index = typeName.lastIndexOf('.');
-		if (index < 0) return typeName;
+		if (index < 0)
+			return typeName;
 		return typeName.substring(index + 1);
 	}
 
@@ -1270,14 +1290,14 @@ public class CSharpBuilder extends ASTVisitor  {
 			warning(node, Annotations.SHARPEN_EVENT + " type name must end with 'EventArgs'");
 			return typeName + "EventHandler";
 		}
-		
+
 		return buildEventTypeName(typeName, "EventArgs", "EventHandler");
 	}
 
 	private String buildEventArgsTypeName(CSTypeReference typeName) {
 		return buildEventTypeName(typeName.typeName(), "EventHandler", "EventArgs");
 	}
-	
+
 	private String buildEventTypeName(String typeName, String expected, String suffix) {
 		String prefix = typeName.substring(0, typeName.length() - expected.length());
 		return prefix + suffix;
@@ -1285,16 +1305,19 @@ public class CSharpBuilder extends ASTVisitor  {
 
 	private String getEventArgsType(MethodDeclaration node) {
 		TagElement tag = findEventTag(node);
-		if (null == tag) return null;
+		if (null == tag)
+			return null;
 		return mappedTypeName(getSingleTextFragment(tag));
 	}
 
 	private TagElement findEventTag(MethodDeclaration node) {
 		TagElement eventTag = getEventTag(node);
-		if (null != eventTag) return eventTag;
-		
+		if (null != eventTag)
+			return eventTag;
+
 		MethodDeclaration originalMethod = findOriginalMethodDeclaration(node);
-		if (null == originalMethod) return null;
+		if (null == originalMethod)
+			return null;
 
 		return getEventTag(originalMethod);
 	}
@@ -1302,17 +1325,20 @@ public class CSharpBuilder extends ASTVisitor  {
 	private MethodDeclaration findOriginalMethodDeclaration(MethodDeclaration node) {
 		return findOriginalMethodDeclaration(node.resolveBinding());
 	}
-	
+
 	private MethodDeclaration findOriginalMethodDeclaration(IMethodBinding binding) {
 		IMethodBinding definition = Bindings.findMethodDefininition(binding, _ast.getAST());
-		if (null == definition) return null;
+		if (null == definition)
+			return null;
 		return declaringNode(definition);
 	}
 
 	private ASTNode findDeclaringNode(IBinding binding) {
 		final ASTNode declaringNode = _ast.findDeclaringNode(binding);
-		if (null != declaringNode) return declaringNode;
-		if (null == _resolver) return null;
+		if (null != declaringNode)
+			return declaringNode;
+		if (null == _resolver)
+			return null;
 		return _resolver.findDeclaringNode(binding);
 	}
 
@@ -1323,27 +1349,28 @@ public class CSharpBuilder extends ASTVisitor  {
 	private void visitBodyDeclarationBlock(BodyDeclaration node, Block block, CSMethodBase method) {
 		CSMethodBase saved = _currentMethod;
 		_currentMethod = method;
-		
+
 		processDisableTags(node, method);
 		processBlock(node, block, method.body());
-		
+
 		_currentMethod = saved;
 	}
 
 	private void processDisableTags(BodyDeclaration node, CSMethodBase method) {
 		TagElement tag = JavadocUtility.getJavadocTag(node, Annotations.SHARPEN_IF);
-		if (null == tag) return;
-		
+		if (null == tag)
+			return;
+
 		method.addEnclosingIfDef(getSingleTextFragment(tag));
 	}
 
 	private void processBlock(BodyDeclaration node, Block block, final CSBlock targetBlock) {
-		BodyDeclaration savedDeclaration = _currentBodyDeclaration;		
+		BodyDeclaration savedDeclaration = _currentBodyDeclaration;
 		_currentBodyDeclaration = node;
-		
+
 		if (Modifier.isSynchronized(node.getModifiers())) {
 			CSLockStatement lock = new CSLockStatement(node.getStartPosition(), getLockTarget(node));
-			targetBlock.addStatement(lock);			
+			targetBlock.addStatement(lock);
 			visitBlock(lock.body(), block);
 		} else {
 			visitBlock(targetBlock, block);
@@ -1352,11 +1379,10 @@ public class CSharpBuilder extends ASTVisitor  {
 	}
 
 	private CSExpression getLockTarget(BodyDeclaration node) {
-		return Modifier.isStatic(node.getModifiers())
-			? new CSTypeofExpression(new CSTypeReference(_currentType.name()))
-			: new CSThisExpression();
+		return Modifier.isStatic(node.getModifiers()) ? new CSTypeofExpression(new CSTypeReference(_currentType.name()))
+		        : new CSThisExpression();
 	}
-	
+
 	public boolean visit(ConstructorInvocation node) {
 		addChainedConstructorInvocation(new CSThisExpression(), node.arguments());
 		return false;
@@ -1365,9 +1391,9 @@ public class CSharpBuilder extends ASTVisitor  {
 	private void addChainedConstructorInvocation(CSExpression target, List arguments) {
 		CSConstructorInvocationExpression cie = new CSConstructorInvocationExpression(target);
 		mapArguments(cie, arguments);
-		((CSConstructor)_currentMethod).chainedConstructorInvocation(cie);
+		((CSConstructor) _currentMethod).chainedConstructorInvocation(cie);
 	}
-	
+
 	public boolean visit(SuperConstructorInvocation node) {
 		if (null != node.getExpression()) {
 			notImplemented(node);
@@ -1375,26 +1401,27 @@ public class CSharpBuilder extends ASTVisitor  {
 		addChainedConstructorInvocation(new CSBaseExpression(), node.arguments());
 		return false;
 	}
-	
+
 	private <T extends ASTNode> void visitBlock(CSBlock block, T node) {
 		if (null == node) {
 			return;
 		}
-		
+
 		CSBlock saved = _currentBlock;
-		_currentBlock = block;		
+		_currentBlock = block;
 		node.accept(this);
 		_currentBlock = saved;
 	}
-	
+
 	public boolean visit(VariableDeclarationExpression node) {
-		pushExpression(new CSDeclarationExpression(createVariableDeclaration((VariableDeclarationFragment) node.fragments().get(0))));
+		pushExpression(new CSDeclarationExpression(createVariableDeclaration((VariableDeclarationFragment) node
+		        .fragments().get(0))));
 		return false;
 	}
-	
+
 	public boolean visit(VariableDeclarationStatement node) {
 		for (Object f : node.fragments()) {
-			VariableDeclarationFragment variable = (VariableDeclarationFragment)f;
+			VariableDeclarationFragment variable = (VariableDeclarationFragment) f;
 			addStatement(new CSDeclarationStatement(node.getStartPosition(), createVariableDeclaration(variable)));
 		}
 		return false;
@@ -1406,32 +1433,33 @@ public class CSharpBuilder extends ASTVisitor  {
 	}
 
 	private CSVariableDeclaration createVariableDeclaration(IVariableBinding binding, CSExpression initializer) {
-		return new CSVariableDeclaration(identifier(binding.getName()), mappedTypeReference(binding.getType()), initializer);
+		return new CSVariableDeclaration(identifier(binding.getName()), mappedTypeReference(binding.getType()),
+		        initializer);
 	}
-	
+
 	public boolean visit(ExpressionStatement node) {
 		if (isRemovedMethodInvocation(node.getExpression())) {
 			return false;
 		}
-		
+
 		addStatement(new CSExpressionStatement(node.getStartPosition(), mapExpression(node.getExpression())));
 		return false;
 	}
-	
+
 	private boolean isRemovedMethodInvocation(Expression expression) {
 		if (!(expression instanceof MethodInvocation)) {
 			return false;
 		}
-		
-		MethodInvocation invocation = (MethodInvocation)expression;
+
+		MethodInvocation invocation = (MethodInvocation) expression;
 		return isTaggedMethodInvocation(invocation, Annotations.SHARPEN_REMOVE)
-			|| isRemoved(invocation.resolveMethodBinding());
-		
+		        || isRemoved(invocation.resolveMethodBinding());
+
 	}
 
 	public boolean visit(IfStatement node) {
 		Expression expression = node.getExpression();
-		
+
 		Object constValue = constValue(expression);
 		if (null != constValue) {
 			// dead branch elimination
@@ -1450,36 +1478,36 @@ public class CSharpBuilder extends ASTVisitor  {
 		}
 		return false;
 	}
-	
+
 	private boolean isTrue(Object constValue) {
-		return ((Boolean)constValue).booleanValue();
+		return ((Boolean) constValue).booleanValue();
 	}
 
 	private Object constValue(Expression expression) {
 		switch (expression.getNodeType()) {
 		case ASTNode.PREFIX_EXPRESSION:
-			return constValue((PrefixExpression)expression);
+			return constValue((PrefixExpression) expression);
 		case ASTNode.SIMPLE_NAME:
 		case ASTNode.QUALIFIED_NAME:
-			return constValue((Name)expression);
+			return constValue((Name) expression);
 		}
 		return null;
 	}
-	
+
 	public Object constValue(PrefixExpression expression) {
 		if (PrefixExpression.Operator.NOT == expression.getOperator()) {
 			Object value = constValue(expression.getOperand());
 			if (null != value) {
-				return isTrue(value) ? Boolean.FALSE : Boolean.TRUE; 
+				return isTrue(value) ? Boolean.FALSE : Boolean.TRUE;
 			}
 		}
 		return null;
 	}
-	
+
 	public Object constValue(Name expression) {
 		IBinding binding = expression.resolveBinding();
 		if (IBinding.VARIABLE == binding.getKind()) {
-			return ((IVariableBinding)binding).getConstantValue();
+			return ((IVariableBinding) binding).getConstantValue();
 		}
 		return null;
 	}
@@ -1490,19 +1518,19 @@ public class CSharpBuilder extends ASTVisitor  {
 		addStatement(stmt);
 		return false;
 	}
-	
+
 	public boolean visit(DoStatement node) {
 		CSDoStatement stmt = new CSDoStatement(node.getStartPosition(), mapExpression(node.getExpression()));
 		visitBlock(stmt.body(), node.getBody());
 		addStatement(stmt);
 		return false;
 	}
-	
+
 	public boolean visit(TryStatement node) {
 		CSTryStatement stmt = new CSTryStatement(node.getStartPosition());
 		visitBlock(stmt.body(), node.getBody());
 		for (Object o : node.catchClauses()) {
-			CatchClause clause = (CatchClause)o;
+			CatchClause clause = (CatchClause) o;
 			if (!isIgnoredExceptionType(clause.getException().getType().resolveBinding())) {
 				stmt.addCatchClause(mapCatchClause(clause));
 			}
@@ -1512,10 +1540,9 @@ public class CSharpBuilder extends ASTVisitor  {
 			visitBlock(finallyBlock, node.getFinally());
 			stmt.finallyBlock(finallyBlock);
 		}
-		
-		if (null != stmt.finallyBlock()
-			|| !stmt.catchClauses().isEmpty()) {
-			
+
+		if (null != stmt.finallyBlock() || !stmt.catchClauses().isEmpty()) {
+
 			addStatement(stmt);
 		} else {
 
@@ -1523,7 +1550,7 @@ public class CSharpBuilder extends ASTVisitor  {
 		}
 		return false;
 	}
-	
+
 	private boolean isIgnoredExceptionType(ITypeBinding exceptionType) {
 		return qualifiedName(exceptionType).equals("java.lang.CloneNotSupportedException");
 	}
@@ -1534,7 +1561,7 @@ public class CSharpBuilder extends ASTVisitor  {
 		try {
 			CheckVariableUseVisitor check = new CheckVariableUseVisitor(_currentExceptionVariable);
 			node.getBody().accept(check);
-			
+
 			CSCatchClause clause;
 			if (isEmptyCatch(node, check)) {
 				clause = new CSCatchClause();
@@ -1550,7 +1577,8 @@ public class CSharpBuilder extends ASTVisitor  {
 	}
 
 	private boolean isEmptyCatch(CatchClause clause, CheckVariableUseVisitor check) {
-		if (check.used()) return false;
+		if (check.used())
+			return false;
 		return isThrowable(clause.getException().resolveBinding().getType());
 	}
 
@@ -1567,15 +1595,15 @@ public class CSharpBuilder extends ASTVisitor  {
 		Expression exception = node.getExpression();
 		if (isCurrentExceptionVariable(exception)) {
 			return new CSThrowStatement(node.getStartPosition(), null);
-		} 
+		}
 		return new CSThrowStatement(node.getStartPosition(), mapExpression(exception));
 	}
-	
+
 	private boolean isCurrentExceptionVariable(Expression exception) {
 		if (!(exception instanceof SimpleName)) {
 			return false;
 		}
-		return ((SimpleName)exception).resolveBinding() == _currentExceptionVariable;
+		return ((SimpleName) exception).resolveBinding() == _currentExceptionVariable;
 	}
 
 	public boolean visit(BreakStatement node) {
@@ -1585,7 +1613,7 @@ public class CSharpBuilder extends ASTVisitor  {
 		addStatement(new CSBreakStatement(node.getStartPosition()));
 		return false;
 	}
-	
+
 	public boolean visit(ContinueStatement node) {
 		if (null != node.getLabel()) {
 			notImplemented(node.getLabel());
@@ -1593,37 +1621,38 @@ public class CSharpBuilder extends ASTVisitor  {
 		addStatement(new CSContinueStatement(node.getStartPosition()));
 		return false;
 	}
-	
+
 	public boolean visit(SynchronizedStatement node) {
 		CSLockStatement stmt = new CSLockStatement(node.getStartPosition(), mapExpression(node.getExpression()));
 		visitBlock(stmt.body(), node.getBody());
 		addStatement(stmt);
 		return false;
 	}
-	
+
 	public boolean visit(ReturnStatement node) {
 		addStatement(new CSReturnStatement(node.getStartPosition(), mapExpression(node.getExpression())));
 		return false;
 	}
-	
+
 	public boolean visit(NumberLiteral node) {
-		
+
 		String token = node.getToken();
 		CSNumberLiteralExpression literal = new CSNumberLiteralExpression(token);
-		
+
 		if (token.startsWith("0x")) {
 			pushExpression(uncheckedCast("int", literal));
 		} else {
 			pushExpression(literal);
 		}
-		
+
 		return false;
 	}
 
 	private CSUncheckedExpression uncheckedCast(String type, CSExpression expression) {
-		return new CSUncheckedExpression(new CSCastExpression(new CSTypeReference(type), new CSParenthesizedExpression(expression)));
+		return new CSUncheckedExpression(new CSCastExpression(new CSTypeReference(type), new CSParenthesizedExpression(
+		        expression)));
 	}
-	
+
 	public boolean visit(StringLiteral node) {
 		String value = node.getLiteralValue();
 		if (value != null && value.length() == 0) {
@@ -1633,38 +1662,38 @@ public class CSharpBuilder extends ASTVisitor  {
 		}
 		return false;
 	}
-	
+
 	public boolean visit(CharacterLiteral node) {
 		pushExpression(new CSCharLiteralExpression(node.getEscapedValue()));
 		return false;
 	}
-	
+
 	public boolean visit(NullLiteral node) {
 		pushExpression(new CSNullLiteralExpression());
 		return false;
 	}
-	
+
 	public boolean visit(BooleanLiteral node) {
 		pushExpression(new CSBoolLiteralExpression(node.booleanValue()));
 		return false;
 	}
-	
+
 	public boolean visit(ThisExpression node) {
 		pushExpression(new CSThisExpression());
 		return false;
 	}
-	
+
 	public boolean visit(ArrayAccess node) {
-		pushExpression(new CSIndexedExpression(mapExpression(node.getArray()), mapExpression(node.getIndex()))); 
+		pushExpression(new CSIndexedExpression(mapExpression(node.getArray()), mapExpression(node.getIndex())));
 		return false;
 	}
-	
-	public boolean visit(ArrayCreation node) {			
+
+	public boolean visit(ArrayCreation node) {
 		if (node.dimensions().size() > 1) {
 			if (null != node.getInitializer()) {
 				notImplemented(node);
 			}
-			pushExpression(unfoldMultiArrayCreation(node));			
+			pushExpression(unfoldMultiArrayCreation(node));
 		} else {
 			pushExpression(mapSingleArrayCreation(node));
 		}
@@ -1672,10 +1701,10 @@ public class CSharpBuilder extends ASTVisitor  {
 	}
 
 	/**
-	 * Unfolds java multi array creation shortcut "new String[2][3][2]" into explicitly
-	 * array creation "new string[][][] {
-	 * 	 					new string[][] { new string[2], new string[2], new string[2] },
-	 * 						new string[][] { new string[2], new string[2], new string[2] } }"
+	 * Unfolds java multi array creation shortcut "new String[2][3][2]" into
+	 * explicitly array creation "new string[][][] { new string[][] { new
+	 * string[2], new string[2], new string[2] }, new string[][] { new
+	 * string[2], new string[2], new string[2] } }"
 	 */
 	private CSArrayCreationExpression unfoldMultiArrayCreation(ArrayCreation node) {
 		return unfoldMultiArray((ArrayType) node.getType().getComponentType(), node.dimensions(), 0);
@@ -1686,31 +1715,32 @@ public class CSharpBuilder extends ASTVisitor  {
 		expression.initializer(new CSArrayInitializerExpression());
 		int length = resolveIntValue(dimensions.get(dimensionIndex));
 		if (dimensionIndex < lastIndex(dimensions) - 1) {
-			for (int i=0; i<length; ++i) {
+			for (int i = 0; i < length; ++i) {
 				expression.initializer().addExpression(
-						unfoldMultiArray((ArrayType) type.getComponentType(), dimensions, dimensionIndex+1));
+				        unfoldMultiArray((ArrayType) type.getComponentType(), dimensions, dimensionIndex + 1));
 			}
 		} else {
-			Expression innerLength = (Expression)dimensions.get(dimensionIndex+1);
+			Expression innerLength = (Expression) dimensions.get(dimensionIndex + 1);
 			CSTypeReferenceExpression innerType = mappedTypeReference(type.getComponentType());
-			for (int i=0; i<length; ++i) {
+			for (int i = 0; i < length; ++i) {
 				expression.initializer().addExpression(
-						new CSArrayCreationExpression(innerType, mapExpression(innerLength)));
+				        new CSArrayCreationExpression(innerType, mapExpression(innerLength)));
 			}
 		}
 		return expression;
 	}
 
 	private int lastIndex(List dimensions) {
-		return dimensions.size()-1;
+		return dimensions.size() - 1;
 	}
 
 	private int resolveIntValue(Object expression) {
-		return ((Number)((Expression)expression).resolveConstantExpressionValue()).intValue();
+		return ((Number) ((Expression) expression).resolveConstantExpressionValue()).intValue();
 	}
 
 	private CSArrayCreationExpression mapSingleArrayCreation(ArrayCreation node) {
-		CSArrayCreationExpression expression = new CSArrayCreationExpression(mappedTypeReference(componentType(node.getType())));
+		CSArrayCreationExpression expression = new CSArrayCreationExpression(mappedTypeReference(componentType(node
+		        .getType())));
 		if (!node.dimensions().isEmpty()) {
 			expression.length(mapExpression((Expression) node.dimensions().get(0)));
 		}
@@ -1719,21 +1749,22 @@ public class CSharpBuilder extends ASTVisitor  {
 	}
 
 	private CSArrayInitializerExpression mapArrayInitializer(ArrayCreation node) {
-		return (CSArrayInitializerExpression)mapExpression(node.getInitializer());
+		return (CSArrayInitializerExpression) mapExpression(node.getInitializer());
 	}
 
 	public boolean visit(ArrayInitializer node) {
 		if (isImplicitelyTypedArrayInitializer(node)) {
-			CSArrayCreationExpression ace = new CSArrayCreationExpression(mappedTypeReference(node.resolveTypeBinding().getComponentType()));
+			CSArrayCreationExpression ace = new CSArrayCreationExpression(mappedTypeReference(node.resolveTypeBinding()
+			        .getComponentType()));
 			ace.initializer(mapArrayInitializer(node));
 			pushExpression(ace);
 			return false;
 		}
-		
+
 		pushExpression(mapArrayInitializer(node));
 		return false;
 	}
-	
+
 	private CSArrayInitializerExpression mapArrayInitializer(ArrayInitializer node) {
 		CSArrayInitializerExpression initializer = new CSArrayInitializerExpression();
 		for (Object e : node.expressions()) {
@@ -1749,7 +1780,7 @@ public class CSharpBuilder extends ASTVisitor  {
 	public ITypeBinding componentType(ArrayType type) {
 		return type.getComponentType().resolveBinding();
 	}
-	
+
 	@Override
 	public boolean visit(EnhancedForStatement node) {
 		CSForEachStatement stmt = new CSForEachStatement(node.getStartPosition(), mapExpression(node.getExpression()));
@@ -1762,7 +1793,7 @@ public class CSharpBuilder extends ASTVisitor  {
 	public boolean visit(ForStatement node) {
 		CSForStatement stmt = new CSForStatement(node.getStartPosition(), mapExpression(node.getExpression()));
 		for (Object i : node.initializers()) {
-			stmt.addInitializer(mapExpression((Expression)i));
+			stmt.addInitializer(mapExpression((Expression) i));
 		}
 		for (Object u : node.updaters()) {
 			stmt.addUpdater(mapExpression((Expression) u));
@@ -1771,25 +1802,23 @@ public class CSharpBuilder extends ASTVisitor  {
 		addStatement(stmt);
 		return false;
 	}
-	
+
 	public boolean visit(SwitchStatement node) {
 		CSBlock saved = _currentBlock;
-		
-		CSSwitchStatement stmt = new CSSwitchStatement(node.getStartPosition(), mapExpression(node.getExpression()));
-		addStatement(stmt);
-		
-		Iterator i = node.statements().iterator();
+
+		CSSwitchStatement mappedNode = new CSSwitchStatement(node.getStartPosition(), mapExpression(node.getExpression()));
+		addStatement(mappedNode);
+
 		CSCaseClause defaultClause = null;
 		CSCaseClause current = null;
-		while (i.hasNext()) {
-			ASTNode element = (ASTNode) i.next();
+		for (ASTNode element : Types.<Iterable<ASTNode>>cast(node.statements())) {
 			if (ASTNode.SWITCH_CASE == element.getNodeType()) {
 				if (null == current) {
 					current = new CSCaseClause();
-					stmt.addCase(current);
+					mappedNode.addCase(current);
 					_currentBlock = current.body();
 				}
-				SwitchCase sc = (SwitchCase)element;
+				SwitchCase sc = (SwitchCase) element;
 				if (sc.isDefault()) {
 					defaultClause = current;
 					current.isDefault(true);
@@ -1801,32 +1830,32 @@ public class CSharpBuilder extends ASTVisitor  {
 				element.accept(this);
 			}
 		}
-		
+
 		if (null != defaultClause) {
 			defaultClause.body().addStatement(new CSBreakStatement(Integer.MIN_VALUE));
 		}
-		
+
 		_currentBlock = saved;
 		return false;
 	}
-	
+
 	public boolean visit(CastExpression node) {
 		pushExpression(new CSCastExpression(mappedTypeReference(node.getType()), mapExpression(node.getExpression())));
 		return false;
 	}
-	
+
 	public boolean visit(PrefixExpression node) {
 		pushExpression(new CSPrefixExpression(node.getOperator().toString(), mapExpression(node.getOperand())));
 		return false;
 	}
-	
+
 	public boolean visit(PostfixExpression node) {
 		pushExpression(new CSPostfixExpression(node.getOperator().toString(), mapExpression(node.getOperand())));
 		return false;
 	}
-	
+
 	public boolean visit(InfixExpression node) {
-		
+
 		CSExpression left = mapExpression(node.getLeftOperand());
 		CSExpression right = mapExpression(node.getRightOperand());
 		if (node.getOperator() == InfixExpression.Operator.RIGHT_SHIFT_UNSIGNED) {
@@ -1839,46 +1868,50 @@ public class CSharpBuilder extends ASTVisitor  {
 			pushExpression(new CSInfixExpression(operator, left, right));
 			pushExtendedOperands(operator, node);
 		}
-		
+
 		return false;
 	}
 
 	private void pushExtendedOperands(String operator, InfixExpression node) {
 		for (Object x : node.extendedOperands()) {
-			pushExpression(new CSInfixExpression(operator, popExpression(), mapExpression((Expression)x)));
+			pushExpression(new CSInfixExpression(operator, popExpression(), mapExpression((Expression) x)));
 		}
 	}
-	
+
 	public boolean visit(ParenthesizedExpression node) {
 		pushExpression(new CSParenthesizedExpression(mapExpression(node.getExpression())));
 		return false;
 	}
-	
+
 	public boolean visit(ConditionalExpression node) {
-		pushExpression(new CSConditionalExpression(mapExpression(node.getExpression()), mapExpression(node.getThenExpression()), mapExpression(node.getElseExpression())));
-		return false;
-	}
-	
-	public boolean visit(InstanceofExpression node) {
-		pushExpression(new CSInfixExpression("is", mapExpression(node.getLeftOperand()), mappedTypeReference(node.getRightOperand().resolveBinding())));
-		return false;
-	}
-	
-	public boolean visit(Assignment node) {
-		Expression lhs = node.getLeftHandSide();
-		pushExpression(new CSInfixExpression(node.getOperator().toString(), mapExpression(lhs), mapExpression(lhs.resolveTypeBinding(), node.getRightHandSide())));
+		pushExpression(new CSConditionalExpression(mapExpression(node.getExpression()), mapExpression(node
+		        .getThenExpression()), mapExpression(node.getElseExpression())));
 		return false;
 	}
 
-	private CSExpression mapExpression(ITypeBinding expectedType,
-			Expression expression) {
+	public boolean visit(InstanceofExpression node) {
+		pushExpression(new CSInfixExpression("is", mapExpression(node.getLeftOperand()), mappedTypeReference(node
+		        .getRightOperand().resolveBinding())));
+		return false;
+	}
+
+	public boolean visit(Assignment node) {
+		Expression lhs = node.getLeftHandSide();
+		pushExpression(new CSInfixExpression(node.getOperator().toString(), mapExpression(lhs), mapExpression(lhs
+		        .resolveTypeBinding(), node.getRightHandSide())));
+		return false;
+	}
+
+	private CSExpression mapExpression(ITypeBinding expectedType, Expression expression) {
 		return castIfNeeded(expectedType, expression.resolveTypeBinding(), mapExpression(expression));
 	}
-	
+
 	private CSExpression castIfNeeded(ITypeBinding expectedType, ITypeBinding actualType, CSExpression expression) {
 		ITypeBinding charType = resolveWellKnownType("char");
-		if (expectedType != charType) return expression;
-		if (actualType == expectedType) return expression;
+		if (expectedType != charType)
+			return expression;
+		if (actualType == expectedType)
+			return expression;
 		return new CSCastExpression(mappedTypeReference(expectedType), expression);
 	}
 
@@ -1887,16 +1920,16 @@ public class CSharpBuilder extends ASTVisitor  {
 			node.getAnonymousClassDeclaration().accept(this);
 			return false;
 		}
-		
+
 		CSMethodInvocationExpression expression = mapConstructorInvocation(node);
 		if (null == expression) {
 			return false;
 		}
-		
+
 		if (isNonStaticNestedTypeCreation(node)) {
 			expression.addArgument(new CSThisExpression());
 		}
-		
+
 		mapArguments(expression, node.arguments());
 		pushExpression(expression);
 		return false;
@@ -1918,12 +1951,12 @@ public class CSharpBuilder extends ASTVisitor  {
 		}
 		return new CSMethodInvocationExpression(new CSReferenceExpression(methodName(mappedConstructor.name)));
 	}
-	
+
 	private boolean optimizeSystemConvert(String mappedConstructor, ClassInstanceCreation node) {
 		String typeName = _configuration.getConvertRelatedWellKnownTypeName(mappedConstructor);
 		if (null != typeName) {
 			assert 1 == node.arguments().size();
-			Expression arg = (Expression)node.arguments().get(0);
+			Expression arg = (Expression) node.arguments().get(0);
 			if (arg.resolveTypeBinding() == resolveWellKnownType(typeName)) {
 				arg.accept(this);
 				return true;
@@ -1931,7 +1964,7 @@ public class CSharpBuilder extends ASTVisitor  {
 		}
 		return false;
 	}
-	
+
 	public boolean visit(TypeLiteral node) {
 		pushTypeOfExpression(mappedTypeReference(node.getType()));
 		return false;
@@ -1946,48 +1979,45 @@ public class CSharpBuilder extends ASTVisitor  {
 	}
 
 	private void pushGetClassForTypeExpression(final CSTypeReferenceExpression typeName) {
-		CSMethodInvocationExpression mie = new CSMethodInvocationExpression(
-				new CSReferenceExpression(
-						methodName(_configuration.getRuntimeTypeName() + ".getClassForType")));		
+		CSMethodInvocationExpression mie = new CSMethodInvocationExpression(new CSReferenceExpression(
+		        methodName(_configuration.getRuntimeTypeName() + ".getClassForType")));
 		mie.addArgument(new CSTypeofExpression(typeName));
 		pushExpression(mie);
 	}
-	
+
 	public boolean visit(SuperMethodInvocation node) {
 		if (null != node.getQualifier()) {
 			notImplemented(node);
 		}
-		
+
 		IMethodBinding binding = originalMethodBinding(node.resolveMethodBinding());
 		Configuration.MemberMapping mapping = configuredMappingFor(binding);
-		CSExpression target = new CSMemberReferenceExpression(
-									new CSBaseExpression(),
-									mappedMethodName(binding));
-		
+		CSExpression target = new CSMemberReferenceExpression(new CSBaseExpression(), mappedMethodName(binding));
+
 		if (mapping != null && mapping.kind != MemberKind.Method) {
 			pushExpression(target);
 			return false;
 		}
-		
+
 		CSMethodInvocationExpression mie = new CSMethodInvocationExpression(target);
 		mapArguments(mie, node.arguments());
 		pushExpression(mie);
 		return false;
 	}
-	
+
 	public boolean visit(MethodInvocation node) {
 		IMethodBinding binding = originalMethodBinding(node.resolveMethodBinding());
 		Configuration.MemberMapping mapping = configuredMappingFor(binding);
-		
+
 		if (null == mapping) {
 			if (isIndexer(node)) {
 				mapping = new MemberMapping(null, MemberKind.Indexer);
 			} else if (isTaggedMethodInvocation(node, Annotations.SHARPEN_PROPERTY)
-						|| isTaggedMethodInvocation(node, Annotations.SHARPEN_EVENT)) {
+			        || isTaggedMethodInvocation(node, Annotations.SHARPEN_EVENT)) {
 				mapping = new MemberMapping(binding.getName(), MemberKind.Property);
 			}
 		}
-		
+
 		if (null == mapping) {
 			processUnmappedMethodInvocation(node);
 		} else {
@@ -2003,42 +2033,42 @@ public class CSharpBuilder extends ASTVisitor  {
 		}
 		return isTaggedDeclaration(declaration, Annotations.SHARPEN_INDEXER);
 	}
-	
+
 	private IMethodBinding originalMethodBinding(IMethodBinding binding) {
 		IMethodBinding original = Bindings.findMethodDefininition(binding, _ast.getAST());
-		if (null != original) return original;
+		if (null != original)
+			return original;
 		return binding;
 	}
-	
+
 	private void processUnmappedMethodInvocation(MethodInvocation node) {
-		
+
 		if (isMappedEventSubscription(node)) {
 			processMappedEventSubscription(node);
 			return;
 		}
-		
+
 		if (isEventSubscription(node)) {
 			processEventSubscription(node);
 			return;
 		}
-		
+
 		if (isRemovedMethodInvocation(node)) {
 			processRemovedInvocation(node);
 			return;
 		}
-		
+
 		String name = mappedMethodName(node.resolveMethodBinding(), null);
 		final CSExpression targetExpression = mapMethodTargetExpression(node);
-		CSExpression target = null == targetExpression
-			? new CSReferenceExpression(name)
-			: new CSMemberReferenceExpression(targetExpression, name);
+		CSExpression target = null == targetExpression ? new CSReferenceExpression(name)
+		        : new CSMemberReferenceExpression(targetExpression, name);
 		CSMethodInvocationExpression mie = new CSMethodInvocationExpression(target);
 		mapMethodInvocationArguments(mie, node);
 		pushExpression(mie);
 	}
 
 	private void processMappedEventSubscription(MethodInvocation node) {
-		
+
 		final MethodInvocation event = (MethodInvocation) node.getExpression();
 		final String eventArgsType = _configuration.mappedEvent(qualifiedName(event));
 		final String eventHandlerType = buildEventHandlerTypeName(node, eventArgsType);
@@ -2046,9 +2076,10 @@ public class CSharpBuilder extends ASTVisitor  {
 	}
 
 	private void processRemovedInvocation(MethodInvocation node) {
-		TagElement element = JavadocUtility.getJavadocTag(declaringNode(node.resolveMethodBinding()), Annotations.SHARPEN_REMOVE);
-		
-		String exchangeValue = getSingleTextFragment(element);			
+		TagElement element = JavadocUtility.getJavadocTag(declaringNode(node.resolveMethodBinding()),
+		        Annotations.SHARPEN_REMOVE);
+
+		String exchangeValue = getSingleTextFragment(element);
 		pushExpression(new CSReferenceExpression(exchangeValue));
 	}
 
@@ -2058,11 +2089,10 @@ public class CSharpBuilder extends ASTVisitor  {
 		final ITypeBinding[] actualTypes = actualMethod.getParameterTypes();
 		final IMethodBinding originalMethod = actualMethod.getMethodDeclaration();
 		final ITypeBinding[] originalTypes = originalMethod.getParameterTypes();
-		for (int i=0; i<arguments.size(); ++i) {
+		for (int i = 0; i < arguments.size(); ++i) {
 			final Expression arg = (Expression) arguments.get(i);
-			if (i < originalTypes.length
-				&& isGenericRuntimeParameterIdiom(originalMethod, originalTypes[i])
-				&& isClassLiteral(arg)) {
+			if (i < originalTypes.length && isGenericRuntimeParameterIdiom(originalMethod, originalTypes[i])
+			        && isClassLiteral(arg)) {
 				mie.addTypeArgument(genericRuntimeTypeIdiomType(actualTypes[i]));
 			} else {
 				addArgument(mie, arg);
@@ -2075,36 +2105,29 @@ public class CSharpBuilder extends ASTVisitor  {
 	}
 
 	private void processEventSubscription(MethodInvocation node) {
-		
+
 		final MethodDeclaration addListener = declaringNode(node.resolveMethodBinding());
 		assertValidEventAddListener(node, addListener);
-		
-		final MethodInvocation eventInvocation = (MethodInvocation)node.getExpression();
-		
+
+		final MethodInvocation eventInvocation = (MethodInvocation) node.getExpression();
+
 		final MethodDeclaration eventDeclaration = declaringNode(eventInvocation.resolveMethodBinding());
 		mapEventSubscription(node, getEventArgsType(eventDeclaration), getEventHandlerTypeName(eventDeclaration));
 	}
 
-	private void mapEventSubscription(MethodInvocation node,
-			final String eventArgsType, final String eventHandlerType) {
+	private void mapEventSubscription(MethodInvocation node, final String eventArgsType, final String eventHandlerType) {
 		final CSAnonymousClassBuilder listenerBuilder = mapAnonymousEventListener(node);
-		final CSMemberReferenceExpression handlerMethodRef = new CSMemberReferenceExpression(
-								listenerBuilder.createConstructorInvocation(),
-								eventListenerMethodName(listenerBuilder));
-		
-	
+		final CSMemberReferenceExpression handlerMethodRef = new CSMemberReferenceExpression(listenerBuilder
+		        .createConstructorInvocation(), eventListenerMethodName(listenerBuilder));
+
 		final CSReferenceExpression delegateType = new CSReferenceExpression(eventHandlerType);
-		
+
 		patchEventListener(listenerBuilder, eventArgsType);
-		
+
 		CSConstructorInvocationExpression delegateConstruction = new CSConstructorInvocationExpression(delegateType);
 		delegateConstruction.addArgument(handlerMethodRef);
-		
-		pushExpression(
-			new CSInfixExpression(
-				"+=",
-				mapMethodTargetExpression(node),
-				delegateConstruction));
+
+		pushExpression(new CSInfixExpression("+=", mapMethodTargetExpression(node), delegateConstruction));
 	}
 
 	private CSAnonymousClassBuilder mapAnonymousEventListener(MethodInvocation node) {
@@ -2119,12 +2142,12 @@ public class CSharpBuilder extends ASTVisitor  {
 	private void patchEventListener(CSAnonymousClassBuilder listenerBuilder, String eventArgsType) {
 		final CSClass type = listenerBuilder.type();
 		type.clearBaseTypes();
-		
-		final CSMethod handlerMethod = (CSMethod)type.getMember(eventListenerMethodName(listenerBuilder));
+
+		final CSMethod handlerMethod = (CSMethod) type.getMember(eventListenerMethodName(listenerBuilder));
 		handlerMethod.parameters().get(0).type(OBJECT_TYPE_REFERENCE);
 		handlerMethod.parameters().get(0).name("sender");
 		handlerMethod.parameters().get(1).type(new CSTypeReference(eventArgsType));
-		
+
 	}
 
 	private IMethodBinding getFirstMethod(ITypeBinding listenerType) {
@@ -2132,17 +2155,20 @@ public class CSharpBuilder extends ASTVisitor  {
 	}
 
 	private void assertValidEventAddListener(ASTNode source, MethodDeclaration addListener) {
-		if (isValidEventAddListener(addListener)) return;
-		
+		if (isValidEventAddListener(addListener))
+			return;
+
 		unsupportedConstruct(source, Annotations.SHARPEN_EVENT_ADD + " must take lone single method interface argument");
 	}
 
 	private boolean isValidEventAddListener(MethodDeclaration addListener) {
-		if (1 != addListener.parameters().size()) return false;
-		
+		if (1 != addListener.parameters().size())
+			return false;
+
 		final ITypeBinding type = getFirstParameterType(addListener);
-		if (!type.isInterface()) return false;
-		
+		if (!type.isInterface())
+			return false;
+
 		return type.getDeclaredMethods().length == 1;
 	}
 
@@ -2150,8 +2176,7 @@ public class CSharpBuilder extends ASTVisitor  {
 		return parameter(addListener, 0).getType().resolveBinding();
 	}
 
-	private SingleVariableDeclaration parameter(MethodDeclaration method,
-			final int index) {
+	private SingleVariableDeclaration parameter(MethodDeclaration method, final int index) {
 		return (SingleVariableDeclaration) method.parameters().get(index);
 	}
 
@@ -2167,8 +2192,7 @@ public class CSharpBuilder extends ASTVisitor  {
 		return qualifiedName(node.resolveMethodBinding());
 	}
 
-	private boolean isTaggedMethodInvocation(MethodInvocation node,
-			final String tag) {
+	private boolean isTaggedMethodInvocation(MethodInvocation node, final String tag) {
 		final MethodDeclaration method = declaringNode(originalMethodBinding(node.resolveMethodBinding()));
 		if (null == method) {
 			return false;
@@ -2177,32 +2201,32 @@ public class CSharpBuilder extends ASTVisitor  {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void processMappedMethodInvocation(MethodInvocation node, IMethodBinding binding, Configuration.MemberMapping mapping) {
-		
+	private void processMappedMethodInvocation(MethodInvocation node, IMethodBinding binding,
+	        Configuration.MemberMapping mapping) {
+
 		if (mapping.kind == MemberKind.Indexer) {
 			processIndexerInvocation(node, binding, mapping);
 			return;
 		}
-		
+
 		String name = mappedMethodName(binding, mapping);
 		if (0 == name.length()) {
 			final Expression expression = node.getExpression();
-			final CSExpression target = expression != null
-				? mapExpression(expression)
-				: new CSThisExpression(); // see collections/EntrySet1
+			final CSExpression target = expression != null ? mapExpression(expression) : new CSThisExpression(); // see
+																													// collections/EntrySet1
 			pushExpression(target);
 			return;
 		}
-		
+
 		boolean isMappingToStaticMethod = isMappingToStaticMember(name);
-		
+
 		List<Expression> arguments = node.arguments();
 		CSExpression expression = mapMethodTargetExpression(node);
 		CSExpression target = null;
-		
+
 		if (null == expression || isMappingToStaticMethod) {
 			target = new CSReferenceExpression(name);
-		} else {			
+		} else {
 			if (isStatic(binding) && arguments.size() > 0) {
 				// mapping static method to instance member
 				// typical example is String.valueOf(arg) => arg.ToString()
@@ -2212,28 +2236,24 @@ public class CSharpBuilder extends ASTVisitor  {
 				target = new CSMemberReferenceExpression(expression, name);
 			}
 		}
-		
+
 		if (mapping.kind != MemberKind.Method) {
 			switch (arguments.size()) {
 			case 0:
 				pushExpression(target);
 				break;
-				
+
 			case 1:
-				pushExpression(
-					new CSInfixExpression(
-						"=",
-						target,
-						mapExpression(arguments.get(0))));
+				pushExpression(new CSInfixExpression("=", target, mapExpression(arguments.get(0))));
 				break;
-				
+
 			default:
 				unsupportedConstruct(node, "Method invocation with more than 1 argument mapped to property");
 				break;
 			}
 			return;
 		}
-		
+
 		CSMethodInvocationExpression mie = new CSMethodInvocationExpression(target);
 		if (isMappingToStaticMethod && isInstanceMethod(binding)) {
 			if (null == expression) {
@@ -2250,24 +2270,21 @@ public class CSharpBuilder extends ASTVisitor  {
 		if (node.arguments().size() != 1) {
 			unsupportedConstruct(node, "indexer with any argument number but 1");
 		}
-		pushExpression(
-				new CSIndexedExpression(
-						mapIndexerTarget(node),
-						mapExpression((Expression) node.arguments().get(0))));
+		pushExpression(new CSIndexedExpression(mapIndexerTarget(node), mapExpression((Expression) node.arguments().get(
+		        0))));
 	}
 
 	private CSExpression mapIndexerTarget(MethodInvocation node) {
 		if (node.getExpression() == null) {
-			return new CSThisExpression(); 
+			return new CSThisExpression();
 		}
 		return mapMethodTargetExpression(node);
 	}
 
 	private CSExpression parensIfNeeded(CSExpression expression) {
-		if (expression instanceof CSInfixExpression
-			|| expression instanceof CSPrefixExpression
-			|| expression instanceof CSPostfixExpression) {
-				
+		if (expression instanceof CSInfixExpression || expression instanceof CSPrefixExpression
+		        || expression instanceof CSPostfixExpression) {
+
 			return new CSParenthesizedExpression(expression);
 		}
 		return expression;
@@ -2287,18 +2304,18 @@ public class CSharpBuilder extends ASTVisitor  {
 
 	protected void mapArguments(CSMethodInvocationExpression mie, List arguments) {
 		for (Object arg : arguments) {
-			addArgument(mie, (Expression)arg);
+			addArgument(mie, (Expression) arg);
 		}
 	}
 
 	private void addArgument(CSMethodInvocationExpression mie, Expression arg) {
 		mie.addArgument(mapExpression(arg));
 	}
-	
+
 	public boolean visit(FieldAccess node) {
 		String name = mappedFieldName(node);
-		if (null == node.getExpression()) {			
-			pushExpression(new CSReferenceExpression(name));			
+		if (null == node.getExpression()) {
+			pushExpression(new CSReferenceExpression(name));
 		} else {
 			pushExpression(new CSMemberReferenceExpression(mapExpression(node.getExpression()), name));
 		}
@@ -2311,10 +2328,11 @@ public class CSharpBuilder extends ASTVisitor  {
 
 	private String mappedFieldName(FieldAccess node) {
 		String name = mappedFieldName(node.getName());
-		if (null != name) return name;
+		if (null != name)
+			return name;
 		return identifier(node.getName());
 	}
-	
+
 	public boolean visit(SimpleName node) {
 		if (isTypeReference(node)) {
 			pushTypeReference(node.resolveTypeBinding());
@@ -2323,7 +2341,7 @@ public class CSharpBuilder extends ASTVisitor  {
 		}
 		return false;
 	}
-	
+
 	private void addStatement(CSStatement statement) {
 		_currentBlock.addStatement(statement);
 	}
@@ -2344,7 +2362,7 @@ public class CSharpBuilder extends ASTVisitor  {
 		}
 		return IBinding.TYPE == binding.getKind();
 	}
-	
+
 	public boolean visit(QualifiedName node) {
 		if (isTypeReference(node)) {
 			pushTypeReference(node.resolveTypeBinding());
@@ -2371,7 +2389,7 @@ public class CSharpBuilder extends ASTVisitor  {
 			} else {
 				pushMemberReferenceExpression(node.getQualifier(), mapped);
 			}
-		} else {			
+		} else {
 			Name qualifier = node.getQualifier();
 			String name = identifier(node.getName().getIdentifier());
 			pushMemberReferenceExpression(qualifier, name);
@@ -2380,49 +2398,61 @@ public class CSharpBuilder extends ASTVisitor  {
 
 	private String checkForPrimitiveTypeReference(QualifiedName node) {
 		String name = qualifiedName(node);
-		if (name.equals(JAVA_LANG_VOID_TYPE)) return "void";
-		if (name.equals(JAVA_LANG_BOOLEAN_TYPE)) return "bool";
-		if (name.equals(JAVA_LANG_BYTE_TYPE)) return "byte";
-		if (name.equals(JAVA_LANG_CHARACTER_TYPE)) return "char";
-		if (name.equals(JAVA_LANG_SHORT_TYPE)) return "short";
-		if (name.equals(JAVA_LANG_INTEGER_TYPE)) return "int";
-		if (name.equals(JAVA_LANG_LONG_TYPE)) return "long";
-		if (name.equals(JAVA_LANG_FLOAT_TYPE)) return "float";
-		if (name.equals(JAVA_LANG_DOUBLE_TYPE)) return "double";
+		if (name.equals(JAVA_LANG_VOID_TYPE))
+			return "void";
+		if (name.equals(JAVA_LANG_BOOLEAN_TYPE))
+			return "bool";
+		if (name.equals(JAVA_LANG_BYTE_TYPE))
+			return "byte";
+		if (name.equals(JAVA_LANG_CHARACTER_TYPE))
+			return "char";
+		if (name.equals(JAVA_LANG_SHORT_TYPE))
+			return "short";
+		if (name.equals(JAVA_LANG_INTEGER_TYPE))
+			return "int";
+		if (name.equals(JAVA_LANG_LONG_TYPE))
+			return "long";
+		if (name.equals(JAVA_LANG_FLOAT_TYPE))
+			return "float";
+		if (name.equals(JAVA_LANG_DOUBLE_TYPE))
+			return "double";
 		return null;
 	}
-	
+
 	private String qualifiedName(QualifiedName node) {
 		IVariableBinding binding = variableBinding(node);
-		if (binding == null) return node.toString();
+		if (binding == null)
+			return node.toString();
 		return qualifiedName(binding);
 	}
 
 	private void pushMemberReferenceExpression(Name qualifier, String name) {
 		pushExpression(new CSMemberReferenceExpression(mapExpression(qualifier), name));
 	}
-	
+
 	private IVariableBinding variableBinding(Name node) {
 		if (node.resolveBinding() instanceof IVariableBinding) {
-			return (IVariableBinding)node.resolveBinding();
+			return (IVariableBinding) node.resolveBinding();
 		}
 		return null;
 	}
-	
+
 	private String mappedFieldName(Name node) {
 		IVariableBinding binding = variableBinding(node);
 		return null == binding ? null : mappedFieldName(binding);
 	}
 
 	private String mappedFieldName(IVariableBinding binding) {
-		if (!binding.isField()) return null;
+		if (!binding.isField())
+			return null;
 		Configuration.MemberMapping mapping = _configuration.mappedMember(qualifiedName(binding));
 		return mapping != null ? mapping.name : null;
 	}
 
 	protected CSExpression mapExpression(Expression expression) {
-		if (null == expression) return null;
-		
+		if (null == expression)
+			return null;
+
 		try {
 			expression.accept(this);
 			return popExpression();
@@ -2435,7 +2465,7 @@ public class CSharpBuilder extends ASTVisitor  {
 	private void unsupportedConstruct(ASTNode node, Exception cause) {
 		unsupportedConstruct(node, "failed to map: '" + node + "'", cause);
 	}
-	
+
 	private void unsupportedConstruct(ASTNode node, String message) {
 		unsupportedConstruct(node, message, null);
 	}
@@ -2443,7 +2473,7 @@ public class CSharpBuilder extends ASTVisitor  {
 	private void unsupportedConstruct(ASTNode node, final String message, Exception cause) {
 		throw new IllegalArgumentException(sourceInformation(node) + ": " + message, cause);
 	}
-	
+
 	protected void pushExpression(CSExpression expression) {
 		if (null != _currentExpression) {
 			throw new IllegalStateException();
@@ -2452,7 +2482,7 @@ public class CSharpBuilder extends ASTVisitor  {
 	}
 
 	private CSExpression popExpression() {
-		if (null == _currentExpression ) {
+		if (null == _currentExpression) {
 			throw new IllegalStateException();
 		}
 		CSExpression found = _currentExpression;
@@ -2471,10 +2501,12 @@ public class CSharpBuilder extends ASTVisitor  {
 	}
 
 	private void createInheritedAbstractMemberStubs(TypeDeclaration node) {
-		if (node.isInterface()) return;
-		
+		if (node.isInterface())
+			return;
+
 		ITypeBinding binding = node.resolveBinding();
-		if (!Modifier.isAbstract(node.getModifiers())) return;
+		if (!Modifier.isAbstract(node.getModifiers()))
+			return;
 
 		Set<ITypeBinding> interfaces = new LinkedHashSet<ITypeBinding>();
 		collectInterfaces(interfaces, binding);
@@ -2527,7 +2559,7 @@ public class CSharpBuilder extends ASTVisitor  {
 	}
 
 	private MethodDeclaration declaringNode(IMethodBinding method) {
-		return (MethodDeclaration)findDeclaringNode(method);
+		return (MethodDeclaration) findDeclaringNode(method);
 	}
 
 	private CSProperty createAbstractPropertyStub(IMethodBinding method) {
@@ -2541,15 +2573,14 @@ public class CSharpBuilder extends ASTVisitor  {
 	private CSMethod createAbstractMethodStub(IMethodBinding method) {
 		CSMethod stub = new CSMethod(mappedMethodName(method));
 		stub.modifier(CSMethodModifier.Abstract);
-		stub.visibility(mapVisibility(method.getModifiers()));		
+		stub.visibility(mapVisibility(method.getModifiers()));
 		stub.returnType(mappedTypeReference(method.getReturnType()));
-		
+
 		ITypeBinding[] parameters = method.getParameterTypes();
 		for (int i = 0; i < parameters.length; ++i) {
-			stub.addParameter(
-				new CSVariableDeclaration("arg" + (i + 1), mappedTypeReference(parameters[i])));
+			stub.addParameter(new CSVariableDeclaration("arg" + (i + 1), mappedTypeReference(parameters[i])));
 		}
-		
+
 		return stub;
 	}
 
@@ -2564,30 +2595,24 @@ public class CSharpBuilder extends ASTVisitor  {
 		if (Modifier.isPrivate(modifiers)) {
 			return CSMethodModifier.None;
 		}
-		
+
 		boolean override = isOverride(method);
 		if (Modifier.isAbstract(modifiers)) {
-			return override
-				? CSMethodModifier.AbstractOverride
-				: CSMethodModifier.Abstract;
-		}		
+			return override ? CSMethodModifier.AbstractOverride : CSMethodModifier.Abstract;
+		}
 		boolean isFinal = Modifier.isFinal(modifiers);
 		if (override) {
-			return isFinal
-				? CSMethodModifier.Sealed
-				: CSMethodModifier.Override;
+			return isFinal ? CSMethodModifier.Sealed : CSMethodModifier.Override;
 		}
-		return isFinal || _currentType.isSealed()
-			? CSMethodModifier.None
-			: CSMethodModifier.Virtual;
+		return isFinal || _currentType.isSealed() ? CSMethodModifier.None : CSMethodModifier.Virtual;
 	}
 
 	private boolean isOverride(MethodDeclaration method) {
 		IMethodBinding methodBinding = method.resolveBinding();
-		ITypeBinding superclass = _ignoreExtends.value()
-			? resolveWellKnownType("java.lang.Object")
-			: methodBinding.getDeclaringClass().getSuperclass();
-		if (null == superclass) return false;
+		ITypeBinding superclass = _ignoreExtends.value() ? resolveWellKnownType("java.lang.Object") : methodBinding
+		        .getDeclaringClass().getSuperclass();
+		if (null == superclass)
+			return false;
 		return null != Bindings.findOverriddenMethodInHierarchy(superclass, methodBinding);
 	}
 
@@ -2600,14 +2625,14 @@ public class CSharpBuilder extends ASTVisitor  {
 		}
 		return CSClassModifier.None;
 	}
-	
+
 	CSVisibility mapVisibility(BodyDeclaration node) {
 		if (null != JavadocUtility.getJavadocTag(node, Annotations.SHARPEN_INTERNAL)) {
 			return CSVisibility.Internal;
 		} else if (null != JavadocUtility.getJavadocTag(node, Annotations.SHARPEN_PRIVATE)) {
 			return CSVisibility.Private;
 		}
-		
+
 		return mapVisibility(node.getModifiers());
 	}
 
@@ -2623,11 +2648,11 @@ public class CSharpBuilder extends ASTVisitor  {
 		}
 		return CSVisibility.Internal;
 	}
-	
+
 	protected CSTypeReferenceExpression mappedTypeReference(Type type) {
 		return mappedTypeReference(type.resolveBinding());
 	}
-	
+
 	protected CSTypeReferenceExpression mappedTypeReference(ITypeBinding type) {
 		if (type.isArray()) {
 			return mappedArrayTypeReference(type);
@@ -2655,16 +2680,12 @@ public class CSharpBuilder extends ASTVisitor  {
 
 	private CSTypeReferenceExpression mappedWildcardTypeReference(ITypeBinding type) {
 		final ITypeBinding bound = type.getBound();
-		return bound != null
-			? mappedTypeReference(bound)
-			: OBJECT_TYPE_REFERENCE;
+		return bound != null ? mappedTypeReference(bound) : OBJECT_TYPE_REFERENCE;
 	}
 
 	private CSTypeReferenceExpression mappedArrayTypeReference(ITypeBinding type) {
-		return new CSArrayTypeReference(
-						mappedTypeReference(type.getElementType()),
-						type.getDimensions());
-		
+		return new CSArrayTypeReference(mappedTypeReference(type.getElementType()), type.getDimensions());
+
 	}
 
 	protected String mappedTypeName(ITypeBinding type) {
@@ -2676,7 +2697,7 @@ public class CSharpBuilder extends ASTVisitor  {
 		}
 		return registerMappedType(type, mappedTypeNameForKey(type));
 	}
-	
+
 	private String mappedInterfaceName(String name) {
 		int pos = name.lastIndexOf('.');
 		return name.substring(0, pos) + "." + interfaceName(name.substring(pos + 1));
@@ -2689,61 +2710,64 @@ public class CSharpBuilder extends ASTVisitor  {
 	private String typeMappingKey(ITypeBinding type) {
 		final ITypeBinding[] typeArguments = type.getTypeArguments();
 		if (typeArguments.length > 0) {
-			return qualifiedName(type) + "<" + repeat(',', typeArguments.length-1) + ">";
+			return qualifiedName(type) + "<" + repeat(',', typeArguments.length - 1) + ">";
 		}
 		return qualifiedName(type);
 	}
 
 	private String repeat(char c, int count) {
 		StringBuilder builder = new StringBuilder(count);
-		for (int i=0; i<count; ++i) {
+		for (int i = 0; i < count; ++i) {
 			builder.append(c);
 		}
 		return builder.toString();
 	}
 
 	private String registerMappedType(ITypeBinding type, String fullName) {
-		if (!_configuration.organizeUsings()) return fullName;
+		if (!_configuration.organizeUsings())
+			return fullName;
 
 		int pos = fullName.lastIndexOf(".");
-		if (pos == -1) return fullName;
+		if (pos == -1)
+			return fullName;
 
-		if(!hasMapping(type)){
+		if (!hasMapping(type)) {
 			pos = nameSpaceLength(type, fullName, pos);
 		}
-		
+
 		String namespace = fullName.substring(0, pos);
 		registerNamespace(namespace);
 		String name = fullName.substring(pos + 1);
-		
-		if (isConflicting(name)) return fullName;
-		
+
+		if (isConflicting(name))
+			return fullName;
+
 		_compilationUnit.addUsing(new CSUsing(namespace));
 		return name;
 	}
 
 	private int nameSpaceLength(ITypeBinding type, String fullName, int pos) {
-		while (type.isNested()) {		
-			pos = fullName.lastIndexOf(".", pos -1);
+		while (type.isNested()) {
+			pos = fullName.lastIndexOf(".", pos - 1);
 			type = type.getDeclaringClass();
-		}		
+		}
 		return pos;
 	}
 
 	private boolean isConflicting(String name) {
-		return _configuration.shouldFullyQualifyTypeName(name)
-			|| _namespaces.contains(name)
-			|| _mappedMethodDeclarations.contains(name);
+		return _configuration.shouldFullyQualifyTypeName(name) || _namespaces.contains(name)
+		        || _mappedMethodDeclarations.contains(name);
 	}
 
 	private void registerNamespace(String namespace) {
-		if (_namespaces.contains(namespace)) return;
+		if (_namespaces.contains(namespace))
+			return;
 		int pos = namespace.lastIndexOf(".");
 		if (pos == -1) {
 			_namespaces.add(namespace);
 			return;
 		}
-		
+
 		_namespaces.add(namespace.substring(pos + 1));
 		registerNamespace(namespace.substring(0, pos));
 	}
@@ -2755,6 +2779,7 @@ public class CSharpBuilder extends ASTVisitor  {
 	private boolean shouldPrefixInterface(ITypeBinding type) {
 		return _configuration.nativeInterfaces()
 			&& type.isInterface()
+			&& !type.isAnnotation()
 			&& !hasMapping(type);
 	}
 
@@ -2765,7 +2790,7 @@ public class CSharpBuilder extends ASTVisitor  {
 	private String interfaceName(String name) {
 		return "I" + name;
 	}
-	
+
 	private String mappedTypeName(String typeName) {
 		return mappedTypeName(typeName, typeName);
 	}
@@ -2773,28 +2798,31 @@ public class CSharpBuilder extends ASTVisitor  {
 	private String mappedTypeName(String typeName, String defaultValue) {
 		return _configuration.mappedTypeName(typeName, defaultValue);
 	}
-	
+
 	private String renamedName(BodyDeclaration node) {
 		TagElement renameTag = JavadocUtility.getJavadocTag(node, Annotations.SHARPEN_RENAME);
-		if (null == renameTag) return null;
+		if (null == renameTag)
+			return null;
 		return getSingleTextFragment(renameTag);
 	}
-	
+
 	protected String mappedMethodName(MethodDeclaration node) {
 		String newName = renamedName(node);
-		if (null != newName) return newName;
-		
+		if (null != newName)
+			return newName;
+
 		IMethodBinding original = originalMethodBinding(node.resolveBinding());
 		return mappedMethodName(original);
 	}
 
-	protected String mappedMethodName(IMethodBinding binding) {		
+	protected String mappedMethodName(IMethodBinding binding) {
 		Configuration.MemberMapping mapping = configuredMappingFor(binding);
 		return mappedMethodName(binding, mapping);
 	}
 
 	private String mappedMethodName(IMethodBinding binding, Configuration.MemberMapping mapping) {
-		if (isStaticVoidMain(binding)) return "Main";
+		if (isStaticVoidMain(binding))
+			return "Main";
 		String name = null != mapping && null != mapping.name ? mapping.name : binding.getName();
 		return methodName(name);
 	}
@@ -2802,23 +2830,26 @@ public class CSharpBuilder extends ASTVisitor  {
 	private Configuration.MemberMapping configuredMappingFor(final IMethodBinding binding) {
 		final IMethodBinding actual = originalMethodBinding(binding);
 		final MemberMapping mapping = _configuration.mappedMember(Bindings.qualifiedSignature(actual));
-		if (null != mapping) return mapping;
+		if (null != mapping)
+			return mapping;
 		return _configuration.mappedMember(qualifiedName(actual));
 	}
-	
+
 	private String qualifiedName(IMethodBinding actual) {
 		return Bindings.qualifiedName(actual);
 	}
 
 	private boolean isEvent(MethodDeclaration declaring) {
 		MethodDeclaration original = findOriginalMethodDeclaration(declaring);
-		if (null != original) return containsEventTag(original);
+		if (null != original)
+			return containsEventTag(original);
 		return containsEventTag(declaring);
 	}
 
 	private boolean isMappedToProperty(MethodDeclaration original) {
 		final MemberMapping mapping = configuredMappingFor(original.resolveBinding());
-		if (null == mapping) return false;
+		if (null == mapping)
+			return false;
 		return mapping.kind == MemberKind.Property;
 	}
 
@@ -2837,26 +2868,26 @@ public class CSharpBuilder extends ASTVisitor  {
 	protected String identifier(String name) {
 		return namingStrategy().identifier(name);
 	}
-	
-	private String qualifiedName(IVariableBinding binding) {		
+
+	private String qualifiedName(IVariableBinding binding) {
 		ITypeBinding declaringClass = binding.getDeclaringClass();
-		
+
 		if (null == declaringClass) {
 			return binding.getName();
 		}
 		return qualifiedName(declaringClass) + "." + binding.getName();
 	}
-	
+
 	private String mappedQualifiedName(IBinding binding) {
 		switch (binding.getKind()) {
 		case IBinding.METHOD:
-			return mappedQualifiedMethodName((IMethodBinding)binding);
+			return mappedQualifiedMethodName((IMethodBinding) binding);
 		case IBinding.TYPE:
-			return mappedTypeName((ITypeBinding)binding);
+			return mappedTypeName((ITypeBinding) binding);
 		case IBinding.VARIABLE:
-			return mappedQualifiedFieldName((IVariableBinding)binding);
+			return mappedQualifiedFieldName((IVariableBinding) binding);
 		case IBinding.PACKAGE:
-			return mappedNamespace(((IPackageBinding)binding).getName());
+			return mappedNamespace(((IPackageBinding) binding).getName());
 		}
 		throw new IllegalArgumentException("Binding type not supported: " + binding);
 	}
@@ -2864,10 +2895,11 @@ public class CSharpBuilder extends ASTVisitor  {
 	private String mappedNamespace(String namespace) {
 		return _configuration.mappedNamespace(namespace);
 	}
-	
+
 	private String mappedQualifiedFieldName(IVariableBinding binding) {
 		String name = mappedFieldName(binding);
-		if (null != name) return name;
+		if (null != name)
+			return name;
 		return mappedTypeName(binding.getDeclaringClass()) + "." + identifier(binding.getName());
 	}
 
@@ -2880,8 +2912,7 @@ public class CSharpBuilder extends ASTVisitor  {
 	}
 
 	private boolean isStaticVoidMain(IMethodBinding binding) {
-		return isStatic(binding)
-				&& "main".equals(binding.getName());
+		return isStatic(binding) && "main".equals(binding.getName());
 	}
 
 	private boolean isStatic(IMethodBinding binding) {
@@ -2891,7 +2922,7 @@ public class CSharpBuilder extends ASTVisitor  {
 	private void unresolvedTypeBinding(ASTNode node) {
 		warning(node, "unresolved type binding for node: " + node);
 	}
-	
+
 	public boolean visit(CompilationUnit node) {
 		return true;
 	}
@@ -2899,7 +2930,7 @@ public class CSharpBuilder extends ASTVisitor  {
 	private void warning(ASTNode node, String message) {
 		warningHandler().warning(node, message);
 	}
-	
+
 	protected String sourceInformation(ASTNode node) {
 		return ASTUtility.sourceInformation(_ast, node);
 	}

@@ -29,7 +29,7 @@ import java.util.zip.ZipOutputStream;
 
 public class JarUtilities {
 	
-	public static String createJar(Class...cookies) throws Exception {
+	public static String createJar(Class<?>...cookies) throws Exception {
 		File file = java.io.File.createTempFile("sharpen", ".jar");
 		java.io.FileOutputStream fos = new java.io.FileOutputStream(file);
 		try {
@@ -40,10 +40,10 @@ public class JarUtilities {
 		return file.getAbsolutePath();
 	}
 	
-	private static void fillJar(java.io.FileOutputStream fos, Class... cookies) throws Exception {
+	private static void fillJar(java.io.FileOutputStream fos, Class<?>... cookies) throws Exception {
 		ZipOutputStream out = new ZipOutputStream(fos);
 		try {
-			for (Class clazz : cookies) {
+			for (Class<?> clazz : cookies) {
 				writeJarEntry(out, clazz);
 			}
 		} finally {
@@ -51,14 +51,14 @@ public class JarUtilities {
 		}
 	}
 
-	private static void writeJarEntry(ZipOutputStream out, Class clazz) throws Exception {
+	private static void writeJarEntry(ZipOutputStream out, Class<?> clazz) throws Exception {
 		ZipEntry ze = new ZipEntry(fileName(clazz));
 		out.putNextEntry(ze);
 		out.write(readBytes(clazz));
 		out.closeEntry();
 	}
 
-	private static byte[] readBytes(Class clazz) throws IOException {
+	private static byte[] readBytes(Class<?> clazz) throws IOException {
 		String resourceName = "/"+ fileName(clazz);
 		InputStream stream = clazz.getResourceAsStream(resourceName);
 		try {
@@ -70,7 +70,7 @@ public class JarUtilities {
 		}
 	}
 
-	private static String fileName(Class clazz) {
+	private static String fileName(Class<?> clazz) {
 		return clazz.getName().replace('.', '/') + ".class";
 	}
 }

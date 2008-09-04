@@ -1,0 +1,15 @@
+namespace annotations
+{
+	public class CompilerAnnotations
+	{
+		[System.Obsolete]
+		public virtual void foo()
+		{
+		}
+
+		public override string ToString()
+		{
+			return "foo";
+		}
+	}
+}

@@ -6,7 +6,7 @@ import java.io.*;
 
 public class ResourceLoader {
 	
-	public static String getStringContents(final Class anchor, String resourceName) throws IOException {
+	public static String getStringContents(final Class<?> anchor, String resourceName) throws IOException {
 		InputStream stream = anchor.getResourceAsStream(resourceName);
 		if (null == stream) ResourceLoader.resourceNotFound(resourceName);
 		try {

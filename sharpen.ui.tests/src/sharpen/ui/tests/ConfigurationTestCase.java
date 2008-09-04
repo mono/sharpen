@@ -21,14 +21,19 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.ui.tests;
 
+import junit.framework.*;
 import sharpen.core.*;
-import junit.framework.TestCase;
 
 public class ConfigurationTestCase extends TestCase {
 	private Configuration _configuration;
 	
 	public void setUp() {
 		_configuration = new Configuration("Sharpen.Runtime");
+	}
+	
+	public void testIgnoredAnnotationsByDefault() {
+		
+		assertTrue(_configuration.isIgnoredAnnotation("java.lang.Override"));
 	}
 	
 	public void testDefaultMappings() {

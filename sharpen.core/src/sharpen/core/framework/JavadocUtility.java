@@ -20,12 +20,12 @@ public class JavadocUtility {
 		if (null == javadoc) {
 			return Collections.emptyList();
 		}
-		return collectTags(javadoc.tags(), tagName, new ArrayList<TagElement>());
+		final List<TagElement> tags = Types.cast(javadoc.tags());
+		return collectTags(tags, tagName, new ArrayList<TagElement>());
 	}
 
-	public static ArrayList<TagElement> collectTags(final List tags, String tagName, final ArrayList<TagElement> accumulator) {
-		for (Object tag : tags) {
-			TagElement element = (TagElement)tag;
+	public static ArrayList<TagElement> collectTags(final List<TagElement> tags, String tagName, final ArrayList<TagElement> accumulator) {
+		for (TagElement element : tags) {
 			if (tagName.equals(element.getTagName())) {
 				accumulator.add(element);
 			}

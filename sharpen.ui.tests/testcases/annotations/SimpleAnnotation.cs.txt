@@ -1,0 +1,8 @@
+namespace annotations
+{
+	internal class Annotated
+	{
+		[annotations.Indexed]
+		public string field;
+	}
+}

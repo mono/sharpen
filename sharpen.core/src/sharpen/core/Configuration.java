@@ -103,7 +103,7 @@ public class Configuration {
 	private final Set<String> _mappedEventAdds = new HashSet<String>();
 
 	private final Map<String, String> _mappedEvents = new HashMap<String, String>();
-	
+
 	public Configuration() {
 		this(DEFAULT_RUNTIME_TYPE_NAME);
 	}
@@ -113,6 +113,7 @@ public class Configuration {
 		_runtimeTypeName = runtimeTypeName;
 		
 		setUpPrimitiveMappings();
+		setUpAnnotationMappings();
 	
 		mapType("java.lang.System", runtimeTypeName);
 		mapType("java.lang.Math", "System.Math");
@@ -192,6 +193,10 @@ public class Configuration {
 		mapMethod("java.lang.Float.floatToIntBits", runtimeMethod("floatToIntBits"));
 		mapMethod("java.lang.Float.intBitsToFloat", runtimeMethod("intBitsToFloat"));
 	}
+
+	private void setUpAnnotationMappings() {
+		mapType("java.lang.Deprecated", "System.Obsolete");
+    }
 
 	private void setUpStringMappings() {
 		mapType("java.lang.StringBuffer", "System.Text.StringBuilder");
@@ -598,4 +603,8 @@ public class Configuration {
 			mapEvent(m.from, m.to);
 		}
 	}
+
+	public boolean isIgnoredAnnotation(String typeName) {
+	    return typeName.equals("java.lang.Override");
+    }
 }

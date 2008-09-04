@@ -1,0 +1,12 @@
+package annotations;
+
+public class CompilerAnnotations {
+	@Deprecated
+	public void foo() {
+	}
+	
+	@Override
+	public String toString() {
+		return "foo";
+	}
+}

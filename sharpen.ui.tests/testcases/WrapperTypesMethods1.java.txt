@@ -27,5 +27,6 @@ public class WrapperTypesMethods1 {
 		
 		Integer yetAnotherIntWrapper = Integer.valueOf("32");
 		Integer parsedInt = Integer.parseInt("32");
+		boolean isWS = Character.isWhitespace(' ');
 	}
 }

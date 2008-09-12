@@ -23,5 +23,6 @@ public class WrapperTypesMethods1
 		long anotherLongValue = long.Parse("32");
 		int yetAnotherIntWrapper = int.Parse("32");
 		int parsedInt = int.Parse("32");
+		bool isWS = char.IsWhiteSpace(' ');
 	}
 }

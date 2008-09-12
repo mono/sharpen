@@ -148,7 +148,11 @@ public class Configuration {
 	    mapMethod("java.lang.Object.getClass", runtimeMethod("getClassForObject"));		
 	
 	    mapMethod("length", "Length");	// see qualifiedName(IVariableBinding)
-		mapField("java.lang.Short.MAX_VALUE", "short.MaxValue");
+		setUpPrimitiveWrappers();
+	}
+
+	private void setUpPrimitiveWrappers() {
+	    mapField("java.lang.Short.MAX_VALUE", "short.MaxValue");
 		mapField("java.lang.Short.MIN_VALUE", "short.MinValue");
 		mapField("java.lang.Integer.MAX_VALUE", "int.MaxValue");
 		mapField("java.lang.Integer.MIN_VALUE", "int.MinValue");
@@ -162,12 +166,13 @@ public class Configuration {
 		mapField("java.lang.Double.MIN_VALUE", "double.MinValue");
 		mapField("java.lang.Double.NEGATIVE_INFINITY", "double.NegativeInfinity");
 		mapField("java.lang.Double.POSITIVE_INFINITY", "double.PositiveInfinity");
-		mapField("java.lang.Character.MAX_VALUE", "char.MaxValue");
-		mapField("java.lang.Character.MIN_VALUE", "char.MinValue");
 		mapField("java.lang.Boolean.TRUE", "true");
 		mapField("java.lang.Boolean.FALSE", "false");
 		mapField("java.lang.Byte.MAX_VALUE", "byte.MaxValue");
 		mapField("java.lang.Byte.MIN_VALUE", "byte.MinValue");
+		mapField("java.lang.Character.MAX_VALUE", "char.MaxValue");
+		mapField("java.lang.Character.MIN_VALUE", "char.MinValue");
+		mapMethod("java.lang.Character.isWhitespace", "char.IsWhiteSpace");
 		
 		mapWrapperConstructor("java.lang.Boolean.Boolean", "System.Convert.ToBoolean", "boolean");
 		mapWrapperConstructor("java.lang.Byte.Byte", "System.Convert.ToByte", "byte");
@@ -192,7 +197,7 @@ public class Configuration {
 		mapMethod("java.lang.Boolean.booleanValue", "");
 		mapMethod("java.lang.Float.floatToIntBits", runtimeMethod("floatToIntBits"));
 		mapMethod("java.lang.Float.intBitsToFloat", runtimeMethod("intBitsToFloat"));
-	}
+    }
 
 	private void setUpAnnotationMappings() {
 		mapType("java.lang.Deprecated", "System.Obsolete");

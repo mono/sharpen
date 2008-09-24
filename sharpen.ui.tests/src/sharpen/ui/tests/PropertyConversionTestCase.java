@@ -40,6 +40,13 @@ public class PropertyConversionTestCase extends AbstractConversionTestCase {
 		runResourceTestCase("properties/SimpleGetter");
 	}
 	
+	public void testGetterSetterProperties() throws Throwable {
+		runBatchConverterTestCase(
+				getConfiguration(),
+				"properties/InterfaceGetter",
+				"properties/GetterSetterProperties");		
+	}
+	
 	public void testSimpleSetter() throws Throwable {
 		runResourceTestCase("properties/SimpleSetter");
 	}

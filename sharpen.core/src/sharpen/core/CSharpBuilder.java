@@ -1012,17 +1012,35 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private void processPropertyDeclaration(MethodDeclaration node, final String name) {
-		_currentType.addMember(mapPropertyDeclaration(node, name));
+		CSProperty existingProperty = findProperty(node, name);		
+		CSProperty property = mapPropertyDeclaration(node, name, existingProperty);
+		
+		if (existingProperty == null) {		
+			_currentType.addMember(property);
+		}		
 	}
 
-	private CSProperty mapPropertyDeclaration(MethodDeclaration node, final String propName) {
+	private CSProperty findProperty(MethodDeclaration node, final String name) {
+		CSMember existingProperty = _currentType.getMember(name);
+		if (existingProperty != null) {
+			if (! (existingProperty instanceof CSProperty)) {
+				throw new IllegalArgumentException(sourceInformation(node) + ": Previously declared member redeclared as property.");
+			}
+		}
+		return (CSProperty) existingProperty;
+	}
+
+	private CSProperty mapPropertyDeclaration(MethodDeclaration node, final String propName, CSProperty property) {
 		final boolean isGetter = isGetter(node);
 		final CSTypeReferenceExpression propertyType = isGetter ? mappedReturnType(node)
 		        : mappedTypeReference(lastParameter(node).getType());
 
 		final CSBlock block = mapBody(node);
 
-		final CSProperty property = new CSProperty(propName, propertyType);
+		if (property == null) {
+			property = new CSProperty(propName, propertyType);	
+		}		
+		
 		if (isGetter) {
 			property.getter(block);
 		} else {
@@ -1730,7 +1748,7 @@ public class CSharpBuilder extends ASTVisitor {
 		return expression;
 	}
 
-	private int lastIndex(List dimensions) {
+	private int lastIndex(List<?> dimensions) {
 		return dimensions.size() - 1;
 	}
 

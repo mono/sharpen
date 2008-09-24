@@ -1,0 +1,10 @@
+package properties;
+
+public interface InterfaceSetter {
+	
+	/**
+	 * @sharpen.property
+	 */
+	public void isCancelled(boolean value);
+
+}

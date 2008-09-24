@@ -1,0 +1,53 @@
+package properties;
+
+class SimpleGetterSetter {
+
+	private int _value;
+	
+	/**
+	 * @sharpen.property
+	 */
+	 void value(int value) {
+	 	_value = value;
+	 }
+	 
+	/**
+	 * @sharpen.property
+	 */
+	 int value() {
+	 	return _value;
+	 }
+	 	 
+}
+
+class SimpleSetter {
+	/**
+	 * @sharpen.property
+	 */
+	 public void isCancelled(boolean value) {
+	 	System.out.println(value);
+	 }
+} 
+
+class GetterFromInterfaceSetterInDerived implements InterfaceGetter {
+	
+	public boolean isCancelled() {
+		return true;
+	}
+
+	/**
+	 * @sharpen.property
+	 */
+	public void isCancelled(boolean value) {
+	 	System.out.println(value);
+	}
+		
+}  
+
+class GetterFromInterfaceSetterFromBase extends SimpleSetter implements InterfaceGetter {
+
+	public boolean isCancelled() {
+		return true;
+	}
+		
+}  

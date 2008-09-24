@@ -1,0 +1,56 @@
+namespace properties
+{
+	internal class SimpleGetterSetter
+	{
+		private int _value;
+
+		internal virtual int Value
+		{
+			get
+			{
+				return _value;
+			}
+			set
+			{
+				_value = value;
+			}
+		}
+	}
+
+	internal class SimpleSetter
+	{
+		public virtual bool IsCancelled
+		{
+			set
+			{
+				System.Console.Out.WriteLine(value);
+			}
+		}
+	}
+
+	internal class GetterFromInterfaceSetterInDerived : properties.InterfaceGetter
+	{
+		public virtual bool IsCancelled
+		{
+			get
+			{
+				return true;
+			}
+			set
+			{
+				System.Console.Out.WriteLine(value);
+			}
+		}
+	}
+
+	internal class GetterFromInterfaceSetterFromBase : properties.SimpleSetter, properties.InterfaceGetter
+	{
+		public virtual bool IsCancelled
+		{
+			get
+			{
+				return true;
+			}
+		}
+	}
+}

@@ -24,13 +24,13 @@ package sharpen.core;
 import java.util.*;
 import java.util.regex.*;
 
-import sharpen.core.Configuration.MemberMapping;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.dom.*;
+
+import sharpen.core.Configuration.*;
 import sharpen.core.csharp.ast.*;
 import sharpen.core.framework.*;
 import sharpen.core.util.*;
-
-import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.core.dom.*;
 
 public class CSharpBuilder extends ASTVisitor {
 
@@ -1012,13 +1012,18 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private void processPropertyDeclaration(MethodDeclaration node, final String name) {
-		CSProperty existingProperty = findProperty(node, name);		
-		CSProperty property = mapPropertyDeclaration(node, name, existingProperty);
-		
-		if (existingProperty == null) {		
-			_currentType.addMember(property);
-		}		
+		mapPropertyDeclaration(node, producePropertyFor(node, name));
 	}
+
+	private CSProperty producePropertyFor(MethodDeclaration node, final String name) {
+	    CSProperty existingProperty = findProperty(node, name);
+	    if (existingProperty != null) {
+	    	return existingProperty;
+	    }
+		CSProperty property = newPropertyFor(node, name);
+		_currentType.addMember(property);
+	    return property;
+    }
 
 	private CSProperty findProperty(MethodDeclaration node, final String name) {
 		CSMember existingProperty = _currentType.getMember(name);
@@ -1030,26 +1035,43 @@ public class CSharpBuilder extends ASTVisitor {
 		return (CSProperty) existingProperty;
 	}
 
-	private CSProperty mapPropertyDeclaration(MethodDeclaration node, final String propName, CSProperty property) {
-		final boolean isGetter = isGetter(node);
-		final CSTypeReferenceExpression propertyType = isGetter ? mappedReturnType(node)
-		        : mappedTypeReference(lastParameter(node).getType());
-
+	private CSProperty mapPropertyDeclaration(MethodDeclaration node, CSProperty property) {
 		final CSBlock block = mapBody(node);
-
-		if (property == null) {
-			property = new CSProperty(propName, propertyType);	
-		}		
 		
-		if (isGetter) {
+		if (isGetter(node)) {
 			property.getter(block);
 		} else {
 			property.setter(block);
+			mapImplicitSetterParameter(node, property);
 		}
 		mapMetaMemberAttributes(node, property);
 		mapParameters(node, property);
 		return property;
 	}
+
+	private void mapImplicitSetterParameter(MethodDeclaration node, CSProperty property) {
+	    final String parameterName = parameter(node, 0).getName().toString();
+	    if (parameterName.equals("value")) {
+	    	return;
+	    }
+	    
+    	property.setter().addStatement(0,
+    			newVariableDeclarationExpression(parameterName, property.type(), new CSReferenceExpression("value")));
+    }
+
+	private CSDeclarationExpression newVariableDeclarationExpression(final String name,
+            final CSTypeReferenceExpression type, final CSReferenceExpression initializer) {
+	    return new CSDeclarationExpression(
+	    	new CSVariableDeclaration(name, type, initializer));
+    }
+
+	private CSProperty newPropertyFor(MethodDeclaration node, final String propName) {
+	    final CSTypeReferenceExpression propertyType = isGetter(node)
+				? mappedReturnType(node)
+		        : mappedTypeReference(lastParameter(node).getType());
+		CSProperty p = new CSProperty(propName, propertyType);
+	    return p;
+    }
 
 	private CSBlock mapBody(MethodDeclaration node) {
 		final CSBlock block = new CSBlock();

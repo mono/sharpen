@@ -30,6 +30,7 @@ public class NamingStrategy {
 	static Map<String, String> _identifierMappings = new HashMap<String, String>();
 	
 	static {
+		mapIdentifier("base");
 		mapIdentifier("ref");
 		mapIdentifier("out");
 		mapIdentifier("as");

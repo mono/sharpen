@@ -9,6 +9,15 @@ namespace properties
 			}
 		}
 
+		public bool Cancelled
+		{
+			set
+			{
+				bool c = value;
+				IsCancelled = c;
+			}
+		}
+
 		public virtual void Foo()
 		{
 			IsCancelled = true;

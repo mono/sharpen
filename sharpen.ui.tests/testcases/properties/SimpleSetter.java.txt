@@ -8,6 +8,13 @@ public class SimpleSetter {
 	public final void isCancelled(boolean value) {
 	}
 	
+	/**
+	 * @sharpen.property
+	 */
+	public final void cancelled(boolean c) {
+		isCancelled(c);
+	}
+	
 	public void foo() {
 		isCancelled(true);
 	}

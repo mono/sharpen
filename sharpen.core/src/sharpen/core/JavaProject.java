@@ -111,8 +111,11 @@ public class JavaProject extends SimpleProject {
 		_javaProject.setRawClasspath(new IClasspathEntry[0], null);
 	}
 	
-	public void addSourceFolder(String path) throws CoreException {
-		_sourceFolders.add(createSourceFolder(path));
+	public IPackageFragmentRoot addSourceFolder(String path) throws CoreException {
+		final IPackageFragmentRoot sourceFolder = createSourceFolder(path);
+		_sourceFolders.add(sourceFolder);
+		
+		return sourceFolder;
 	}
 
 	/**
@@ -187,15 +190,24 @@ public class JavaProject extends SimpleProject {
 		return _sourceFolders.get(0);
 	}
 
-	public ICompilationUnit createCompilationUnit(String packageName,
-			String cuName, String source) throws CoreException {
-		IPackageFragment packageFragment = getMainSourceFolder()
+	public ICompilationUnit createCompilationUnit(String packageName, String cuName, String source) 
+		throws CoreException {
+		
+		return createCompilationUnit(getMainSourceFolder(), packageName, cuName, source);
+	}
+
+	public ICompilationUnit createCompilationUnit(
+			final IPackageFragmentRoot sourceFolder, String packageName,
+			String cuName, String contents) throws JavaModelException,
+			CoreException {
+		
+		IPackageFragment packageFragment = sourceFolder
 				.getPackageFragment(packageName);
 		if (!packageFragment.exists()) {
-			packageFragment = getMainSourceFolder().createPackageFragment(
+			packageFragment = sourceFolder.createPackageFragment(
 					packageName, false, null);
 		}
-		return createCompilationUnit(packageFragment, cuName, source);
+		return createCompilationUnit(packageFragment, cuName, contents);
 	}
 
 	/**

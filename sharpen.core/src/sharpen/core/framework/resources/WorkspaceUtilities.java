@@ -30,6 +30,8 @@ import org.eclipse.core.runtime.*;
 
 public class WorkspaceUtilities {
 	
+	public static final String DEFAULT_CHARSET = "utf-8";
+	
 	public static void addProjectReference(IProject referent, IProject reference,
 			IProgressMonitor monitor) throws CoreException {
 		IProject[] referencedProjects = referent.getReferencedProjects();
@@ -146,4 +148,21 @@ public class WorkspaceUtilities {
 		workspace.setDescription(workspaceDescription);
 	}
 
+	public static void writeFile(IFile file, final InputStream contents, final String charset, IProgressMonitor monitor) 
+		throws CoreException {
+		
+		if (!file.exists()) {
+			file.create(contents, true, monitor);
+		} else {
+			file.setContents(contents, true, true, monitor);
+		}
+		file.setCharset(charset, monitor);
+		
+	}
+
+	public static void writeText(IFile file, String contents) throws CoreException {
+		
+		writeFile(file, encode(contents, DEFAULT_CHARSET), DEFAULT_CHARSET, null);
+		
+	}
 }

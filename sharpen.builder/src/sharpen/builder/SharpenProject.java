@@ -38,8 +38,6 @@ public class SharpenProject implements ISharpenProject {
 	
 	private static String SETTINGS_FILE = ".sharpen";
 	
-	private static String SETTINGS_CHARSET = "utf-8";
-	
 	public static ISharpenProject create(IProject project) throws CoreException {
 		return create(project, null);
 	}
@@ -85,13 +83,14 @@ public class SharpenProject implements ISharpenProject {
 	}
 	
 	public void save(IProgressMonitor monitor) throws CoreException {
-		IFile file = getSettingsFile();
-		if (!file.exists()) {
-			file.create(toEncodedXml(), true, monitor);
-		} else {
-			file.setContents(toEncodedXml(), true, true, monitor);
-		}
-		file.setCharset(SETTINGS_CHARSET, monitor);
+		WorkspaceUtilities.writeFile(getSettingsFile(), toEncodedXml(), WorkspaceUtilities.DEFAULT_CHARSET, monitor);
+	}
+
+	public static void writeFile(IFile file, final InputStream contents, final String charset, IProgressMonitor monitor) 
+		throws CoreException {
+		
+		WorkspaceUtilities.writeFile(file, contents, charset, monitor);
+		
 	}
 
 	private InputStream toEncodedXml() throws CoreException {
@@ -114,7 +113,7 @@ public class SharpenProject implements ISharpenProject {
 	}
 
 	private InputStream encode(String xml) throws CoreException {
-		return WorkspaceUtilities.encode(xml, SETTINGS_CHARSET);
+		return WorkspaceUtilities.encode(xml, WorkspaceUtilities.DEFAULT_CHARSET);
 	}
 
 	public static final class Remembrance {

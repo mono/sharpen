@@ -109,15 +109,14 @@ public class SharpenBuilder extends IncrementalProjectBuilder {
 	private void sharpen(List<ICompilationUnit> compilationUnits,
 			IProgressMonitor monitor) throws CoreException, IOException {
 		SharpenConversionBatch converter = new SharpenConversionBatch();
-		converter.setTargetFolder(getTargetFolder(monitor));
+		converter.setTargetProject(getTargetProject(monitor));
 		converter.setSource(compilationUnits);
 		converter.setProgressMonitor(monitor);
 		converter.run();
 	}
 
-	private IFolder getTargetFolder(IProgressMonitor monitor) throws CoreException {
-		IFolder targetFolder = getConfiguration(monitor).getTargetFolder();
-		WorkspaceUtilities.initializeTree(targetFolder, monitor);
+	private IProject getTargetProject(IProgressMonitor monitor) throws CoreException {
+		IProject targetFolder = getConfiguration(monitor).getTargetProject();
 		return targetFolder;
 	}
 

@@ -25,6 +25,7 @@ import java.io.*;
 
 import sharpen.core.csharp.ast.CSCompilationUnit;
 import sharpen.core.framework.*;
+import sharpen.core.framework.resources.WorkspaceUtilities;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -41,7 +42,7 @@ import org.eclipse.jdt.core.dom.*;
  */
 public class SharpenConversionBatch extends ConversionBatch { 
 	
-	private IFolder _targetFolder;
+	private IProject _targetProject;
 
 	private final Configuration _configuration;	
 
@@ -56,8 +57,8 @@ public class SharpenConversionBatch extends ConversionBatch {
 		_configuration = configuration;
 	}
 	
-	public void setTargetFolder(IFolder folder) {
-		_targetFolder = folder;
+	public void setTargetProject(IProject project) {
+		_targetProject = project;
 	}
 
 	@Override
@@ -87,34 +88,30 @@ public class SharpenConversionBatch extends ConversionBatch {
 
 		IFolder folder = getTargetFolderForCompilationUnit(cu, csModule.namespace());
 		IFile file = folder.getFile(newName);
-
-		ByteArrayInputStream stream = new ByteArrayInputStream(convertedContents
-				.getBuffer().toString().getBytes(file.getCharset()));
-		if (file.exists()) {
-			file.setContents(stream, true, false, null);
-		} else {
-			file.create(stream, true, null);
-		}
+		WorkspaceUtilities.writeText(file, convertedContents.getBuffer().toString());
 	}
 
 	IFolder getTargetFolderForCompilationUnit(ICompilationUnit cu, String generatedNamespace)
 			throws CoreException {
 
-		if (null == _targetFolder) {
+		if (null == _targetProject) {
 			// no target folder specified
 			// converted files go in the same folder as their corresponding
 			// java source files
 			return (IFolder) cu.getCorrespondingResource().getParent();
 		}
+		
+		final IPath basePath = cu.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT).getResource().getProjectRelativePath();
+		final IFolder targetFolder = _targetProject.getFolder(basePath);
 
 		// compute target folder based on packageName
 		String packageName = generatedNamespace == null
 			? cu.getParent().getElementName()
 			: cleanupNamespace(generatedNamespace);
 		if (packageName.length() > 0) {
-			return getTargetPackageFolder(packageName);
+			return getTargetPackageFolder(targetFolder, packageName);
 		}
-		return _targetFolder;
+		return targetFolder;
 	}
 
 	public static String cleanupNamespace(String generatedNamespace) {
@@ -122,11 +119,11 @@ public class SharpenConversionBatch extends ConversionBatch {
 		return generatedNamespace.replace("@", "");
 	}
 
-	private IFolder getTargetPackageFolder(String packageName)
+	private IFolder getTargetPackageFolder(IFolder targetFolder, String packageName)
 			throws CoreException {
 		String[] parts = packageName.split("\\.");
-		IFolder folder = _targetFolder;
-		synchronized(_targetFolder) {
+		IFolder folder = targetFolder;
+		synchronized(targetFolder) {
 			for (int i = 0; i < parts.length; ++i) {
 				folder = folder.getFolder(parts[i]);
 				if (!folder.exists()) {

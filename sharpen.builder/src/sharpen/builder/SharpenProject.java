@@ -56,30 +56,26 @@ public class SharpenProject implements ISharpenProject {
 	
 	private final IProject _project;
 	
-	private IFolder _targetFolder;
+	private IProject _targetProject;
 	
 	private SharpenProject(IProject project) {
 		_project = project;
-		_targetFolder = getUninitializedTargetFolder(project);
-	}
-
-	private IFolder getUninitializedTargetFolder(IProject project) {
-		return getUninitializedTargetProject(project).getFolder(SharpenConstants.DEFAULT_TARGET_FOLDER);
+		_targetProject = getUninitializedTargetProject(project);
 	}
 
 	private IProject getUninitializedTargetProject(IProject project) {
 		return WorkspaceUtilities.getWorkspaceRoot().getProject(project.getName() + SharpenConstants.SHARPENED_PROJECT_SUFFIX);
 	}
 
-	public void setTargetFolder(IFolder folder) {
-		if (null == folder) {
-			throw new IllegalArgumentException("folder");
+	public void setTargetProject(IProject project) {
+		if (null == project) {
+			throw new IllegalArgumentException("project");
 		}
-		_targetFolder = folder;
+		_targetProject = project;
 	}
 	
-	public IFolder getTargetFolder() {
-		return _targetFolder;
+	public IProject getTargetProject() {
+		return _targetProject;
 	}
 	
 	public void save(IProgressMonitor monitor) throws CoreException {
@@ -120,7 +116,7 @@ public class SharpenProject implements ISharpenProject {
 		public String targetFolder;
 		
 		public Remembrance(SharpenProject project) {
-			targetFolder = project.getTargetFolder().getFullPath().toPortableString();
+			targetFolder = project.getTargetProject().getFullPath().toPortableString();
 		}
 	}
 }

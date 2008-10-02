@@ -81,29 +81,21 @@ public class SharpenApplication implements IApplication {
 		convertTo(units, resetTargetFolder(project));
 	}
 
-	private IFolder resetTargetFolder(JavaProject project) throws CoreException {
-		deleteTargetProject(project);
-		IFolder targetFolder = createTargetProjectAndFolder(project);
-		return targetFolder;
+	private IProject resetTargetFolder(JavaProject project) throws CoreException {
+		return deleteTargetProject(project);
 	}
 
-	private void convertTo(List<ICompilationUnit> units, IFolder targetFolder)
+	private void convertTo(List<ICompilationUnit> units, IProject targetFolder)
 			throws IOException, CoreException, InterruptedException {
 		SharpenConversionBatch converter = new SharpenConversionBatch(getConfiguration());		
 		converter.setProgressMonitor(newProgressMonitor());
-		converter.setTargetFolder(targetFolder);
+		converter.setTargetProject(targetFolder);
 		converter.setSource(units);
 		converter.run();
 	}
 
-	private IFolder createTargetProjectAndFolder(JavaProject project)
-			throws CoreException {
-		return JavaModelUtility
-				.getTargetProjectAndFolder(project.getJavaProject(), null);
-	}
-
-	private void deleteTargetProject(JavaProject project) throws CoreException {
-		JavaModelUtility.deleteTargetProject(project.getJavaProject());
+	private IProject deleteTargetProject(JavaProject project) throws CoreException {
+		return JavaModelUtility.deleteTargetProject(project.getJavaProject());
 	}
 
 	private Configuration getConfiguration() throws IOException {

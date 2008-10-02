@@ -60,7 +60,7 @@ public class SharpenBuilderPropertyPage extends PropertyPage {
 	    
 		_outputPath = new Text(group, SWT.NONE);
 		_outputPath.setEditable(false);
-		setOutputFolder(configuration.getTargetFolder());
+		setOutputFolder(configuration.getTargetProject());
 		
 		Button button = new Button(group, SWT.PUSH);
 		button.setText("Browse...");

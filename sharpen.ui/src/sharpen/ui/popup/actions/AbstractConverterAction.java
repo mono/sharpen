@@ -77,9 +77,9 @@ public abstract class AbstractConverterAction implements IObjectActionDelegate{
 			@SuppressWarnings("unchecked")
 			public IStatus runInWorkspace(IProgressMonitor monitor) {
 				try {
-					IFolder targetFolder = null;
+					IProject targetProject = null;
 					if (null != sourceProject) {
-						targetFolder = JavaModelUtility.getTargetProjectAndFolder(sourceProject, monitor);
+						targetProject = JavaModelUtility.getTargetProject(sourceProject, monitor);
 						WorkspaceUtilities.addProjectNature(sourceProject.getProject(), SharpenNature.NATURE_ID);
 					}
 					
@@ -87,7 +87,7 @@ public abstract class AbstractConverterAction implements IObjectActionDelegate{
 					SharpenConversionBatch converter = new SharpenConversionBatch();
 					converter.setSource((ICompilationUnit[])compilationUnits.toArray(new ICompilationUnit[compilationUnits.size()]));
 					converter.setProgressMonitor(monitor);
-					converter.setTargetFolder(targetFolder);
+					converter.setTargetProject(targetProject);
 					final Configuration configuration = converter.getConfiguration();
 					configuration.setNamingStrategy(new PascalCaseIdentifiersNamingStrategy());
 					configuration.setCreateProblemMarkers(true);

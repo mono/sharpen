@@ -1,0 +1,6 @@
+namespace builder
+{
+	public interface EmptyInterface
+	{
+	}
+}

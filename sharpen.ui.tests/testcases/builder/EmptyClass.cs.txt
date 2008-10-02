@@ -1,0 +1,6 @@
+namespace builder
+{
+	public class EmptyClass : builder.EmptyInterface
+	{
+	}
+}

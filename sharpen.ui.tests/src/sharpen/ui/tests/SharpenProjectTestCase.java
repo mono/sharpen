@@ -55,21 +55,20 @@ public class SharpenProjectTestCase extends AbstractConversionTestCase {
 		// default configuration points to a non existent folder
 		// which will be automatically created by the builder
 		// the first time is needed
-		IFolder targetFolder = sharpen.getTargetFolder();
-		assertNotNull(targetFolder);
+		IProject targetProject = sharpen.getTargetProject();
+		assertNotNull(targetProject);
 		
-		assertTrue(!targetFolder.exists());
-		assertTrue(!targetFolder.getProject().exists());
+		assertTrue(!targetProject.exists());
 		
-		IPath targetPath = srcProject.getParent().getFullPath().append(srcProject.getName() + ".net/src");
-		assertPath(targetPath, targetFolder);
+		IPath targetPath = srcProject.getParent().getFullPath().append(srcProject.getName() + ".net");
+		assertPath(targetPath, targetProject);
 	}
 
 	private void addSharpenNature() throws CoreException {
 		_project.addNature(SharpenNature.NATURE_ID);
 	}
 	
-	private void assertPath(IPath targetPath, IFolder targetFolder) {
+	private void assertPath(IPath targetPath, IResource targetFolder) {
 		assertEquals(targetPath.toPortableString(), targetFolder.getFullPath().toPortableString());
 	}
 

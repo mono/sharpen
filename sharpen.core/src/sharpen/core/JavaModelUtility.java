@@ -54,9 +54,9 @@ public class JavaModelUtility {
 		return result;
 	}
 	
-	public static IFolder getTargetProjectAndFolder(IJavaProject project, IProgressMonitor monitor) throws CoreException {
+	public static IProject getTargetProject(IJavaProject project, IProgressMonitor monitor) throws CoreException {
 		SimpleProject targetProject = new SimpleProject(getTargetProjectName(project), monitor);
-		return targetProject.createFolder(SharpenConstants.DEFAULT_TARGET_FOLDER, monitor);
+		return targetProject.getProject();
 	}
 	
 	public static String getTargetProjectName(IJavaProject project) {
@@ -69,12 +69,13 @@ public class JavaModelUtility {
 		return result;
 	}
 
-	public static void deleteTargetProject(IJavaProject javaProject) throws CoreException {
-		IProject target = workspaceRoot().getProject(getTargetProjectName(javaProject));
+	public static IProject deleteTargetProject(IJavaProject javaProject) throws CoreException {
+		IProject target = getTargetProject(javaProject, null);
 		if (target.exists()) {
 			target.close(null);
 			target.delete(true, true, null);
 		}
+		return target;
 	}
 
 	public static IWorkspaceRoot workspaceRoot() {

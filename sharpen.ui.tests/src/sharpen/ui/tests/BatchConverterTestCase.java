@@ -58,16 +58,16 @@ public class BatchConverterTestCase extends AbstractConversionTestCase {
 	
 	public void testSingleClassSimplePackageAndTargetFolder() throws Throwable {
 
-		runResourceTestCaseWithTargetFolder("mp/Albatross");
+		runResourceTestCaseWithTargetProject("mp/Albatross");
 	}
 	
 	public void testSingleClassNestedPackageAndTargetFolder() throws Throwable {
 		
-		runResourceTestCaseWithTargetFolder("mp/nested/Parrot");
+		runResourceTestCaseWithTargetProject("mp/nested/Parrot");
 		
 	}
 
-	private void runResourceTestCaseWithTargetFolder(String path)
+	private void runResourceTestCaseWithTargetProject(String path)
 			throws Throwable {
 
 		TestCaseResource resource = new TestCaseResource(path);
@@ -80,7 +80,7 @@ public class BatchConverterTestCase extends AbstractConversionTestCase {
 
 			SharpenConversionBatch converter = new SharpenConversionBatch(getConfiguration());
 			converter.setSource(new ICompilationUnit[] {cu});
-			converter.setTargetFolder(targetFolder);
+			converter.setTargetProject(targetProject.getProject());
 			converter.run();
 
 			assertFile(resource, targetFolder.getFile(path + ".cs"));

@@ -25,6 +25,7 @@ import java.io.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 
 import sharpen.builder.*;
 import sharpen.core.*;
@@ -39,11 +40,15 @@ public class SharpenBuilderTestCase extends AbstractConversionTestCase {
 	}
 	
 	public void testConvertsNewFiles() throws Throwable {
-		TestCaseResource resource = addResourceAndWaitForBuild("EmptyClass");
-		
+		TestCaseResource resource1 = new TestCaseResource("builder/EmptyInterface");
+		TestCaseResource resource2 = new TestCaseResource("builder/EmptyClass");
+		createCompilationUnit(resource1);
+		createCompilationUnit(resource2);
+		waitForBuild();
 		IProject convertedProject = getConvertedProject();
 		try {
-			assertConvertedFile(resource, convertedProject);
+			assertConvertedFile(resource1, convertedProject);
+			assertConvertedFile(resource2, convertedProject);
 		} finally {
 			delete(convertedProject);
 		}
@@ -51,17 +56,9 @@ public class SharpenBuilderTestCase extends AbstractConversionTestCase {
 
 	private IFile getConvertedFile(IProject convertedProject,
 			TestCaseResource resource) {
-		return convertedProject.getFolder(SharpenConstants.DEFAULT_TARGET_FOLDER).getFile(resource.getSimpleName() + ".cs");
+		return convertedProject.getFolder(SharpenConstants.DEFAULT_TARGET_FOLDER).getFile(resource.packageName().replace('.', '/') + '/' + resource.getSimpleName() + ".cs");
 	}
 
-	private void delete(IProject convertedProject) throws CoreException {
-		convertedProject.delete(true, true, null);
-	}
-
-	private IProject getConvertedProject() {
-		return getProject(_project.getName() + SharpenConstants.SHARPENED_PROJECT_SUFFIX);
-	}
-	
 	public void testConvertsUpdatedFiles() throws Throwable {
 		final TestCaseResource resource = addResourceAndWaitForBuild("EmptyClass");
 		IProject convertedProject = getConvertedProject();
@@ -73,6 +70,10 @@ public class SharpenBuilderTestCase extends AbstractConversionTestCase {
 		} finally {
 			delete(convertedProject);
 		}
+	}
+
+	private void waitForBuild() {
+		_project.joinAutoBuild();
 	}
 
 	private void delete(IFile file) throws CoreException {
@@ -103,10 +104,6 @@ public class SharpenBuilderTestCase extends AbstractConversionTestCase {
 		return writer.toString();
 	}
 
-	private IProject getProject(String name) {
-		return WorkspaceUtilities.getProject(name);
-	}
-	
 	private TestCaseResource addResourceAndWaitForBuild(String resourceName) throws CoreException,
 			IOException {
 		TestCaseResource resource = new TestCaseResource(resourceName);
@@ -119,19 +116,13 @@ public class SharpenBuilderTestCase extends AbstractConversionTestCase {
 		
 		SimpleProject targetProject = new SimpleProject("TargetProject");
 		try {
-			IFolder targetFolder = targetProject.createFolder("target");
-		
 			ISharpenProject sharpen = SharpenProject.create(_project.getProject());
-			sharpen.setTargetFolder(targetFolder);
+			sharpen.setTargetProject(targetProject.getProject());
 			
 			TestCaseResource resource = addResourceAndWaitForBuild("EmptyClass");
-			assertFile(resource, targetFolder.getFile("EmptyClass.cs"));
+			assertFile(resource, targetProject.getFile("src/EmptyClass.cs"));
 		} finally {
 			targetProject.dispose();
 		}
-	}
-	
-	private void waitForBuild() {
-		_project.joinAutoBuild();
-	}
+	}	
 }

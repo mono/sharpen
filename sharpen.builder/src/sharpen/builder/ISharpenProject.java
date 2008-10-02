@@ -21,12 +21,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.builder;
 
-import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 
 public interface ISharpenProject {
 
-	void setTargetFolder(IFolder folder);
+	void setTargetProject(IProject project);
 
-	IFolder getTargetFolder();
+	IProject getTargetProject();
 
 }

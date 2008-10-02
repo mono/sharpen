@@ -30,6 +30,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 
 import sharpen.core.*;
+import sharpen.core.framework.resources.SimpleProject;
+import sharpen.core.framework.resources.WorkspaceUtilities;
 
 public abstract class AbstractConversionTestCase extends TestCase {
 
@@ -51,6 +53,10 @@ public abstract class AbstractConversionTestCase extends TestCase {
 	 */
 	protected ICompilationUnit createCompilationUnit(TestCaseResource resource) throws CoreException, IOException {
 		return _project.createCompilationUnit(resource.packageName(), resource.javaFileName(), resource.actualStringContents());
+	}
+	
+	protected ICompilationUnit createCompilationUnit(IPackageFragmentRoot srcFolder, TestCaseResource resource) throws CoreException, IOException {
+		return _project.createCompilationUnit(srcFolder, resource.packageName(), resource.javaFileName(), resource.actualStringContents());
 	}
 
 	protected void runResourceTestCase(String resourceName) throws Throwable {		
@@ -114,12 +120,12 @@ public abstract class AbstractConversionTestCase extends TestCase {
 			TestCaseResource... resources) throws CoreException,
 			IOException, Throwable {
 		final ICompilationUnit[] units = createCompilationUnits(resources); 
+		final SimpleProject targetProject = new SimpleProject("converted");
+		final IFolder targetFolder = targetProject.createFolder("src");
 		
-		final IFolder targetFolder = _project.createFolder("converted");
-	
 		final SharpenConversionBatch converter = new SharpenConversionBatch(configuration);
 		converter.setSource(units);
-		converter.setTargetFolder(targetFolder);
+		converter.setTargetProject(targetProject.getProject());
 		converter.run();
 	
 		for (int i=0; i<resources.length; ++i) { 
@@ -166,5 +172,17 @@ public abstract class AbstractConversionTestCase extends TestCase {
 
 	protected void assertFile(TestCaseResource expectedResource, IFile actualFile) throws Throwable {
 		expectedResource.assertFile(actualFile);
+	}
+
+	protected IProject getConvertedProject() {
+		return getProject(_project.getName() + SharpenConstants.SHARPENED_PROJECT_SUFFIX);
+	}
+
+	IProject getProject(String name) {
+		return WorkspaceUtilities.getProject(name);
+	}
+
+	protected void delete(IProject convertedProject) throws CoreException {
+		convertedProject.delete(true, true, null);
 	}
 }

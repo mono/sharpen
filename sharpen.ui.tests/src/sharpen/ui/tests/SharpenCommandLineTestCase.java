@@ -88,7 +88,7 @@ public class SharpenCommandLineTestCase extends TestCase {
 	}
 	
 	public void testSourceFolders() {
-		SharpenCommandLine cmdLine = parse("foo", "-srcfolder", "bar", "-srcfolder", "baz");
+		SharpenCommandLine cmdLine = parse("foo", "-srcFolder", "bar", "-srcFolder", "baz");
 		assertEquals(NamingStrategy.DEFAULT, cmdLine.pascalCase.getNamingStrategy());
 		assertEquals("foo", cmdLine.project);
 		assertEquals(0, cmdLine.classpath.size());

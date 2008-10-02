@@ -79,7 +79,7 @@ class SharpenCommandLineParser extends CommandLineParser {
 			_cmdLine.pascalCase = SharpenCommandLine.PascalCaseOptions.NamespaceAndIdentifiers;			 
 		} else if (areEqual(arg, "-cp")) {
 			_cmdLine.classpath.add(consumeNext());
-		} else if (areEqual(arg, "-srcfolder")) {
+		} else if (areEqual(arg, "-srcFolder")) {
 			_cmdLine.sourceFolders.add(consumeNext());
 		} else if (areEqual(arg, "-nativeTypeSystem")) {
 			_cmdLine.nativeTypeSystem = true;

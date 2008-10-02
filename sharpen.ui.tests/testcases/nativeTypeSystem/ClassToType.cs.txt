@@ -40,6 +40,7 @@ namespace nativeTypeSystem
 			string foo = clazz.FullName;
 			bool bar = clazz.IsInstanceOfType("foo");
 			bool primitive = clazz.IsPrimitive;
+			bool isInterface = clazz.IsInterface;
 			try
 			{
 				object o = System.Activator.CreateInstance(clazz);

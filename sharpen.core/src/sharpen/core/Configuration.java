@@ -389,6 +389,7 @@ public class Configuration {
 		mapJavaLangClassProperty("getSuperclass", "BaseType");
 		mapJavaLangClassProperty("isArray", "IsArray");
 		mapJavaLangClassProperty("isPrimitive", "IsPrimitive");
+		mapJavaLangClassProperty("isInterface", "IsInterface");
 		mapJavaLangClassMethod("isInstance", "IsInstanceOfType");
 		mapJavaLangClassMethod("newInstance", "System.Activator.CreateInstance");
 		mapJavaLangClassMethod("forName", runtimeMethod("GetType"));

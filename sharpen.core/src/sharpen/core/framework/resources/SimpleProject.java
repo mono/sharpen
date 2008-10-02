@@ -51,17 +51,26 @@ public class SimpleProject {
 	}
 	
 	public IFolder createFolder(String name, IProgressMonitor monitor) throws CoreException {
-		IFolder folder = _project.getFolder(name);
+		IFolder folder = getFolder(name);
 		folder.create(false, true, monitor);
 		return folder;
 	}
+
+	public IFolder getFolder(String name) {
+	    return _project.getFolder(name);
+    }
 
 	public IProject getProject() {
 		return _project;
 	}
 	
-	public void dispose() throws CoreException {
-		_project.delete(true, true, null);
+	public void dispose() {
+		try {
+			_project.delete(true, true, null);
+		} catch (CoreException x) {
+			// just ignore if the resource cant be deleted immediately
+			x.printStackTrace();
+		}
 	}
 	
 	public void addReferencedProject(IProject reference, IProgressMonitor monitor) throws CoreException {

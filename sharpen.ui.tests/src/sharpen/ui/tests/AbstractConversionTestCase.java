@@ -119,9 +119,17 @@ public abstract class AbstractConversionTestCase extends TestCase {
 	protected void runBatchConverterTestCase(Configuration configuration,
 			TestCaseResource... resources) throws CoreException,
 			IOException, Throwable {
-		final ICompilationUnit[] units = createCompilationUnits(resources); 
 		final SimpleProject targetProject = new SimpleProject("converted");
-		final IFolder targetFolder = targetProject.createFolder("src");
+		try {
+			runBatchConverterTestCaseWithTargetProject(targetProject, configuration, resources);
+		} finally {
+			targetProject.dispose();
+		}
+	}
+
+	private void runBatchConverterTestCaseWithTargetProject(final SimpleProject targetProject,
+            Configuration configuration, TestCaseResource... resources) throws CoreException, IOException, Throwable {
+	    final ICompilationUnit[] units = createCompilationUnits(resources); 
 		
 		final SharpenConversionBatch converter = new SharpenConversionBatch(configuration);
 		converter.setSource(units);
@@ -133,9 +141,9 @@ public abstract class AbstractConversionTestCase extends TestCase {
 			if (resource.isSupportingLibrary()) {
 				continue;
 			}
-			checkConversionResult(configuration, targetFolder, units[i], resource);
+			checkConversionResult(configuration, targetProject.getFolder("src"), units[i], resource);
 		}
-	}
+    }
 
 	private ICompilationUnit[] createCompilationUnits(
 			TestCaseResource... resources) throws CoreException, IOException {

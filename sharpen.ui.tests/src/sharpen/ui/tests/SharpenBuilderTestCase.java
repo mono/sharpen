@@ -25,7 +25,6 @@ import java.io.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
 
 import sharpen.builder.*;
 import sharpen.core.*;
@@ -38,6 +37,26 @@ public class SharpenBuilderTestCase extends AbstractConversionTestCase {
 		super.setUp();
 		_project.addNature(SharpenNature.NATURE_ID);
 	}
+	
+//	@Override
+//	protected void tearDown() throws Exception {
+//		waitForBuild(); // don't try to delete resources if the workspace is still building
+//	    super.tearDown();
+//	}
+	
+	public void testTargetFolderConfiguration() throws Throwable {
+		
+		SimpleProject targetProject = new SimpleProject("TargetProject");
+		try {
+			ISharpenProject sharpen = SharpenProject.create(_project.getProject());
+			sharpen.setTargetProject(targetProject.getProject());
+			
+			TestCaseResource resource = addResourceAndWaitForBuild("EmptyClass");
+			assertFile(resource, targetProject.getFile("src/EmptyClass.cs"));
+		} finally {
+			targetProject.dispose();
+		}
+	}	
 	
 	public void testConvertsNewFiles() throws Throwable {
 		TestCaseResource resource1 = new TestCaseResource("builder/EmptyInterface");
@@ -112,17 +131,4 @@ public class SharpenBuilderTestCase extends AbstractConversionTestCase {
 		return resource;
 	}
 	
-	public void testTargetFolderConfiguration() throws Throwable {
-		
-		SimpleProject targetProject = new SimpleProject("TargetProject");
-		try {
-			ISharpenProject sharpen = SharpenProject.create(_project.getProject());
-			sharpen.setTargetProject(targetProject.getProject());
-			
-			TestCaseResource resource = addResourceAndWaitForBuild("EmptyClass");
-			assertFile(resource, targetProject.getFile("src/EmptyClass.cs"));
-		} finally {
-			targetProject.dispose();
-		}
-	}	
 }

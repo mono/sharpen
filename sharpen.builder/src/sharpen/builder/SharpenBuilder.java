@@ -21,15 +21,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.builder;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
-
-import sharpen.core.*;
-import sharpen.core.framework.resources.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
+
+import sharpen.core.*;
 
 public class SharpenBuilder extends IncrementalProjectBuilder {
 

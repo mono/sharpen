@@ -86,12 +86,16 @@ public class SharpenConversionBatch extends ConversionBatch {
 			newName = getNameWithoutExtension(cu.getElementName()) + ".cs";
 		}
 
-		IFolder folder = getTargetFolderForCompilationUnit(cu, csModule.namespace());
-		IFile file = folder.getFile(newName);
-		WorkspaceUtilities.writeText(file, convertedContents.getBuffer().toString());
+		IFolder folder = targetFolderForCompilationUnit(cu, csModule.namespace());
+		ensureFolder(folder);
+		WorkspaceUtilities.writeText(folder.getFile(newName), convertedContents.getBuffer().toString());
 	}
 
-	IFolder getTargetFolderForCompilationUnit(ICompilationUnit cu, String generatedNamespace)
+	private void ensureFolder(IFolder folder) throws CoreException {
+	    WorkspaceUtilities.initializeTree(folder, null);
+    }
+
+	IFolder targetFolderForCompilationUnit(ICompilationUnit cu, String generatedNamespace)
 			throws CoreException {
 
 		if (null == _targetProject) {
@@ -121,17 +125,7 @@ public class SharpenConversionBatch extends ConversionBatch {
 
 	private IFolder getTargetPackageFolder(IFolder targetFolder, String packageName)
 			throws CoreException {
-		String[] parts = packageName.split("\\.");
-		IFolder folder = targetFolder;
-		synchronized(targetFolder) {
-			for (int i = 0; i < parts.length; ++i) {
-				folder = folder.getFolder(parts[i]);
-				if (!folder.exists()) {
-					folder.create(false, true, null);
-				}
-			}
-		}
-		return folder;
+		return targetFolder.getFolder(packageName.replace('.', '/'));
 	}
 	
 	private String getNameWithoutExtension(String name) {

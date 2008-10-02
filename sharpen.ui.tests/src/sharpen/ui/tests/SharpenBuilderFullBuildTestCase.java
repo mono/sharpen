@@ -6,6 +6,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 
+import sharpen.builder.*;
 import sharpen.core.framework.resources.WorkspaceUtilities;
 
 public class SharpenBuilderFullBuildTestCase extends AbstractConversionTestCase {
@@ -18,6 +19,7 @@ public class SharpenBuilderFullBuildTestCase extends AbstractConversionTestCase 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		_project.addNature(SharpenNature.NATURE_ID);
 		WorkspaceUtilities.setAutoBuilding(false);
 	}
 	
@@ -35,7 +37,7 @@ public class SharpenBuilderFullBuildTestCase extends AbstractConversionTestCase 
 
 	private void assertConvertedFile(final TestCaseResource resource,
 			final ICompilationUnit cu) throws IOException, CoreException {
-		resource.assertFile(getConvertedProject().getFile(cu.getResource().getProjectRelativePath()));
+		resource.assertFile(getConvertedProject().getFile(cu.getResource().getParent().getProjectRelativePath() + "/" + resource.getSimpleName() + ".cs"));
 	}
 
 	private IPackageFragmentRoot addSourceFolder(String path) throws CoreException {

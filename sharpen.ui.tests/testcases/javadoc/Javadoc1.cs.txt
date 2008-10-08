@@ -30,6 +30,7 @@ namespace javadoc
 		/// <returns>the ultimate answer</returns>
 		/// <exception cref="System.InvalidOperationException">when things go crazy</exception>
 		/// <seealso cref="int.MaxValue">int.MaxValue</seealso>
+		/// <seealso><a href="http://a-valid-url.com/resource">Ancor Text</a></seealso>
 		public virtual int foo(int bar)
 		{
 			return 42;

@@ -784,13 +784,12 @@ public class CSharpPrinter extends CSVisitor {
 	
 
 	private String xmlEscape(String text) {
-		return text
-			.replaceAll("(<)(/?\\w+)(>)", ":lt:$2:gt:")
-			.replace("<", "&lt;").replace(">", "&gt;")
-			.replace(":lt:", "<")
-			.replace(":gt:", ">");
+		return text.replaceAll("(<)(/?[^\\s][^>]*)(>)", ":lt:$2:gt:")
+					.replace("<", "&lt;").replace(">", "&gt;")
+					.replace(":lt:", "<")
+					.replace(":gt:", ">");
+		
 	}
-
 	
 	public void visit(CSDocTagNode node) {
 		String tagName = node.tagName();

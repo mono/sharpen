@@ -23,6 +23,7 @@ public abstract class Javadoc1 {
 	 * @return the ultimate answer
 	 * @throws IllegalStateException when things go crazy
 	 * @see Integer#MAX_VALUE
+	 * @see <a href="http://a-valid-url.com/resource">Ancor Text</a>
 	 */
 	public int foo(int bar) throws IllegalStateException {
 		return 42;

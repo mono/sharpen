@@ -74,7 +74,7 @@ public class JavaProject extends SimpleProject {
 		public Builder projectReferences(Iterable<String> projectReferences) throws CoreException {
 			for (String projectReference : projectReferences) {
 				final IProject reference = WorkspaceUtilities.getProject(projectReference);
-				project.addClasspathEntry(JavaCore.newProjectEntry(reference.getFullPath(), true));
+				project.addReferencedProject(reference, null);
 			}
 			return this;
 		}
@@ -109,6 +109,12 @@ public class JavaProject extends SimpleProject {
 
 	private void initializeClassPath() throws JavaModelException {
 		_javaProject.setRawClasspath(new IClasspathEntry[0], null);
+	}
+	
+	@Override
+	public void addReferencedProject(IProject reference, IProgressMonitor monitor) throws CoreException {
+	    super.addReferencedProject(reference, monitor);
+	    addClasspathEntry(JavaCore.newProjectEntry(reference.getFullPath(), true));
 	}
 	
 	public IPackageFragmentRoot addSourceFolder(String path) throws CoreException {

@@ -288,6 +288,7 @@ public class Configuration {
 		// collection framework
 	    mapType("java.util.Collection", "System.Collections.ICollection");
 	    mapType("java.util.Collection<>", "System.Collections.Generic.ICollection");
+	    mapType("java.util.Set<>", "System.Collections.Generic.ICollection");
 	    mapType("java.util.Iterator", "System.Collections.IEnumerator");
 	    mapType("java.util.Iterator<>", "System.Collections.Collection.IEnumerator");
 	    mapType("java.lang.Iterable", "System.Collections.IEnumerable");

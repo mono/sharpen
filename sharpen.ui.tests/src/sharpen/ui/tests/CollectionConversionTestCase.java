@@ -23,28 +23,37 @@ package sharpen.ui.tests;
 
 public class CollectionConversionTestCase extends AbstractConversionTestCase {
 	
+	public void testSet() throws Throwable {
+		runResourceTestCase("Set");
+	}
+	
 	public void testMap1() throws Throwable {
-		runResourceTestCase("collections/Map1");
+		runResourceTestCase("Map1");
 	}
 	
 	public void testList1() throws Throwable {
-		runResourceTestCase("collections/List1");
+		runResourceTestCase("List1");
 	}
 	
 	public void testEntrySet() throws Throwable {
-		runResourceTestCase("collections/EntrySet1");
+		runResourceTestCase("EntrySet1");
 	}
 	
 	public void testIterator() throws Throwable {
-		runResourceTestCase("collections/Iterator1");
+		runResourceTestCase("Iterator1");
 	}
 	
 	public void testVector() throws Throwable {
-		runResourceTestCase("collections/Vector1");
+		runResourceTestCase("Vector1");
 	}
 	
 	public void testHashtable() throws Throwable {
-		runResourceTestCase("collections/Hashtable1");
+		runResourceTestCase("Hashtable1");
+	}
+	
+	@Override
+	protected void runResourceTestCase(String resourceName) throws Throwable {
+		super.runResourceTestCase("collections/" + resourceName);
 	}
 
 }

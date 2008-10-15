@@ -1,0 +1,7 @@
+namespace collections
+{
+	internal class BigSet<E>
+	{
+		public System.Collections.Generic.ICollection<E> set;
+	}
+}

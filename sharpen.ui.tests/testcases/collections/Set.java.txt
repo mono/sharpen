@@ -1,0 +1,5 @@
+package collections;
+
+class BigSet<E> {
+	public java.util.Set<E> set;
+}

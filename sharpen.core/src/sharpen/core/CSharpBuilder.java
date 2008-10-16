@@ -2098,15 +2098,20 @@ public class CSharpBuilder extends ASTVisitor {
 			return;
 		}
 
-		String name = mappedMethodName(node.resolveMethodBinding(), null);
+		processOrdinaryMethodInvocation(node);
+	}
+
+	private void processOrdinaryMethodInvocation(MethodInvocation node) {
 		final CSExpression targetExpression = mapMethodTargetExpression(node);
-		CSExpression target = null == targetExpression ? new CSReferenceExpression(name)
+		String name = mappedMethodName(node.resolveMethodBinding(), null);
+		CSExpression target = null == targetExpression
+				? new CSReferenceExpression(name)
 		        : new CSMemberReferenceExpression(targetExpression, name);
 		CSMethodInvocationExpression mie = new CSMethodInvocationExpression(target);
 		mapMethodInvocationArguments(mie, node);
 		mapTypeArguments(mie, node);
 		pushExpression(mie);
-	}
+    }
 
 	private void mapTypeArguments(CSMethodInvocationExpression mie, MethodInvocation node) {
 	    for (Object o : node.typeArguments()) {

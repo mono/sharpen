@@ -1,7 +1,17 @@
 package generics;
 
+import java.util.*;
+
 public class GenericMethods {
 	public <T> T[] toArray(T[] a) {
 		return a;
+	}
+	
+	public static List<String> asList() {
+		return GenericMethods.<String>newList();
+	}
+	
+	private static <T> List<T> newList() {
+		return null;
 	}
 }

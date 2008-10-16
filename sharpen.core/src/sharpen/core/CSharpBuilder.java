@@ -2104,8 +2104,15 @@ public class CSharpBuilder extends ASTVisitor {
 		        : new CSMemberReferenceExpression(targetExpression, name);
 		CSMethodInvocationExpression mie = new CSMethodInvocationExpression(target);
 		mapMethodInvocationArguments(mie, node);
+		mapTypeArguments(mie, node);
 		pushExpression(mie);
 	}
+
+	private void mapTypeArguments(CSMethodInvocationExpression mie, MethodInvocation node) {
+	    for (Object o : node.typeArguments()) {
+			mie.addTypeArgument(mappedTypeReference((Type)o));
+		}
+    }
 
 	private void processMappedEventSubscription(MethodInvocation node) {
 

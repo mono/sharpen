@@ -6,5 +6,15 @@ namespace generics
 		{
 			return a;
 		}
+
+		public static System.Collections.Generic.IList<string> asList()
+		{
+			return generics.GenericMethods.newList<string>();
+		}
+
+		private static System.Collections.Generic.IList<T> newList<T>()
+		{
+			return null;
+		}
 	}
 }

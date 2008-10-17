@@ -26,6 +26,9 @@ public class ExceptionMapping1
 		{
 			baz();
 		}
+		catch (System.OutOfMemoryException)
+		{
+		}
 		catch (System.Exception x)
 		{
 			bar(x.Message);

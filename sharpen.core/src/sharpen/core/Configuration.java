@@ -268,6 +268,7 @@ public class Configuration {
 		mapProperty("java.lang.Throwable.getMessage", "Message");
 		mapProperty("java.lang.Throwable.getCause", "InnerException");
 		mapType("java.lang.Error", "System.Exception");
+		mapType("java.lang.OutOfMemoryError", "System.OutOfMemoryException");
 		mapType("java.lang.Exception", "System.Exception");
 		mapType("java.lang.RuntimeException", "System.Exception");
 		mapType("java.lang.ClassCastException", "System.InvalidCastException");

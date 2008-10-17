@@ -17,6 +17,7 @@ public class ExceptionMapping1 {
 	public void gazonk() {
 		try {
 			baz();
+		} catch (OutOfMemoryError error) {
 		} catch (Throwable x) {
 			bar(x.getMessage());
 			bar(x.getCause());

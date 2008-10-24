@@ -8,7 +8,9 @@
 
    <runtime>
       <library name="sharpen.jar">
-         <export name="*"/>
+         <export
+               name="*">
+         </export>
       </library>
    </runtime>
 

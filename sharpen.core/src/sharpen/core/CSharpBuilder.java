@@ -30,7 +30,6 @@ import org.eclipse.jdt.core.dom.*;
 import sharpen.core.Configuration.*;
 import sharpen.core.csharp.ast.*;
 import sharpen.core.framework.*;
-import sharpen.core.util.*;
 
 public class CSharpBuilder extends ASTVisitor {
 
@@ -82,7 +81,7 @@ public class CSharpBuilder extends ASTVisitor {
 
 	private IVariableBinding _currentExceptionVariable;
 
-	private final ContextVariable<Boolean> _ignoreExtends = new ContextVariable<Boolean>(Boolean.FALSE);
+	private final DynamicVariable<Boolean> _ignoreExtends = new DynamicVariable<Boolean>(Boolean.FALSE);
 
 	protected NamingStrategy namingStrategy() {
 		return _configuration.getNamingStrategy();

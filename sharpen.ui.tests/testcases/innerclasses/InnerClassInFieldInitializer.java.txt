@@ -1,0 +1,39 @@
+package innerclasses;
+
+class Class1 {
+	private Runnable _runnable = new Runnable() {
+		public void run() {
+			_field ++;
+		}
+	};
+	
+	private int _field = 0;
+}
+
+class Class2 {
+
+	private Runnable _r1 = new Runnable() {
+		public void run() {
+			_field++;
+		}
+	};
+	
+	private Runnable _r2 = new Runnable() {
+		public void run() {
+			_field--;
+		}
+	};
+	
+	private int _field = 0;
+	
+	private Runnable _r3 = _r1;
+	
+	private Runnable _r4 = null;
+	
+	public Class2(int initialValue) {
+		_field = initialValue;
+	}
+	
+	public Class2() {
+	}
+}

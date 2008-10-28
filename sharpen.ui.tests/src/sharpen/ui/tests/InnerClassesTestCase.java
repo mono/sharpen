@@ -25,6 +25,10 @@ package sharpen.ui.tests;
 
 public class InnerClassesTestCase extends AbstractConversionTestCase {
 	
+	public void testInnerClassInFieldInitializer() throws Throwable {
+		runResourceTestCase("InnerClassInFieldInitializer");
+	}
+	
 	public void testNestedThis() throws Throwable {
 		runResourceTestCase("NestedThis");
 	}

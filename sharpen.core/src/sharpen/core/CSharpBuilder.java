@@ -309,9 +309,80 @@ public class CSharpBuilder extends ASTVisitor {
 		mapMembers(node, type);
 
 		autoImplementCloneable(node, type);
-
+		
+		moveInitializersDependingOnThisReferenceToConstructor(type);
+	
 		return type;
 	}
+
+	private void moveInitializersDependingOnThisReferenceToConstructor(CSTypeDeclaration type) {
+		
+		final List<String> moved = new ArrayList<String>();
+		
+		for (CSMember member : copy(type.members())) {
+			if (!(member instanceof CSField))
+				continue;
+			
+			final CSField field = (CSField)member;
+			if (!isDependentOnThisOrMovedField(field, moved))
+				continue;
+			
+			moveFieldInitializerToConstructors(field, type, moved);
+        }
+	}
+
+	private CSMember[] copy(final List<CSMember> list) {
+	    return list.toArray(new CSMember[0]);
+    }
+
+	private boolean isDependentOnThisOrMovedField(CSField field, final List<String> moved) {
+		if (null == field.initializer())
+			return false;
+		
+		final ByRef<Boolean> foundThisReference = new ByRef<Boolean>(false);
+		field.initializer().accept(new CSExpressionVisitor() {
+			@Override
+			public void visit(CSThisExpression node) {
+				foundThisReference.value = true;
+			}
+			
+			@Override
+			public void visit(CSReferenceExpression node) {
+				if (moved.contains(node.name())) {
+					foundThisReference.value = true;
+				}
+			}
+		});
+		return foundThisReference.value;
+    }
+	
+	private void moveFieldInitializerToConstructors(CSField field, CSTypeDeclaration type, List<String> moved) {
+		final CSExpression initializer = field.initializer();
+		for (CSConstructor ctor : ensureConstructorsFor(type))
+			ctor.body().addStatement(
+					moved.size(),
+					newAssignment(field, initializer));
+		field.initializer(null);
+		moved.add(field.name());
+    }
+
+	private CSExpression newAssignment(CSField field, final CSExpression initializer) {
+	    return CSharpCode.newAssignment(CSharpCode.newReference(field), initializer);
+    }
+
+	private Iterable<CSConstructor> ensureConstructorsFor(CSTypeDeclaration type) {
+		final List<CSConstructor> ctors = type.constructors();
+		if (!ctors.isEmpty())
+			return ctors;
+		
+		return Collections.singletonList(addDefaultConstructor(type));
+    }
+
+	private CSConstructor addDefaultConstructor(CSTypeDeclaration type) {
+		final CSConstructor ctor = CSharpCode.newPublicConstructor();
+		type.addMember(ctor);
+		return ctor;
+    }
 
 	private void autoImplementCloneable(TypeDeclaration node, CSTypeDeclaration type) {
 

@@ -154,7 +154,7 @@ public class CSAnonymousClassBuilder extends AbstractNestedClassBuilder {
 	}
 
 	private void addFieldParameter(String name, CSTypeReferenceExpression type) {
-		addFieldParameter(createField(name, type));
+		addFieldParameter(CSharpCode.newPrivateReadonlyField(name, type));
 	}
 
 	private void addFieldParameter(CSField field) {

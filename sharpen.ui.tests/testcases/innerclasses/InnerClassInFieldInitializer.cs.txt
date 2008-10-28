@@ -1,0 +1,87 @@
+namespace innerclasses
+{
+	internal class Class1
+	{
+		private sealed class _Runnable_4 : java.lang.Runnable
+		{
+			public _Runnable_4(Class1 _enclosing)
+			{
+				this._enclosing = _enclosing;
+			}
+
+			public void run()
+			{
+				this._enclosing._field++;
+			}
+
+			private readonly Class1 _enclosing;
+		}
+
+		private java.lang.Runnable _runnable;
+
+		private int _field = 0;
+
+		public Class1()
+		{
+			_runnable = new _Runnable_4(this);
+		}
+	}
+
+	internal class Class2
+	{
+		private sealed class _Runnable_15 : java.lang.Runnable
+		{
+			public _Runnable_15(Class2 _enclosing)
+			{
+				this._enclosing = _enclosing;
+			}
+
+			public void run()
+			{
+				this._enclosing._field++;
+			}
+
+			private readonly Class2 _enclosing;
+		}
+
+		private java.lang.Runnable _r1;
+
+		private sealed class _Runnable_21 : java.lang.Runnable
+		{
+			public _Runnable_21(Class2 _enclosing)
+			{
+				this._enclosing = _enclosing;
+			}
+
+			public void run()
+			{
+				this._enclosing._field--;
+			}
+
+			private readonly Class2 _enclosing;
+		}
+
+		private java.lang.Runnable _r2;
+
+		private int _field = 0;
+
+		private java.lang.Runnable _r3;
+
+		private java.lang.Runnable _r4 = null;
+
+		public Class2(int initialValue)
+		{
+			_r1 = new _Runnable_15(this);
+			_r2 = new _Runnable_21(this);
+			_r3 = _r1;
+			_field = initialValue;
+		}
+
+		public Class2()
+		{
+			_r1 = new _Runnable_15(this);
+			_r2 = new _Runnable_21(this);
+			_r3 = _r1;
+		}
+	}
+}

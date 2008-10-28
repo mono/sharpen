@@ -69,9 +69,7 @@ public abstract class AbstractNestedClassBuilder extends CSharpBuilder {
 	}
 
 	private CSExpression createEnclosingReferences(SimpleName name) {
-		
 		CSExpression target = createEnclosingTargetReferences(name);
-			
 		return new CSMemberReferenceExpression(target, mappedName(name));
 	}
 
@@ -145,14 +143,8 @@ public abstract class AbstractNestedClassBuilder extends CSharpBuilder {
 		return null;
 	}
 
-	protected CSField createField(String name, CSTypeReferenceExpression type) {
-		CSField field = new CSField(name, type, CSVisibility.Private);
-		field.addModifier(CSFieldModifier.Readonly);
-		return field;
-	}
-
 	protected CSField createEnclosingField() {
-		return createField("_enclosing", enclosingTypeReference());
+		return CSharpCode.newPrivateReadonlyField("_enclosing", enclosingTypeReference());
 	}
 
 	private CSTypeReference enclosingTypeReference() {

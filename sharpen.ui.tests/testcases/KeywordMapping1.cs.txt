@@ -18,7 +18,7 @@ public class KeywordMapping1
 	{
 	}
 
-	private void setFlag(bool @bool)
+	private void setFlag(bool @bool, bool @readonly)
 	{
 	}
 }

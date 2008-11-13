@@ -30,26 +30,19 @@ public class NamingStrategy {
 	static Map<String, String> _identifierMappings = new HashMap<String, String>();
 	
 	static {
-		mapIdentifier("base");
-		mapIdentifier("ref");
-		mapIdentifier("out");
-		mapIdentifier("as");
-		mapIdentifier("is");
-		mapIdentifier("in");
-		mapIdentifier("object");
-		mapIdentifier("string");
-		mapIdentifier("bool");
-		mapIdentifier("using");
+		keywords("readonly", "params", "override", "event", "operator",
+				"internal", "base", "ref", "out", "as", "is", "in",
+				"object", "string", "bool", "using");
 		mapIdentifier("lock", "Lock");
-		mapIdentifier("params");
 		mapIdentifier("delegate", "delegate_");
-		mapIdentifier("override");
-		mapIdentifier("event");
-		mapIdentifier("operator");
-		mapIdentifier("internal");
 	}
 	
-	private static void mapIdentifier(String value) {
+	private static void keywords(String... values) {
+		for (String value : values)
+			keyword(value);
+	}
+	
+	private static void keyword(String value) {
 		mapIdentifier(value, "@" + value);
 	}
 	

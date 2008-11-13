@@ -15,6 +15,6 @@ public class KeywordMapping1 {
 	private void as(String string) {
 	}
 
-	private void setFlag(boolean bool) {
+	private void setFlags(boolean bool, boolean readonly) {
 	}
 }

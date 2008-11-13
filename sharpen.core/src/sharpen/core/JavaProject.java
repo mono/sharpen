@@ -254,8 +254,7 @@ public class JavaProject extends SimpleProject {
 	}
 
 	public void addNature(String natureId) throws CoreException {
-		IProject project = _project;
-		WorkspaceUtilities.addProjectNature(project, natureId);
+		WorkspaceUtilities.addProjectNature(_project, natureId);
 	}
 
 	/**

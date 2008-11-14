@@ -2054,12 +2054,17 @@ public class CSharpBuilder extends ASTVisitor {
 		if (null == mappedConstructor) {
 			return new CSConstructorInvocationExpression(mappedTypeReference(node.resolveTypeBinding()));
 		}
-		if (mappedConstructor.name.startsWith("System.Convert.To")) {
-			if (optimizeSystemConvert(mappedConstructor.name, node)) {
+		final String mappedName = mappedConstructor.name;
+		if (mappedName.isEmpty()) {
+			pushExpression(mapExpression((Expression)node.arguments().get(0)));
+			return null;
+		}
+		if (mappedName.startsWith("System.Convert.To")) {
+			if (optimizeSystemConvert(mappedName, node)) {
 				return null;
 			}
 		}
-		return new CSMethodInvocationExpression(new CSReferenceExpression(methodName(mappedConstructor.name)));
+		return new CSMethodInvocationExpression(new CSReferenceExpression(methodName(mappedName)));
 	}
 
 	private boolean optimizeSystemConvert(String mappedConstructor, ClassInstanceCreation node) {

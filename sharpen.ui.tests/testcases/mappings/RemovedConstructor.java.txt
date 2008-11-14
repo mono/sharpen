@@ -1,0 +1,17 @@
+package mappings;
+
+class Foo {
+	public Foo(int value) {
+	}
+}
+
+class RemovedConstructor {
+
+	public void run() {
+		bar(new Foo(42));
+	}
+	
+	private void bar(Object o) {
+	}
+	
+}

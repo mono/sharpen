@@ -1,0 +1,21 @@
+namespace mappings
+{
+	internal class Foo
+	{
+		public Foo(int value)
+		{
+		}
+	}
+
+	internal class RemovedConstructor
+	{
+		public virtual void run()
+		{
+			bar(42);
+		}
+
+		private void bar(object o)
+		{
+		}
+	}
+}

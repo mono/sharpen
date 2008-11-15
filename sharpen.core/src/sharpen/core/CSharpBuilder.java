@@ -2055,7 +2055,7 @@ public class CSharpBuilder extends ASTVisitor {
 			return new CSConstructorInvocationExpression(mappedTypeReference(node.resolveTypeBinding()));
 		}
 		final String mappedName = mappedConstructor.name;
-		if (mappedName.isEmpty()) {
+		if (mappedName.length() == 0) {
 			pushExpression(mapExpression((Expression)node.arguments().get(0)));
 			return null;
 		}

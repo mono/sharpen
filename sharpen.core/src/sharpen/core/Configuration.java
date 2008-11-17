@@ -262,8 +262,6 @@ public class Configuration {
 	}
 
 	private void setUpExceptionMappings() {
-		// TODO: evaluate if we should follow the conventions of the previous
-		// converter
 		mapType("java.lang.Throwable", "System.Exception");
 		mapProperty("java.lang.Throwable.getMessage", "Message");
 		mapProperty("java.lang.Throwable.getCause", "InnerException");
@@ -323,6 +321,7 @@ public class Configuration {
 	    mapMethod("java.util.Iterator.hasNext", "MoveNext");
 	    mapProperty("java.util.Iterator.next", "Current");
 	    mapMethod("java.util.Map.put", "Add");
+	    mapMethod("java.util.Map.remove", "Sharpen.Util.Collections.Remove");
 	    mapMethod("java.util.Map.entrySet", "");
 	    mapProperty("java.util.Map.Entry.getKey", "Key");
 	    mapProperty("java.util.Map.Entry.getValue", "Value");

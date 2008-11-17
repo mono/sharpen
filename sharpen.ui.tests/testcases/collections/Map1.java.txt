@@ -10,6 +10,7 @@ public class Map1 {
 		}
 		for (Object key : map.keySet()) {
 		}
+		Object removed = map.remove("foo");
 	}
 	
 	static java.util.Map genericSortedMap() {

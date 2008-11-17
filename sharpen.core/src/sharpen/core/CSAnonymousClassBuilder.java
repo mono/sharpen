@@ -101,6 +101,7 @@ public class CSAnonymousClassBuilder extends AbstractNestedClassBuilder {
 		processAnonymousBody();
 		flushCapturedVariables();
 		flushFieldInitializers();
+		flushInstanceInitializers(_type);
 	}
 
 	private void flushFieldInitializers() {

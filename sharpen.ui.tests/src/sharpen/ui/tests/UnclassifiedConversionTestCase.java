@@ -421,14 +421,6 @@ public class UnclassifiedConversionTestCase extends AbstractConversionTestCase {
 		runResourceTestCase("KeywordMapping1");
 	}
 	
-	public void testConstructorDeclaration() throws Throwable {
-		runResourceTestCase("Constructors1");
-	}
-	
-	public void testConstructorInvocationFromConstructor() throws Throwable {
-		runResourceTestCase("Constructors2");
-	}
-	
 	public void testClassLiterals() throws Throwable {
 		runResourceTestCase("ClassLiterals1");
 	}

@@ -1,0 +1,59 @@
+public class Initializers
+{
+	public Initializers() : this(null)
+	{
+		{
+			foo("instance 1");
+		}
+		{
+			foo("instance 2");
+		}
+		bar(null);
+	}
+
+	public Initializers(string value)
+	{
+		{
+			foo("instance 1");
+		}
+		{
+			foo("instance 2");
+		}
+		bar(null);
+	}
+
+	static Initializers()
+	{
+		foo("static");
+	}
+
+	internal static void foo(string m)
+	{
+		new _Initializers_19(m);
+	}
+
+	private sealed class _Initializers_19 : Initializers
+	{
+		public _Initializers_19(string m)
+		{
+			{
+				Initializers.bar(m);
+			}
+			this.m = m;
+		}
+
+		private readonly string m;
+	}
+
+	internal static void bar(string m)
+	{
+	}
+}
+
+internal class InitializerWithoutConstructor
+{
+	internal InitializerWithoutConstructor()
+	{
+		Initializers.foo(null);
+	}
+}

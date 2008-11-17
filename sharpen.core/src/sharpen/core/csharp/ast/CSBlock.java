@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class CSBlock extends CSNode {
+public class CSBlock extends CSStatement {
 	
 	private List<CSStatement> _statements = new ArrayList<CSStatement>();
 	
@@ -61,4 +61,8 @@ public class CSBlock extends CSNode {
 	public void addAll(CSBlock body) {
 		_statements.addAll(body._statements);
 	}
+
+	public void addStatement(int index, CSStatement stmt) {
+		_statements.add(index, stmt);
+    }
 }

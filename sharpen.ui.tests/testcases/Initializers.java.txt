@@ -1,0 +1,30 @@
+public class Initializers {
+	public Initializers()	{
+		this(null);
+		bar(null);
+	}
+	
+	{ foo("instance 1"); }
+	{ foo("instance 2"); }
+	
+	public Initializers(String value) {
+		bar(null);
+	}
+	
+	static {
+		foo("static");
+	}
+	
+	static void foo(final String m) {
+		new Initializers() {{
+			bar(m);
+		}};
+	}
+	
+	static void bar(String m) {
+	}
+}
+
+class InitializerWithoutConstructor {{
+	Initializers.foo(null);
+}}

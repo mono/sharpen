@@ -80,7 +80,7 @@ public class CSharpPrinter extends CSVisitor {
 		if (usings.size() > 0) _writer.writeLine();
 
 		if (null != node.namespace()) {
-			write("namespace " + node.namespace());
+			writeLine("namespace " + node.namespace());
 			enterBody();
 		}
 		writeLineSeparatedList(node.types());
@@ -99,7 +99,7 @@ public class CSharpPrinter extends CSVisitor {
 	
 	public void visit(CSEnum node) {
 		writeMemberHeader(node);
-		write("enum " + node.name());
+		writeLine("enum " + node.name());
 		enterBody();
 		writeSeparatedList(node.values(), new Closure() {
 			public void execute() {
@@ -203,6 +203,7 @@ public class CSharpPrinter extends CSVisitor {
 	}
 
 	private void writeTypeBody(CSTypeDeclaration node) {
+		writeLine();
 		enterBody();
 		CSTypeDeclaration saved = _currentType;
 		_currentType = node;
@@ -252,13 +253,14 @@ public class CSharpPrinter extends CSVisitor {
 			write(" : ");
 			writeMethodInvocation(node.chainedConstructorInvocation());
 		}
+		writeLine();
 		node.body().accept(this);
 	}
 	
 	public void visit(CSDestructor node) {
 		writeIndented("~");
 		write(_currentType.name());
-		write("()");
+		writeLine("()");
 		node.body().accept(this);
 	}
 	
@@ -305,6 +307,7 @@ public class CSharpPrinter extends CSVisitor {
 	}
 
 	protected void writeMethodBody(CSMethod node) {
+		writeLine();
 		node.body().accept(this);
 	}
 
@@ -392,10 +395,10 @@ public class CSharpPrinter extends CSVisitor {
 		
 		writeIndented("if (");
 		node.expression().accept(this);
-		write(")");
+		writeLine(")");
 		node.trueBlock().accept(this);
 		if (!node.falseBlock().isEmpty()) {
-			writeIndented("else");
+			writeIndentedLine("else");
 			node.falseBlock().accept(this);
 		}
 	}
@@ -411,7 +414,7 @@ public class CSharpPrinter extends CSVisitor {
 	public void visit(CSSwitchStatement node) {
 		writeIndented("switch (");
 		node.expression().accept(this);
-		write(")");
+		writeLine(")");
 		enterBody();
 		writeLineSeparatedList(node.caseClauses());
 		leaveBody();
@@ -430,7 +433,7 @@ public class CSharpPrinter extends CSVisitor {
 			if (clauses > 0) writeLine();
 			writeIndented("default:");
 		}
-		
+		writeLine();
 		node.body().accept(this);
 	}
 	
@@ -441,7 +444,7 @@ public class CSharpPrinter extends CSVisitor {
 		node.variable().accept(this);
 		write(" in ");
 		node.expression().accept(this);
-		write(")");
+		writeLine(")");
 		node.body().accept(this);
 	}
 	
@@ -456,7 +459,7 @@ public class CSharpPrinter extends CSVisitor {
 		}
 		write("; ");
 		writeCommaSeparatedList(node.updaters());
-		write(")");
+		writeLine(")");
 		node.body().accept(this);
 	}
 	
@@ -476,11 +479,12 @@ public class CSharpPrinter extends CSVisitor {
 		write(" (");
 		node.expression().accept(this);
 		write(")");
+		writeLine();
 		node.body().accept(this);
 	}
 	
 	public void visit(CSDoStatement node) {
-		writeIndented("do");
+		writeIndentedLine("do");
 		node.body().accept(this);
 		writeIndented("while (");
 		node.expression().accept(this);
@@ -490,11 +494,11 @@ public class CSharpPrinter extends CSVisitor {
 	public void visit(CSTryStatement node) {
 		printPrecedingComments(node);
 		
-		writeIndented("try");
+		writeIndentedLine("try");
 		node.body().accept(this);
 		visitList(node.catchClauses());
 		if (null != node.finallyBlock()) {
-			writeIndented("finally");
+			writeIndentedLine("finally");
 			node.finallyBlock().accept(this);
 		}
 	}
@@ -507,6 +511,7 @@ public class CSharpPrinter extends CSVisitor {
 			ex.accept(this);
 			write(")");
 		}
+		writeLine();
 		node.body().accept(this);
 	}
 	
@@ -698,9 +703,9 @@ public class CSharpPrinter extends CSVisitor {
 		if (node.isIndexer()) {
 			write("this[");
 			writeCommaSeparatedList(node.parameters());
-			write("]");
+			writeLine("]");
 		} else {
-			write(node.name());
+			writeLine(node.name());
 		}
 		enterBody();
 		writeOptionalMemberBlock("get", node.getter(), node.isAbstract());
@@ -732,6 +737,7 @@ public class CSharpPrinter extends CSVisitor {
 			writeLine(";");
 			return;
 		}
+		writeLine();
 		enterBody();
 		writeMemberBlock("add", firstBlock, node.isAbstract());
 		writeMemberBlock("remove", node.getRemoveBlock(), node.isAbstract());
@@ -749,6 +755,7 @@ public class CSharpPrinter extends CSVisitor {
 		if (isAbstract) {
 			writeLine(";");
 		} else {
+			writeLine();
 			block.accept(this);
 		}
 	}
@@ -906,7 +913,7 @@ public class CSharpPrinter extends CSVisitor {
 	}
 	
     protected void enterBody() {
-		writeLine();
+//		writeLine();
         writeIndentedLine("{");
         indent();
 	}

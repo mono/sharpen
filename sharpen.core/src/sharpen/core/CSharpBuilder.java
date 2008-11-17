@@ -83,6 +83,8 @@ public class CSharpBuilder extends ASTVisitor {
 
 	private final DynamicVariable<Boolean> _ignoreExtends = new DynamicVariable<Boolean>(Boolean.FALSE);
 
+	private List<Initializer> _instanceInitializers = new ArrayList<Initializer>();
+
 	protected NamingStrategy namingStrategy() {
 		return _configuration.getNamingStrategy();
 	}
@@ -311,9 +313,36 @@ public class CSharpBuilder extends ASTVisitor {
 		autoImplementCloneable(node, type);
 		
 		moveInitializersDependingOnThisReferenceToConstructor(type);
+		
+		
 	
 		return type;
 	}
+
+	protected void flushInstanceInitializers(CSTypeDeclaration type) {
+		
+		int initializerIndex = 0;
+		for (Initializer node : _instanceInitializers) {
+			final CSConstructor template = new CSConstructor();
+			visitBodyDeclarationBlock(node, node.getBody(), template);
+			
+			if (type.constructors().isEmpty()) {
+				type.addMember(template);
+				++initializerIndex;
+				continue;
+			}
+			
+			for (CSConstructor ctor : type.constructors()) {
+				if (ctor.isStatic()) {
+					continue;
+				}
+				ctor.body().addStatement(initializerIndex, template.body());
+			}
+			
+			++initializerIndex;
+		}
+		_instanceInitializers.clear();
+    }
 
 	private void moveInitializersDependingOnThisReferenceToConstructor(CSTypeDeclaration type) {
 		
@@ -526,9 +555,13 @@ public class CSharpBuilder extends ASTVisitor {
 	private void mapMembers(TypeDeclaration node, CSTypeDeclaration type) {
 		CSTypeDeclaration saved = _currentType;
 		_currentType = type;
-		visit(node.bodyDeclarations());
-		createInheritedAbstractMemberStubs(node);
-		_currentType = saved;
+		try {
+			visit(node.bodyDeclarations());
+			createInheritedAbstractMemberStubs(node);
+			flushInstanceInitializers(type);
+		} finally {
+			_currentType = saved;
+		}
 	}
 
 	private void mapVisibility(BodyDeclaration node, CSMember member) {
@@ -1022,9 +1055,13 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(Initializer node) {
-		CSConstructor ctor = new CSConstructor(CSConstructorModifier.Static);
-		_currentType.addMember(ctor);
-		visitBodyDeclarationBlock(node, node.getBody(), ctor);
+		if (Modifier.isStatic(node.getModifiers())) {
+			CSConstructor ctor = new CSConstructor(CSConstructorModifier.Static);
+			_currentType.addMember(ctor);
+			visitBodyDeclarationBlock(node, node.getBody(), ctor);
+		} else {
+			_instanceInitializers.add(node);
+		}
 		return false;
 	}
 

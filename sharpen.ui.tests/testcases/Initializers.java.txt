@@ -5,6 +5,7 @@ public class Initializers {
 	}
 	
 	public Initializers(int value) {
+		super();
 		bar(null);
 	}
 	

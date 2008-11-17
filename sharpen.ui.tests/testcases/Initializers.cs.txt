@@ -5,7 +5,7 @@ public class Initializers
 		bar(null);
 	}
 
-	public Initializers(int value)
+	public Initializers(int value) : base()
 	{
 		{
 			foo("instance 1");
@@ -34,12 +34,12 @@ public class Initializers
 
 	internal static void foo(string m)
 	{
-		new _Initializers_23(m);
+		new _Initializers_24(m);
 	}
 
-	private sealed class _Initializers_23 : Initializers
+	private sealed class _Initializers_24 : Initializers
 	{
-		public _Initializers_23(string m)
+		public _Initializers_24(string m)
 		{
 			{
 				Initializers.bar(m);

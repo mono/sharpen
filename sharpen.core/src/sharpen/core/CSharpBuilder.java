@@ -333,7 +333,7 @@ public class CSharpBuilder extends ASTVisitor {
 			}
 			
 			for (CSConstructor ctor : type.constructors()) {
-				if (ctor.isStatic() || ctor.chainedConstructorInvocation() != null) {
+				if (ctor.isStatic() || hasChainedThisInvocation(ctor)) {
 					continue;
 				}
 				ctor.body().addStatement(initializerIndex, template.body());
@@ -343,6 +343,11 @@ public class CSharpBuilder extends ASTVisitor {
 		}
 		_instanceInitializers.clear();
     }
+
+	private boolean hasChainedThisInvocation(CSConstructor ctor) {
+		final CSConstructorInvocationExpression chained = ctor.chainedConstructorInvocation();
+		return chained != null && chained.expression() instanceof CSThisExpression;
+	}
 
 	private void moveInitializersDependingOnThisReferenceToConstructor(CSTypeDeclaration type) {
 		

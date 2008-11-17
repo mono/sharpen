@@ -4,6 +4,10 @@ public class Initializers {
 		bar(null);
 	}
 	
+	public Initializers(int value) {
+		bar(null);
+	}
+	
 	{ foo("instance 1"); }
 	{ foo("instance 2"); }
 	

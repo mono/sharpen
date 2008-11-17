@@ -333,7 +333,7 @@ public class CSharpBuilder extends ASTVisitor {
 			}
 			
 			for (CSConstructor ctor : type.constructors()) {
-				if (ctor.isStatic()) {
+				if (ctor.isStatic() || ctor.chainedConstructorInvocation() != null) {
 					continue;
 				}
 				ctor.body().addStatement(initializerIndex, template.body());

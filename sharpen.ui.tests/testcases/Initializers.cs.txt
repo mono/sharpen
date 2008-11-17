@@ -2,6 +2,11 @@ public class Initializers
 {
 	public Initializers() : this(null)
 	{
+		bar(null);
+	}
+
+	public Initializers(int value)
+	{
 		{
 			foo("instance 1");
 		}
@@ -29,12 +34,12 @@ public class Initializers
 
 	internal static void foo(string m)
 	{
-		new _Initializers_19(m);
+		new _Initializers_23(m);
 	}
 
-	private sealed class _Initializers_19 : Initializers
+	private sealed class _Initializers_23 : Initializers
 	{
-		public _Initializers_19(string m)
+		public _Initializers_23(string m)
 		{
 			{
 				Initializers.bar(m);

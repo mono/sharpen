@@ -57,8 +57,10 @@ public class Initializers
 
 internal class InitializerWithoutConstructor
 {
-	internal InitializerWithoutConstructor()
+	public InitializerWithoutConstructor()
 	{
-		Initializers.foo(null);
+		{
+			Initializers.foo(null);
+		}
 	}
 }

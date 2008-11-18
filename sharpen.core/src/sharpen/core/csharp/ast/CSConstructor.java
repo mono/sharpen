@@ -36,6 +36,11 @@ public class CSConstructor extends CSMethodBase {
 		_modifier = modifier;
 	}
 
+	public CSConstructor(CSVisibility visibility) {
+		this();
+		visibility(visibility);
+    }
+
 	public void accept(CSVisitor visitor) {
 		visitor.visit(this);
 	}

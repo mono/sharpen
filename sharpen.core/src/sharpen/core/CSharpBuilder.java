@@ -321,27 +321,39 @@ public class CSharpBuilder extends ASTVisitor {
 
 	protected void flushInstanceInitializers(CSTypeDeclaration type) {
 		
+		if (_instanceInitializers.isEmpty()) {
+			return;
+		}
+		
+		ensureConstructor(type);
+		
 		int initializerIndex = 0;
 		for (Initializer node : _instanceInitializers) {
-			final CSConstructor template = new CSConstructor();
-			visitBodyDeclarationBlock(node, node.getBody(), template);
-			
-			if (type.constructors().isEmpty()) {
-				type.addMember(template);
-				++initializerIndex;
-				continue;
-			}
+			final CSBlock body = mapInitializer(node);
 			
 			for (CSConstructor ctor : type.constructors()) {
 				if (ctor.isStatic() || hasChainedThisInvocation(ctor)) {
 					continue;
 				}
-				ctor.body().addStatement(initializerIndex, template.body());
+				ctor.body().addStatement(initializerIndex, body);
 			}
 			
 			++initializerIndex;
 		}
 		_instanceInitializers.clear();
+    }
+
+	private CSBlock mapInitializer(Initializer node) {
+	    final CSConstructor template = new CSConstructor();
+	    visitBodyDeclarationBlock(node, node.getBody(), template);
+	    final CSBlock body = template.body();
+	    return body;
+    }
+
+	private void ensureConstructor(CSTypeDeclaration type) {
+	    if (type.constructors().isEmpty()) {
+	    	type.addMember(new CSConstructor(CSVisibility.Public));
+	    }
     }
 
 	private boolean hasChainedThisInvocation(CSConstructor ctor) {

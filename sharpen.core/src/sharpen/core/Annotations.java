@@ -67,6 +67,8 @@ public class Annotations {
 	
 	static final String SHARPEN_REMOVE = "@sharpen.remove";
 	
+	static final String SHARPEN_UNWRAP = "@sharpen.unwrap";
+	
 	static final String SHARPEN_STRUCT = "@sharpen.struct";
 	
 }

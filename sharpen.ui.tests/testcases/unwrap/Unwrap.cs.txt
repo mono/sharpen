@@ -1,0 +1,15 @@
+namespace unwrap
+{
+	internal class Unwrap
+	{
+		internal static string to_s(object o)
+		{
+			return o.ToString();
+		}
+
+		internal static object apply(object o)
+		{
+			return o;
+		}
+	}
+}

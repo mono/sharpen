@@ -1,0 +1,15 @@
+package unwrap;
+
+class Unwrap {
+
+	/**
+	 * @sharpen.unwrap
+	 */
+	 static String to_s(Object o) {
+	 	return o.toString();
+	 }
+	 
+	 static Object apply(Object o) {
+	 	return to_s(o);
+	 }
+}

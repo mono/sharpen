@@ -2259,9 +2259,26 @@ public class CSharpBuilder extends ASTVisitor {
 			processRemovedInvocation(node);
 			return;
 		}
+		
+		if (isUnwrapInvocation(node)) {
+			processUnwrapInvocation(node);
+			return;
+		}
 
 		processOrdinaryMethodInvocation(node);
 	}
+
+	private boolean isUnwrapInvocation(MethodInvocation node) {
+	    return isTaggedMethodInvocation(node, Annotations.SHARPEN_UNWRAP);
+    }
+
+	private void processUnwrapInvocation(MethodInvocation node) {
+	    final List arguments = node.arguments();
+	    if (arguments.size() != 1) {
+	    	unsupportedConstruct(node, Annotations.SHARPEN_UNWRAP + " only works against single argument methods.");
+	    }
+	    pushExpression(mapExpression((Expression) arguments.get(0)));
+    }
 
 	private void processOrdinaryMethodInvocation(MethodInvocation node) {
 		final CSExpression targetExpression = mapMethodTargetExpression(node);

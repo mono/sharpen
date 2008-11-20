@@ -7,4 +7,13 @@ public class Fields1
 	internal bool _boolValue;
 
 	public volatile bool _stopped;
+
+	private readonly object _lock = new object();
+
+	private readonly object _defaultLock;
+
+	public Fields1()
+	{
+		_defaultLock = _lock;
+	}
 }

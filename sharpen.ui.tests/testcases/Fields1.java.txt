@@ -4,5 +4,7 @@ public class Fields1 {
 	protected Integer _intValue;
 	boolean _boolValue;
 	public volatile boolean _stopped;
+	private final Object _lock = new Object();
+	private final Object _defaultLock = _lock;
 	
 }

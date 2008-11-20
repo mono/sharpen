@@ -362,25 +362,36 @@ public class CSharpBuilder extends ASTVisitor {
 
 	private void moveInitializersDependingOnThisReferenceToConstructor(CSTypeDeclaration type) {
 		
-		final List<String> moved = new ArrayList<String>();
+		final HashSet<String> memberNames = memberNameSetFor(type);
 		
+		int index = 0;
 		for (CSMember member : copy(type.members())) {
 			if (!(member instanceof CSField))
 				continue;
 			
 			final CSField field = (CSField)member;
-			if (!isDependentOnThisOrMovedField(field, moved))
+			if (!isDependentOnThisOrMember(field, memberNames))
 				continue;
 			
-			moveFieldInitializerToConstructors(field, type, moved);
+			moveFieldInitializerToConstructors(field, type, index++);
         }
 	}
+
+	private HashSet<String> memberNameSetFor(CSTypeDeclaration type) {
+	    final HashSet<String> members = new HashSet<String>();
+		for (CSMember member : type.members()) {
+			if (member instanceof CSType)
+				continue;
+			members.add(member.name());
+		}
+	    return members;
+    }
 
 	private CSMember[] copy(final List<CSMember> list) {
 	    return list.toArray(new CSMember[0]);
     }
 
-	private boolean isDependentOnThisOrMovedField(CSField field, final List<String> moved) {
+	private boolean isDependentOnThisOrMember(CSField field, final Set<String> fields) {
 		if (null == field.initializer())
 			return false;
 		
@@ -393,7 +404,7 @@ public class CSharpBuilder extends ASTVisitor {
 			
 			@Override
 			public void visit(CSReferenceExpression node) {
-				if (moved.contains(node.name())) {
+				if (fields.contains(node.name())) {
 					foundThisReference.value = true;
 				}
 			}
@@ -401,14 +412,13 @@ public class CSharpBuilder extends ASTVisitor {
 		return foundThisReference.value;
     }
 	
-	private void moveFieldInitializerToConstructors(CSField field, CSTypeDeclaration type, List<String> moved) {
+	private void moveFieldInitializerToConstructors(CSField field, CSTypeDeclaration type, int index) {
 		final CSExpression initializer = field.initializer();
 		for (CSConstructor ctor : ensureConstructorsFor(type))
 			ctor.body().addStatement(
-					moved.size(),
+					index,
 					newAssignment(field, initializer));
 		field.initializer(null);
-		moved.add(field.name());
     }
 
 	private CSExpression newAssignment(CSField field, final CSExpression initializer) {

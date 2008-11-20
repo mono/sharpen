@@ -228,12 +228,18 @@ public class CSharpBuilder extends ASTVisitor {
 		_ignoreExtends.using(ignoreExtends(node), new Runnable() {
 			public void run() {
 
-				if (isNonStaticNestedType(node)) {
-					processNonStaticNestedTypeDeclaration(node);
-				} else {
+				final ITypeBinding binding = node.resolveBinding();
+				if (!binding.isNested()) {
 					processTypeDeclaration(node);
+					return;
 				}
-
+				
+				if (isNonStaticNestedType(binding)) {
+					processNonStaticNestedTypeDeclaration(node);
+					return;
+				}
+				
+				new CSharpBuilder(CSharpBuilder.this).processTypeDeclaration(node);
 			}
 		});
 
@@ -313,8 +319,6 @@ public class CSharpBuilder extends ASTVisitor {
 		autoImplementCloneable(node, type);
 		
 		moveInitializersDependingOnThisReferenceToConstructor(type);
-		
-		
 	
 		return type;
 	}
@@ -325,7 +329,7 @@ public class CSharpBuilder extends ASTVisitor {
 			return;
 		}
 		
-		ensureConstructor(type);
+		ensureConstructorsFor(type);
 		
 		int initializerIndex = 0;
 		for (Initializer node : _instanceInitializers) {
@@ -340,6 +344,7 @@ public class CSharpBuilder extends ASTVisitor {
 			
 			++initializerIndex;
 		}
+		
 		_instanceInitializers.clear();
     }
 
@@ -348,12 +353,6 @@ public class CSharpBuilder extends ASTVisitor {
 	    visitBodyDeclarationBlock(node, node.getBody(), template);
 	    final CSBlock body = template.body();
 	    return body;
-    }
-
-	private void ensureConstructor(CSTypeDeclaration type) {
-	    if (type.constructors().isEmpty()) {
-	    	type.addMember(new CSConstructor(CSVisibility.Public));
-	    }
     }
 
 	private boolean hasChainedThisInvocation(CSConstructor ctor) {
@@ -594,8 +593,12 @@ public class CSharpBuilder extends ASTVisitor {
 			return false;
 		if (!binding.isNested())
 			return false;
-		return !Modifier.isStatic(binding.getModifiers());
+		return !isStatic(binding);
 	}
+
+	private boolean isStatic(ITypeBinding binding) {
+	    return Modifier.isStatic(binding.getModifiers());
+    }
 
 	private void addType(CSType type) {
 		if (null != _currentType) {

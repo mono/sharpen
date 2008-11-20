@@ -382,9 +382,29 @@ public class CSharpBuilder extends ASTVisitor {
 		for (CSMember member : type.members()) {
 			if (member instanceof CSType)
 				continue;
+			if (isStatic(member))
+				continue;
 			members.add(member.name());
 		}
 	    return members;
+    }
+
+	private boolean isStatic(CSMember member) {
+		if (member instanceof CSField)
+			return isStatic((CSField) member);
+		if (member instanceof CSMethod)
+			return isStatic((CSMethod) member);
+		return false;
+    }
+	
+	private boolean isStatic(CSMethod method) {
+		return method.modifier() == CSMethodModifier.Static;
+	}
+
+	private boolean isStatic(CSField member) {
+		final Set<CSFieldModifier> fieldModifiers = member.modifiers();
+		return fieldModifiers.contains(CSFieldModifier.Static)
+			|| fieldModifiers.contains(CSFieldModifier.Const);
     }
 
 	private CSMember[] copy(final List<CSMember> list) {

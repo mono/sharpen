@@ -12,8 +12,31 @@ public class Fields1
 
 	private readonly object _defaultLock;
 
+	private const int value = 42;
+
+	private int defaultValue = value;
+
+	private static readonly object _typeLock = new object();
+
+	private object _defaultTypeLock = _typeLock;
+
+	private int _staticFoo = staticFoo();
+
+	private int _instanceFoo;
+
+	internal static int staticFoo()
+	{
+		return 42;
+	}
+
+	internal virtual int instanceFoo()
+	{
+		return 42;
+	}
+
 	public Fields1()
 	{
 		_defaultLock = _lock;
+		_instanceFoo = instanceFoo();
 	}
 }

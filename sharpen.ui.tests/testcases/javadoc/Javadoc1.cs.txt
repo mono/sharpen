@@ -42,5 +42,17 @@ namespace javadoc
 		/// <summary>Blah.</summary>
 		/// <remarks>Blah.</remarks>
 		public const int BAR = 42;
+
+		/// <summary>
+		/// Type references should not cause using statements to be added to
+		/// the c# code.
+		/// </summary>
+		/// <remarks>
+		/// Type references should not cause using statements to be added to
+		/// the c# code.
+		/// <see cref="java.lang.Thread">java.lang.Thread</see>
+		/// .
+		/// </remarks>
+		public abstract void typeReferences();
 	}
 }

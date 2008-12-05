@@ -35,4 +35,10 @@ public abstract class Javadoc1 {
 	 * Blah.
 	 */
 	public static final int BAR = 42;
+	
+	/**
+	 * Type references should not cause using statements to be added to
+	 * the c# code. {@link Thread}.
+	 */
+	public abstract void typeReferences();
 }

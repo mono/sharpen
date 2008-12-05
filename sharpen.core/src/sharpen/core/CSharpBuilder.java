@@ -83,6 +83,8 @@ public class CSharpBuilder extends ASTVisitor {
 
 	private final DynamicVariable<Boolean> _ignoreExtends = new DynamicVariable<Boolean>(Boolean.FALSE);
 
+	private final DynamicVariable<Boolean> _ignoreOrganizeUsings = new DynamicVariable<Boolean>(Boolean.FALSE);
+
 	private List<Initializer> _instanceInitializers = new ArrayList<Initializer>();
 
 	protected NamingStrategy namingStrategy() {
@@ -614,10 +616,6 @@ public class CSharpBuilder extends ASTVisitor {
 		member.visibility(mapVisibility(node));
 	}
 
-	private boolean isNonStaticNestedType(TypeDeclaration node) {
-		return isNonStaticNestedType(node.resolveBinding());
-	}
-
 	private boolean isNonStaticNestedType(ITypeBinding binding) {
 		if (binding.isInterface())
 			return false;
@@ -639,12 +637,16 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private void mapDocumentation(final BodyDeclaration bodyDecl, final CSMember member) {
-		if (processDocumentationOverlay(member)) {
-			return;
-		}
-
-		mapJavadoc(bodyDecl, member);
-		mapDeclaredExceptions(bodyDecl, member);
+		_ignoreOrganizeUsings.using(true, new Runnable() { @Override public void run() {
+			
+			if (processDocumentationOverlay(member)) {
+				return;
+			}
+	
+			mapJavadoc(bodyDecl, member);
+			mapDeclaredExceptions(bodyDecl, member);
+			
+		}});
 	}
 
 	private void mapDeclaredExceptions(BodyDeclaration bodyDecl, CSMember member) {
@@ -2955,6 +2957,9 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private String registerMappedType(ITypeBinding type, String fullName) {
+		if (_ignoreOrganizeUsings.value())
+			return fullName;
+		
 		if (!_configuration.organizeUsings())
 			return fullName;
 

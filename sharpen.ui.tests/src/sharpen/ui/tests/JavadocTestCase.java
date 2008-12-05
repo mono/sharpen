@@ -50,6 +50,7 @@ public class JavadocTestCase extends AbstractConversionTestCase {
 	@Override
 	protected Configuration getConfiguration() {
 		final Configuration configuration = super.getConfiguration();
+		configuration.enableOrganizeUsings();
 		configuration.enableNativeInterfaces();
 		return configuration;
 	}

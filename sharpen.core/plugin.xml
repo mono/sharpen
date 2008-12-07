@@ -7,13 +7,12 @@
    class="sharpen.core.Sharpen">
 
    <runtime>
-      <library name="sharpen.jar">
+      <library name=".">
          <export
                name="*">
          </export>
       </library>
    </runtime>
-
    <requires>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.core.runtime"/>

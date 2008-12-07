@@ -637,7 +637,7 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private void mapDocumentation(final BodyDeclaration bodyDecl, final CSMember member) {
-		_ignoreOrganizeUsings.using(true, new Runnable() { @Override public void run() {
+		_ignoreOrganizeUsings.using(true, new Runnable() { public void run() {
 			
 			if (processDocumentationOverlay(member)) {
 				return;

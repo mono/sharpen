@@ -41,7 +41,7 @@ public class SimpleProject {
 		_project = project;
 		WorkspaceUtilities.initializeProject(_project, monitor);
 	}
-
+	
 	public String getName() {
 		return _project.getName();
 	}

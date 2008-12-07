@@ -107,6 +107,11 @@ public class JavaProject extends SimpleProject {
 		addSystemLibraries();
 	}
 
+	public JavaProject(IJavaProject javaProject) throws CoreException {
+		super(javaProject.getProject(), null);
+		_javaProject = javaProject;
+	}
+
 	private void initializeClassPath() throws JavaModelException {
 		_javaProject.setRawClasspath(new IClasspathEntry[0], null);
 	}

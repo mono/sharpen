@@ -164,12 +164,23 @@ public class JavaProject extends SimpleProject {
 	}
 	
 	public void addClasspathEntry(String absolutePath) throws JavaModelException {
+		if (containsClasspathEntry(absolutePath))
+			return;
 		addClasspathEntry(new Path(absolutePath));
 	}
 
+	private boolean containsClasspathEntry(String absolutePath) throws JavaModelException {
+		for (IClasspathEntry entry : _javaProject.getRawClasspath()) {
+			if (IClasspathEntry.CPE_LIBRARY != entry.getEntryKind())
+				continue;
+			if (entry.getPath().toFile().getAbsolutePath().equals(absolutePath))
+				return true;
+		}
+		return false;
+    }
+
 	private void addClasspathEntry(IPath absolutePath) throws JavaModelException {
-		IClasspathEntry newLibraryEntry = JavaCore.newLibraryEntry(absolutePath, null,
-				null);
+		IClasspathEntry newLibraryEntry = JavaCore.newLibraryEntry(absolutePath, null, null);
 		addClasspathEntry(newLibraryEntry);
 	}
 

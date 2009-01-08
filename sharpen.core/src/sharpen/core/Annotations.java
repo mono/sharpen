@@ -59,6 +59,8 @@ public class Annotations {
 	
 	static final String SHARPEN_IGNORE_EXTENDS = "@sharpen.ignore.extends";
 	
+	static final String SHARPEN_REPLACE_EXTENDS = "@sharpen.replace.extends";
+	
 	static final String SHARPEN_IGNORE_IMPLEMENTS = "@sharpen.ignore.implements";
 	
 	static final String SHARPEN_EXTENDS = "@sharpen.extends";

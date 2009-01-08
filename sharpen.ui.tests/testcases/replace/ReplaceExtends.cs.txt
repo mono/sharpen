@@ -1,0 +1,13 @@
+namespace replace
+{
+	public class ReplaceExtends : Replaced, replace.TestInterface
+	{
+		public virtual void run()
+		{
+		}
+	}
+
+	internal interface TestInterface
+	{
+	}
+}

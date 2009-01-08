@@ -571,14 +571,27 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private void mapSuperClass(TypeDeclaration node, CSTypeDeclaration type) {
-		if (null != node.getSuperclassType()) {
-			final ITypeBinding superClassBinding = node.getSuperclassType().resolveBinding();
-			if (null == superClassBinding) {
-				unresolvedTypeBinding(node.getSuperclassType());
-			} else {
-				type.addBaseType(mappedTypeReference(superClassBinding));
-			}
-		}
+		if (handledReplaceExtends(node, type))
+			return;
+		
+		if (null == node.getSuperclassType())
+			return;
+		
+		final ITypeBinding superClassBinding = node.getSuperclassType().resolveBinding();
+		if (null == superClassBinding)
+			unresolvedTypeBinding(node.getSuperclassType());
+			
+		type.addBaseType(mappedTypeReference(superClassBinding));
+	}
+
+	private boolean handledReplaceExtends(TypeDeclaration node, CSTypeDeclaration type) {
+		final TagElement replaceExtendsTag = javadocTagFor(node, Annotations.SHARPEN_REPLACE_EXTENDS);
+		if (null == replaceExtendsTag)
+			return false;
+	
+		final String baseType = singleTextFragmentFrom(replaceExtendsTag);
+		type.addBaseType(new CSTypeReference(baseType));		
+		return true;
 	}
 
 	private void mapSuperInterfaces(TypeDeclaration node, CSTypeDeclaration type) {
@@ -812,8 +825,8 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private void processExtendsTagElement(TypeDeclaration node, CSTypeDeclaration member) {
-		TagElement element = JavadocUtility.getJavadocTag(node, Annotations.SHARPEN_EXTENDS);
-		if (null == element)
+		TagElement extendsTag = javadocTagFor(node, Annotations.SHARPEN_EXTENDS);
+		if (null == extendsTag)
 			return;
 
 		if (!(member instanceof CSTypeDeclaration)) {
@@ -821,11 +834,15 @@ public class CSharpBuilder extends ASTVisitor {
 			        + " is only implemented for type declarations");
 		}
 
-		String baseType = getSingleTextFragment(element);
+		String baseType = singleTextFragmentFrom(extendsTag);
 		((CSTypeDeclaration) member).addBaseType(new CSTypeReference(baseType));
 	}
 
-	private String getSingleTextFragment(TagElement element) {
+	private TagElement javadocTagFor(TypeDeclaration node, final String withName) {
+		return JavadocUtility.getJavadocTag(node, withName);
+	}
+
+	private String singleTextFragmentFrom(TagElement element) {
 		final List<ASTNode> fragments = Types.cast(element.fragments());
 		if (fragments.size() != 1 || !isTextFragment(fragments, 0)) {
 			throw new IllegalArgumentException(sourceInformation(element) + ": expecting a single textual argument");
@@ -1385,7 +1402,7 @@ public class CSharpBuilder extends ASTVisitor {
 		final TagElement onAddTag = JavadocUtility.getJavadocTag(node, Annotations.SHARPEN_EVENT_ON_ADD);
 		if (null == onAddTag)
 			return null;
-		return methodName(getSingleTextFragment(onAddTag));
+		return methodName(singleTextFragmentFrom(onAddTag));
 	}
 
 	private String getEventHandlerTypeName(MethodDeclaration node) {
@@ -1506,7 +1523,7 @@ public class CSharpBuilder extends ASTVisitor {
 		TagElement tag = findEventTag(node);
 		if (null == tag)
 			return null;
-		return mappedTypeName(getSingleTextFragment(tag));
+		return mappedTypeName(singleTextFragmentFrom(tag));
 	}
 
 	private TagElement findEventTag(MethodDeclaration node) {
@@ -1560,7 +1577,7 @@ public class CSharpBuilder extends ASTVisitor {
 		if (null == tag)
 			return;
 
-		method.addEnclosingIfDef(getSingleTextFragment(tag));
+		method.addEnclosingIfDef(singleTextFragmentFrom(tag));
 	}
 
 	private void processBlock(BodyDeclaration node, Block block, final CSBlock targetBlock) {
@@ -2312,7 +2329,7 @@ public class CSharpBuilder extends ASTVisitor {
 		TagElement element = JavadocUtility.getJavadocTag(declaringNode(node.resolveMethodBinding()),
 		        Annotations.SHARPEN_REMOVE);
 
-		String exchangeValue = getSingleTextFragment(element);
+		String exchangeValue = singleTextFragmentFrom(element);
 		pushExpression(new CSReferenceExpression(exchangeValue));
 	}
 
@@ -3039,7 +3056,7 @@ public class CSharpBuilder extends ASTVisitor {
 		TagElement renameTag = JavadocUtility.getJavadocTag(node, Annotations.SHARPEN_RENAME);
 		if (null == renameTag)
 			return null;
-		return getSingleTextFragment(renameTag);
+		return singleTextFragmentFrom(renameTag);
 	}
 
 	protected String mappedMethodName(MethodDeclaration node) {

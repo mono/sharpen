@@ -1,0 +1,12 @@
+package replace;
+
+/**
+ * @sharpen.replace.extends Replaced 
+ */
+public class ReplaceExtends extends Object implements TestInterface {
+	public void run() {
+	}
+}
+
+interface TestInterface {
+}

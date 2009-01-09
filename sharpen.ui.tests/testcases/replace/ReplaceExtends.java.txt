@@ -1,7 +1,7 @@
 package replace;
 
 /**
- * @sharpen.replace.extends Replaced 
+ * @sharpen.extends Replaced 
  */
 public class ReplaceExtends extends Object implements TestInterface {
 	public void run() {

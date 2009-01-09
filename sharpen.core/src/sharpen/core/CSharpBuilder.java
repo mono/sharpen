@@ -504,7 +504,6 @@ public class CSharpBuilder extends ASTVisitor {
 
 	private void processConversionJavadocTags(TypeDeclaration node, CSTypeDeclaration type) {
 		processPartialTagElement(node, type);
-		processExtendsTagElement(node, type);
 	}
 
 	private CSTypeDeclaration mapTypeDeclaration(TypeDeclaration node) {
@@ -571,7 +570,7 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private void mapSuperClass(TypeDeclaration node, CSTypeDeclaration type) {
-		if (handledReplaceExtends(node, type))
+		if (handledExtends(node, type))
 			return;
 		
 		if (null == node.getSuperclassType())
@@ -584,8 +583,8 @@ public class CSharpBuilder extends ASTVisitor {
 		type.addBaseType(mappedTypeReference(superClassBinding));
 	}
 
-	private boolean handledReplaceExtends(TypeDeclaration node, CSTypeDeclaration type) {
-		final TagElement replaceExtendsTag = javadocTagFor(node, Annotations.SHARPEN_REPLACE_EXTENDS);
+	private boolean handledExtends(TypeDeclaration node, CSTypeDeclaration type) {
+		final TagElement replaceExtendsTag = javadocTagFor(node, Annotations.SHARPEN_EXTENDS);
 		if (null == replaceExtendsTag)
 			return false;
 	
@@ -822,20 +821,6 @@ public class CSharpBuilder extends ASTVisitor {
 		if (null == element)
 			return;
 		((CSTypeDeclaration) member).partial(true);
-	}
-
-	private void processExtendsTagElement(TypeDeclaration node, CSTypeDeclaration member) {
-		TagElement extendsTag = javadocTagFor(node, Annotations.SHARPEN_EXTENDS);
-		if (null == extendsTag)
-			return;
-
-		if (!(member instanceof CSTypeDeclaration)) {
-			throw new IllegalArgumentException(Annotations.SHARPEN_EXTENDS
-			        + " is only implemented for type declarations");
-		}
-
-		String baseType = singleTextFragmentFrom(extendsTag);
-		((CSTypeDeclaration) member).addBaseType(new CSTypeReference(baseType));
 	}
 
 	private TagElement javadocTagFor(TypeDeclaration node, final String withName) {

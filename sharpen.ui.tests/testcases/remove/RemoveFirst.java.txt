@@ -1,0 +1,11 @@
+package remove;
+
+class Foo {
+
+	/**
+	 * @sharpen.remove.first
+	 */
+	public void baz(int i) {
+		i = i + 1;
+	}	
+}

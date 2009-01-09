@@ -1,0 +1,9 @@
+namespace remove
+{
+	internal class Foo
+	{
+		public virtual void baz(int i)
+		{
+		}
+	}
+}

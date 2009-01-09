@@ -1566,9 +1566,8 @@ public class CSharpBuilder extends ASTVisitor {
 		CSMethodBase saved = _currentMethod;
 		_currentMethod = method;
 
-		processDisableTags(node, method);
+		processDisableTags(node, method);		
 		processBlock(node, block, method.body());
-
 		_currentMethod = saved;
 	}
 
@@ -1581,6 +1580,10 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private void processBlock(BodyDeclaration node, Block block, final CSBlock targetBlock) {
+		if (containsJavadoc(node, Annotations.SHARPEN_REMOVE_FIRST)) {
+			block.statements().remove(0);
+		}
+		
 		BodyDeclaration savedDeclaration = _currentBodyDeclaration;
 		_currentBodyDeclaration = node;
 

@@ -35,6 +35,14 @@ public class RemoveTestCase extends AbstractConversionTestCase {
 		runResourceTestCase("remove/RemoveMethodInExpression");
 	}
 	
+	public void testRemoveFirst() throws Throwable {
+		runResourceTestCase("remove/RemoveFirst");
+	}
+	
+	public void testRemoveFirstInConstructor() throws Throwable {
+		runResourceTestCase("remove/RemoveFirstInConstructor");
+	}
+	
 	public void testRemoveMethodByConfig() throws Throwable {
 		final Configuration config = getConfiguration();
 		config.removeMethod("remove.Foo.baz");

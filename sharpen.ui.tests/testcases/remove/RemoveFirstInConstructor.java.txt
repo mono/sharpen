@@ -1,0 +1,17 @@
+package remove;
+
+class Foo {
+
+	public Foo(int i) {
+		System.out.println(i);
+	}	
+}
+
+class Bar extends Foo {
+   /**
+ 	* @sharpen.remove.first
+ 	*/
+	public Bar() {
+		super(10);
+	}
+}

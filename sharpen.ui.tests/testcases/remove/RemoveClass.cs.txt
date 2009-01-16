@@ -1,0 +1,7 @@
+namespace remove
+{
+	internal class ReferencesRemovedClass
+	{
+		internal static System.Type[] classes = new System.Type[] { typeof(string) };
+	}
+}

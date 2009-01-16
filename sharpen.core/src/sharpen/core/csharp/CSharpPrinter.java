@@ -88,6 +88,11 @@ public class CSharpPrinter extends CSVisitor {
 			leaveBody();
 		}
 	}
+	
+	@Override
+	public void visit(CSRemovedExpression node) {
+	    throw new IllegalStateException("Unexpected removal of expression: " + node.toString());
+	}
 
 	public void visit(CSUsing node) {
 		writeLine("using " + node.namespace() + ";");
@@ -638,10 +643,18 @@ public class CSharpPrinter extends CSVisitor {
 	
 	public void visit(CSArrayInitializerExpression node) {
 		write("{ ");
-		writeCommaSeparatedList(node.expressions());
+		writeCommaSeparatedList(filterRemovedExpressions(node.expressions()));
 		write(" }");
 	}
 	
+	private Iterable<CSNode> filterRemovedExpressions(List<CSExpression> expressions) {
+	    final ArrayList<CSNode> result = new ArrayList<CSNode>(expressions.size());
+	    for (CSNode e : expressions)
+	    	if (!(e instanceof CSRemovedExpression))
+	    		result.add(e);
+		return result;
+    }
+
 	public void visit(CSIndexedExpression node) {
 		node.expression().accept(this);
 		write("[");

@@ -26,6 +26,10 @@ package sharpen.ui.tests;
 import sharpen.core.*;
 
 public class RemoveTestCase extends AbstractConversionTestCase {
+	
+	public void testRemoveClass() throws Throwable {
+		runResourceTestCase("remove/RemoveClass");
+	}
 
 	public void testRemoveMethod() throws Throwable {
 		runResourceTestCase("remove/RemoveMethod");
@@ -47,6 +51,13 @@ public class RemoveTestCase extends AbstractConversionTestCase {
 		final Configuration config = getConfiguration();
 		config.removeMethod("remove.Foo.baz");
 		runResourceTestCase(config, "remove/RemoveMethodByConfig");
+	}
+	
+	@Override
+	protected Configuration getConfiguration() {
+	    final Configuration configuration = super.getConfiguration();
+	    configuration.enableNativeTypeSystem();
+		return configuration;
 	}
 
 

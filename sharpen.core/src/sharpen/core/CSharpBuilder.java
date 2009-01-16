@@ -149,7 +149,7 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(EnumDeclaration node) {
-		if (!isIgnored(node)) {
+		if (!hasIgnoreAnnotation(node)) {
 			notImplemented(node);
 		}
 		return false;
@@ -217,14 +217,15 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(final TypeDeclaration node) {
-		if (processEnumType(node)) {
-			return false;
-		}
 
 		if (processIgnoredType(node)) {
 			return false;
 		}
 
+		if (processEnumType(node)) {
+			return false;
+		}
+		
 		registerMappedMethodNames(node);
 
 		_ignoreExtends.using(ignoreExtends(node), new Runnable() {
@@ -284,7 +285,7 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private boolean processIgnoredType(TypeDeclaration node) {
-		if (!isIgnored(node)) {
+		if (!hasIgnoreOrRemoveAnnotation(node)) {
 			return false;
 		}
 		if (isMainType(node)) {
@@ -293,10 +294,14 @@ public class CSharpBuilder extends ASTVisitor {
 		return true;
 	}
 
+	private boolean hasIgnoreOrRemoveAnnotation(TypeDeclaration node) {
+	    return hasIgnoreAnnotation(node) || hasRemoveAnnotation(node);
+    }
+
 	private void registerMappedMethodNames(TypeDeclaration node) {
 		_mappedMethodDeclarations.clear();
 		for (MethodDeclaration meth : node.getMethods()) {
-			if (isIgnored(meth))
+			if (hasIgnoreAnnotation(meth))
 				continue;
 			_mappedMethodDeclarations.add(mappedMethodName(meth));
 		}
@@ -1019,7 +1024,7 @@ public class CSharpBuilder extends ASTVisitor {
 
 	public boolean visit(FieldDeclaration node) {
 
-		if (isIgnored(node)) {
+		if (hasIgnoreAnnotation(node)) {
 			return false;
 		}
 
@@ -1120,7 +1125,7 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(MethodDeclaration node) {
-		if (isIgnored(node) || isRemoved(node)) {
+		if (hasIgnoreAnnotation(node) || isRemoved(node)) {
 			return false;
 		}
 
@@ -1153,14 +1158,18 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private boolean isRemoved(MethodDeclaration node) {
-		return JavadocUtility.containsJavadoc(node, Annotations.SHARPEN_REMOVE) || isRemoved(node.resolveBinding());
+		return hasRemoveAnnotation(node) || isRemoved(node.resolveBinding());
 	}
+
+	private boolean hasRemoveAnnotation(BodyDeclaration node) {
+	    return JavadocUtility.containsJavadoc(node, Annotations.SHARPEN_REMOVE);
+    }
 
 	private boolean isRemoved(final IMethodBinding binding) {
 		return _configuration.isRemoved(qualifiedName(binding));
 	}
 
-	private boolean isIgnored(BodyDeclaration node) {
+	private boolean hasIgnoreAnnotation(BodyDeclaration node) {
 		return JavadocUtility.containsJavadoc(node, Annotations.SHARPEN_IGNORE);
 	}
 
@@ -1446,7 +1455,7 @@ public class CSharpBuilder extends ASTVisitor {
 	private VariableDeclarationFragment getEventBackingField(MethodDeclaration node) {
 		FieldAccessFinder finder = new FieldAccessFinder();
 		node.accept(finder);
-		return (VariableDeclarationFragment) findDeclaringNode(finder.field);
+		return findDeclaringNode(finder.field);
 	}
 
 	private CSEvent createEventFromMethod(MethodDeclaration node, CSTypeReference eventHandlerType) {
@@ -1534,13 +1543,13 @@ public class CSharpBuilder extends ASTVisitor {
 		return declaringNode(definition);
 	}
 
-	private ASTNode findDeclaringNode(IBinding binding) {
+	private <T extends ASTNode> T findDeclaringNode(IBinding binding) {
 		final ASTNode declaringNode = _ast.findDeclaringNode(binding);
 		if (null != declaringNode)
-			return declaringNode;
+			return (T)declaringNode;
 		if (null == _resolver)
 			return null;
-		return _resolver.findDeclaringNode(binding);
+		return (T)_resolver.findDeclaringNode(binding);
 	}
 
 	private TagElement getEventTag(MethodDeclaration node) {
@@ -2175,9 +2184,22 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(TypeLiteral node) {
+		
+		if (isReferenceToRemovedType(node.getType())) {
+			pushExpression(new CSRemovedExpression(node.toString()));
+			return false;
+		}
+		
 		pushTypeOfExpression(mappedTypeReference(node.getType()));
 		return false;
 	}
+
+	private boolean isReferenceToRemovedType(Type node) {
+	    BodyDeclaration typeDeclaration = findDeclaringNode(node.resolveBinding());
+	    if (null == typeDeclaration)
+	    	return false;
+		return hasRemoveAnnotation(typeDeclaration);
+    }
 
 	private void pushTypeOfExpression(CSTypeReferenceExpression type) {
 		if (_configuration.nativeTypeSystem()) {
@@ -2788,7 +2810,7 @@ public class CSharpBuilder extends ASTVisitor {
 
 	private boolean isIgnored(IMethodBinding binding) {
 		final MethodDeclaration dec = declaringNode(binding);
-		return dec != null && isIgnored(dec);
+		return dec != null && hasIgnoreAnnotation(dec);
 	}
 
 	private boolean stubIsProperty(IMethodBinding method) {
@@ -2797,7 +2819,7 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private MethodDeclaration declaringNode(IMethodBinding method) {
-		return (MethodDeclaration) findDeclaringNode(method);
+		return findDeclaringNode(method);
 	}
 
 	private CSProperty createAbstractPropertyStub(IMethodBinding method) {

@@ -1,0 +1,11 @@
+package remove;
+
+/**
+ * @sharpen.remove
+ */
+class RemovedClass {
+}
+
+class ReferencesRemovedClass {
+	static Class[] classes = { RemovedClass.class, String.class, RemovedClass.class };
+}

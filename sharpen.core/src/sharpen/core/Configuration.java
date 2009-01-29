@@ -320,7 +320,7 @@ public class Configuration {
 	    mapMethod("java.util.Set.iterator", "GetEnumerator");
 	    mapMethod("java.util.Iterator.hasNext", "MoveNext");
 	    mapProperty("java.util.Iterator.next", "Current");
-	    mapMethod("java.util.Map.put", "Add");
+	    mapIndexer("java.util.Map.put");
 	    mapMethod("java.util.Map.remove", "Sharpen.Util.Collections.Remove");
 	    mapMethod("java.util.Map.entrySet", "");
 	    mapProperty("java.util.Map.Entry.getKey", "Key");
@@ -344,9 +344,8 @@ public class Configuration {
 	    mapProperty("java.util.Enumeration.nextElement", "Current");
 	    
 	    mapType("java.util.Hashtable", "System.Collections.Hashtable");
-	    mapMethod("java.util.Dictionary.put", "Add");
+	    mapIndexer("java.util.Dictionary.put");
 	    mapProperty("java.util.Dictionary.size", "Count");
-
 	}
 
 	private String runtimeMethod(String methodName) {

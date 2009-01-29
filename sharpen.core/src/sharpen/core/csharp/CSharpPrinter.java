@@ -658,7 +658,7 @@ public class CSharpPrinter extends CSVisitor {
 	public void visit(CSIndexedExpression node) {
 		node.expression().accept(this);
 		write("[");
-		node.index().accept(this);
+		writeCommaSeparatedList(node.indexes());
 		write("]");
 	}
 	

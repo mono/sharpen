@@ -16,6 +16,7 @@ namespace collections
 			{
 			}
 			object removed = Sharpen.Util.Collections.Remove(map, "foo");
+			map["foo"] = "bar";
 		}
 
 		internal static System.Collections.IDictionary genericSortedMap()

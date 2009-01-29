@@ -11,6 +11,7 @@ public class Map1 {
 		for (Object key : map.keySet()) {
 		}
 		Object removed = map.remove("foo");
+		map.put("foo", "bar");
 	}
 	
 	static java.util.Map genericSortedMap() {

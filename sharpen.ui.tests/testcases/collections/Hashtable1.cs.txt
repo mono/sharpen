@@ -5,7 +5,7 @@ namespace collections
 		public static void printAll(object collection)
 		{
 			System.Collections.Hashtable subject = (System.Collections.Hashtable)collection;
-			subject.Add("foo", "bar");
+			subject["foo"] = "bar";
 			if (subject.Count > 0)
 			{
 			}

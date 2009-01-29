@@ -2527,12 +2527,33 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private void processIndexerInvocation(MethodInvocation node, IMethodBinding binding, MemberMapping mapping) {
-		if (node.arguments().size() != 1) {
-			unsupportedConstruct(node, "indexer with any argument number but 1");
+		if (node.arguments().size() == 1) {
+			processIndexerGetter(node);
+		} else {
+			processIndexerSetter(node);
 		}
-		pushExpression(new CSIndexedExpression(mapIndexerTarget(node), mapExpression((Expression) node.arguments().get(
-		        0))));
 	}
+
+	private void processIndexerSetter(MethodInvocation node) {
+		// target(arg0 ... argN) => target[arg0... argN-1] = argN;
+		
+		final CSIndexedExpression indexer = new CSIndexedExpression(mapIndexerTarget(node));
+		final List arguments = node.arguments();
+		final Expression lastArgument = (Expression)arguments.get(arguments.size() - 1);
+		for (int i=0; i<arguments.size()-1; ++i) {
+			indexer.addIndex(mapExpression((Expression) arguments.get(i)));
+		}
+		pushExpression(CSharpCode.newAssignment(indexer, mapExpression(lastArgument)));
+		
+    }
+
+	private void processIndexerGetter(MethodInvocation node) {
+	    final Expression singleArgument = (Expression) node.arguments().get(0);
+	    pushExpression(
+	    		new CSIndexedExpression(
+	    				mapIndexerTarget(node),
+	    				mapExpression(singleArgument)));
+    }
 
 	private CSExpression mapIndexerTarget(MethodInvocation node) {
 		if (node.getExpression() == null) {

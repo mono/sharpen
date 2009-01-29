@@ -21,15 +21,21 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.core.csharp.ast;
 
+import java.util.*;
+
 public class CSIndexedExpression extends CSExpression {
 
-	private CSExpression _expression;
-	private CSExpression _index;
+	private final CSExpression _expression;
+	private final List<CSExpression> _indexes = new ArrayList<CSExpression>();
 
 	public CSIndexedExpression(CSExpression expression, CSExpression index) {
 		_expression = expression;
-		_index = index;
+		addIndex(index);
 	}
+
+	public CSIndexedExpression(CSExpression expression) {
+		_expression = expression;
+    }
 
 	public void accept(CSVisitor visitor) {
 		visitor.visit(this);
@@ -38,8 +44,12 @@ public class CSIndexedExpression extends CSExpression {
 	public CSExpression expression() {
 		return _expression;
 	}
-	
-	public CSExpression index() {
-		return _index;
-	}
+
+	public void addIndex(CSExpression index) {
+		_indexes.add(index);
+    }
+
+	public Iterable<CSExpression> indexes() {
+		return _indexes;
+    }
 }

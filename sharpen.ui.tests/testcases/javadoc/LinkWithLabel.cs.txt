@@ -1,5 +1,6 @@
 namespace javadoc
 {
+	/// <summary><see cref="javadoc.ILinked">javadoc.ILinked</see></summary>
 	internal interface ILinked
 	{
 	}

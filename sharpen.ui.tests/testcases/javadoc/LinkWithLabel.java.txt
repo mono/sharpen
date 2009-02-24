@@ -1,5 +1,8 @@
 package javadoc;
 
+/**
+ * {@link Linked}
+ */
 interface Linked {
 }
 

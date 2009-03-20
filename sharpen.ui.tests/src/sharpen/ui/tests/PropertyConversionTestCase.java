@@ -32,6 +32,10 @@ public class PropertyConversionTestCase extends AbstractConversionTestCase {
 		runResourceTestCase("properties/MappedProperties");
 	}
 	
+	public void testGetterSetterWithDifferentNames() throws Throwable {
+		runResourceTestCase("properties/GetterSetterWithDifferentNames");
+	}
+	
 	public void testStaticGetter() throws Throwable {
 		runResourceTestCase("properties/StaticGetter");
 	}

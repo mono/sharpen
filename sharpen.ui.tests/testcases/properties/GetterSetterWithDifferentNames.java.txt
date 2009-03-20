@@ -1,0 +1,37 @@
+package properties;
+
+class SimpleGetterSetter {
+
+	private int _value;
+	
+	/**
+	 * @sharpen.property Value
+	 */
+	 void set(int value) {
+	 	_value = value;
+	 }
+	 
+	/**
+	 * @sharpen.property Value
+	 */
+	 int get() {
+	 	return _value;
+	 }
+	 	 
+}
+
+class SimpleSetter {
+	/**
+	 * @sharpen.property IsCancelled
+	 */
+	 public void setCancel(boolean value) {
+	 	System.out.println(value);
+	 }
+}
+
+class Client {
+	static void run(SimpleGetterSetter sgs) {
+		sgs.set(42);
+		System.out.println(sgs.get());
+	}
+}

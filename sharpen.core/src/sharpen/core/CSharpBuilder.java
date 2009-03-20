@@ -281,7 +281,7 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private boolean isEnum(TypeDeclaration node) {
-		return JavadocUtility.containsJavadoc(node, Annotations.SHARPEN_ENUM);
+		return containsJavadoc(node, Annotations.SHARPEN_ENUM);
 	}
 
 	private boolean processIgnoredType(TypeDeclaration node) {
@@ -500,11 +500,11 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private boolean ignoreImplements(TypeDeclaration node) {
-		return JavadocUtility.containsJavadoc(node, Annotations.SHARPEN_IGNORE_IMPLEMENTS);
+		return containsJavadoc(node, Annotations.SHARPEN_IGNORE_IMPLEMENTS);
 	}
 
 	private boolean ignoreExtends(TypeDeclaration node) {
-		return JavadocUtility.containsJavadoc(node, Annotations.SHARPEN_IGNORE_EXTENDS);
+		return containsJavadoc(node, Annotations.SHARPEN_IGNORE_EXTENDS);
 	}
 
 	private void processConversionJavadocTags(TypeDeclaration node, CSTypeDeclaration type) {
@@ -548,7 +548,7 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private boolean isStruct(TypeDeclaration node) {
-		return JavadocUtility.containsJavadoc(node, Annotations.SHARPEN_STRUCT);
+		return containsJavadoc(node, Annotations.SHARPEN_STRUCT);
 	}
 
 	private CSTypeDeclaration checkForMainType(TypeDeclaration node, CSTypeDeclaration type) {
@@ -822,23 +822,31 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private void processPartialTagElement(TypeDeclaration node, CSTypeDeclaration member) {
-		TagElement element = JavadocUtility.getJavadocTag(node, Annotations.SHARPEN_PARTIAL);
+		TagElement element = javadocTagFor(node, Annotations.SHARPEN_PARTIAL);
 		if (null == element)
 			return;
 		((CSTypeDeclaration) member).partial(true);
 	}
 
-	private TagElement javadocTagFor(TypeDeclaration node, final String withName) {
+	private TagElement javadocTagFor(BodyDeclaration node, final String withName) {
 		return JavadocUtility.getJavadocTag(node, withName);
 	}
 
 	private String singleTextFragmentFrom(TagElement element) {
-		final List<ASTNode> fragments = Types.cast(element.fragments());
-		if (fragments.size() != 1 || !isTextFragment(fragments, 0)) {
+		if (!hasSingleTextFragment(element)) {
 			throw new IllegalArgumentException(sourceInformation(element) + ": expecting a single textual argument");
 		}
-		return textFragment(fragments, 0);
+		return textFragment(fragmentsFrom(element), 0);
 	}
+
+	private boolean hasSingleTextFragment(TagElement element) {
+	    final List<ASTNode> fragments = fragmentsFrom(element);
+		return fragments.size() == 1 && isTextFragment(fragments, 0);
+    }
+
+	private List<ASTNode> fragmentsFrom(TagElement element) {
+	    return Types.cast(element.fragments());
+    }
 
 	private boolean isTextFragment(List<ASTNode> fragments, int index) {
 		return (fragments.get(index) instanceof TextElement);
@@ -1134,7 +1142,12 @@ public class CSharpBuilder extends ASTVisitor {
 			return false;
 		}
 
-		if (isProperty(node)) {
+		if (isMappedToProperty(node)) {
+			processMappedPropertyDeclaration(node);
+			return false;
+		}
+		
+		if (isTaggedAsProperty(node)) {
 			processPropertyDeclaration(node);
 			return false;
 		}
@@ -1162,7 +1175,7 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private boolean hasRemoveAnnotation(BodyDeclaration node) {
-	    return JavadocUtility.containsJavadoc(node, Annotations.SHARPEN_REMOVE);
+	    return containsJavadoc(node, Annotations.SHARPEN_REMOVE);
     }
 
 	private boolean isRemoved(final IMethodBinding binding) {
@@ -1170,7 +1183,7 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private boolean hasIgnoreAnnotation(BodyDeclaration node) {
-		return JavadocUtility.containsJavadoc(node, Annotations.SHARPEN_IGNORE);
+		return containsJavadoc(node, Annotations.SHARPEN_IGNORE);
 	}
 
 	public static boolean containsJavadoc(BodyDeclaration node, final String tag) {
@@ -1179,6 +1192,10 @@ public class CSharpBuilder extends ASTVisitor {
 
 	private void processPropertyDeclaration(MethodDeclaration node) {
 		processPropertyDeclaration(node, propertyName(node));
+	}
+	
+	private void processMappedPropertyDeclaration(MethodDeclaration node) {
+		processPropertyDeclaration(node, mappedMethodName(node));
 	}
 
 	private void processPropertyDeclaration(MethodDeclaration node, final String name) {
@@ -1258,22 +1275,28 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private String propertyName(MethodDeclaration node) {
+		final TagElement propertyTag = effectiveJavadocTagFor(node, Annotations.SHARPEN_PROPERTY);
+		if (hasSingleTextFragment(propertyTag)) {
+			return singleTextFragmentFrom(propertyTag);
+		}
 		return mappedMethodName(node);
+	}
+	
+	private String propertyName(IMethodBinding binding) {
+		return propertyName(declaringNode(binding));
 	}
 
 	private boolean isProperty(MethodDeclaration node) {
-		return isTaggedDeclaration(node, Annotations.SHARPEN_PROPERTY) || isMappedToProperty(node);
+		return isTaggedAsProperty(node)
+			|| isMappedToProperty(node);
 	}
 
+	private boolean isTaggedAsProperty(MethodDeclaration node) {
+	    return isTaggedDeclaration(node, Annotations.SHARPEN_PROPERTY);
+    }
+
 	private boolean isTaggedDeclaration(MethodDeclaration node, final String tag) {
-		if (null != JavadocUtility.getJavadocTag(node, tag))
-			return true;
-
-		MethodDeclaration originalMethod = findOriginalMethodDeclaration(node);
-		if (null == originalMethod)
-			return false;
-
-		return null != JavadocUtility.getJavadocTag(originalMethod, tag);
+		return effectiveJavadocTagFor(node, tag) != null;
 	}
 
 	private void processMethodDeclaration(MethodDeclaration node) {
@@ -1393,7 +1416,7 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private String getEventOnAddMethod(MethodDeclaration node) {
-		final TagElement onAddTag = JavadocUtility.getJavadocTag(node, Annotations.SHARPEN_EVENT_ON_ADD);
+		final TagElement onAddTag = javadocTagFor(node, Annotations.SHARPEN_EVENT_ON_ADD);
 		if (null == onAddTag)
 			return null;
 		return methodName(singleTextFragmentFrom(onAddTag));
@@ -1514,14 +1537,18 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private String getEventArgsType(MethodDeclaration node) {
-		TagElement tag = findEventTag(node);
+		TagElement tag = eventTagFor(node);
 		if (null == tag)
 			return null;
 		return mappedTypeName(singleTextFragmentFrom(tag));
 	}
 
-	private TagElement findEventTag(MethodDeclaration node) {
-		TagElement eventTag = getEventTag(node);
+	private TagElement eventTagFor(MethodDeclaration node) {
+		return effectiveJavadocTagFor(node, Annotations.SHARPEN_EVENT);
+	}
+
+	private TagElement effectiveJavadocTagFor(MethodDeclaration node, final String tagName) {
+	    TagElement eventTag = javadocTagFor(node, tagName);
 		if (null != eventTag)
 			return eventTag;
 
@@ -1529,8 +1556,8 @@ public class CSharpBuilder extends ASTVisitor {
 		if (null == originalMethod)
 			return null;
 
-		return getEventTag(originalMethod);
-	}
+		return javadocTagFor(originalMethod, tagName);
+    }
 
 	private MethodDeclaration findOriginalMethodDeclaration(MethodDeclaration node) {
 		return findOriginalMethodDeclaration(node.resolveBinding());
@@ -1552,10 +1579,6 @@ public class CSharpBuilder extends ASTVisitor {
 		return (T)_resolver.findDeclaringNode(binding);
 	}
 
-	private TagElement getEventTag(MethodDeclaration node) {
-		return JavadocUtility.getJavadocTag(node, Annotations.SHARPEN_EVENT);
-	}
-
 	private void visitBodyDeclarationBlock(BodyDeclaration node, Block block, CSMethodBase method) {
 		CSMethodBase saved = _currentMethod;
 		_currentMethod = method;
@@ -1566,7 +1589,7 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private void processDisableTags(BodyDeclaration node, CSMethodBase method) {
-		TagElement tag = JavadocUtility.getJavadocTag(node, Annotations.SHARPEN_IF);
+		TagElement tag = javadocTagFor(node, Annotations.SHARPEN_IF);
 		if (null == tag)
 			return;
 
@@ -2243,9 +2266,10 @@ public class CSharpBuilder extends ASTVisitor {
 		if (null == mapping) {
 			if (isIndexer(node)) {
 				mapping = new MemberMapping(null, MemberKind.Indexer);
-			} else if (isTaggedMethodInvocation(node, Annotations.SHARPEN_PROPERTY)
-			        || isTaggedMethodInvocation(node, Annotations.SHARPEN_EVENT)) {
+			} else if (isTaggedMethodInvocation(node, Annotations.SHARPEN_EVENT)) {
 				mapping = new MemberMapping(binding.getName(), MemberKind.Property);
+			} else if (isTaggedMethodInvocation(node, Annotations.SHARPEN_PROPERTY)) {
+				mapping = new MemberMapping(propertyName(binding), MemberKind.Property);
 			}
 		}
 
@@ -2336,8 +2360,7 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private void processRemovedInvocation(MethodInvocation node) {
-		TagElement element = JavadocUtility.getJavadocTag(declaringNode(node.resolveMethodBinding()),
-		        Annotations.SHARPEN_REMOVE);
+		TagElement element = javadocTagFor(declaringNode(node.resolveMethodBinding()), Annotations.SHARPEN_REMOVE);
 
 		String exchangeValue = singleTextFragmentFrom(element);
 		pushExpression(new CSReferenceExpression(exchangeValue));
@@ -2457,7 +2480,7 @@ public class CSharpBuilder extends ASTVisitor {
 		if (null == method) {
 			return false;
 		}
-		return null != JavadocUtility.getJavadocTag(method, tag);
+		return containsJavadoc(method, tag);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -2908,9 +2931,11 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	CSVisibility mapVisibility(BodyDeclaration node) {
-		if (null != JavadocUtility.getJavadocTag(node, Annotations.SHARPEN_INTERNAL)) {
+		if (containsJavadoc(node, Annotations.SHARPEN_INTERNAL)) {
 			return CSVisibility.Internal;
-		} else if (null != JavadocUtility.getJavadocTag(node, Annotations.SHARPEN_PRIVATE)) {
+		}
+		
+		if (containsJavadoc(node, Annotations.SHARPEN_PRIVATE)) {
 			return CSVisibility.Private;
 		}
 
@@ -3084,7 +3109,7 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private String renamedName(BodyDeclaration node) {
-		TagElement renameTag = JavadocUtility.getJavadocTag(node, Annotations.SHARPEN_RENAME);
+		TagElement renameTag = javadocTagFor(node, Annotations.SHARPEN_RENAME);
 		if (null == renameTag)
 			return null;
 		return singleTextFragmentFrom(renameTag);
@@ -3107,9 +3132,15 @@ public class CSharpBuilder extends ASTVisitor {
 	private String mappedMethodName(IMethodBinding binding, Configuration.MemberMapping mapping) {
 		if (isStaticVoidMain(binding))
 			return "Main";
-		String name = null != mapping && null != mapping.name ? mapping.name : binding.getName();
+		String name = isNameMapping(mapping)
+			? mapping.name
+			: binding.getName();
 		return methodName(name);
 	}
+
+	private boolean isNameMapping(Configuration.MemberMapping mapping) {
+	    return null != mapping && null != mapping.name;
+    }
 
 	private Configuration.MemberMapping configuredMappingFor(final IMethodBinding binding) {
 		final IMethodBinding actual = originalMethodBinding(binding);
@@ -3124,10 +3155,7 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private boolean isEvent(MethodDeclaration declaring) {
-		MethodDeclaration original = findOriginalMethodDeclaration(declaring);
-		if (null != original)
-			return containsEventTag(original);
-		return containsEventTag(declaring);
+		return eventTagFor(declaring) != null;
 	}
 
 	private boolean isMappedToProperty(MethodDeclaration original) {
@@ -3135,10 +3163,6 @@ public class CSharpBuilder extends ASTVisitor {
 		if (null == mapping)
 			return false;
 		return mapping.kind == MemberKind.Property;
-	}
-
-	private boolean containsEventTag(MethodDeclaration original) {
-		return null != getEventTag(original);
 	}
 
 	private String methodName(String name) {

@@ -1,0 +1,39 @@
+namespace properties
+{
+	internal class SimpleGetterSetter
+	{
+		private int _value;
+
+		internal virtual int Value
+		{
+			get
+			{
+				return _value;
+			}
+			set
+			{
+				_value = value;
+			}
+		}
+	}
+
+	internal class SimpleSetter
+	{
+		public virtual bool IsCancelled
+		{
+			set
+			{
+				System.Console.Out.WriteLine(value);
+			}
+		}
+	}
+
+	internal class Client
+	{
+		internal static void Run(properties.SimpleGetterSetter sgs)
+		{
+			sgs.Value = 42;
+			System.Console.Out.WriteLine(sgs.Value);
+		}
+	}
+}

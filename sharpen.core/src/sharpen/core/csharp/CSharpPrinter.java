@@ -196,8 +196,10 @@ public class CSharpPrinter extends CSVisitor {
 
 	private void writeType(CSTypeDeclaration node) {
 		writeDoc(node);
+		beginEnclosingIfDefs(node);
 		writeTypeHeader(node);
 		writeTypeBody(node);
+		endEnclosingIfDefs(node);
 	}
 	
 	private void writeBaseTypes(CSTypeDeclaration node) {
@@ -326,12 +328,13 @@ public class CSharpPrinter extends CSVisitor {
 		leaveBody();
 	}
 	
-	public void visit(CSDeclarationStatement node) {
+	public void visit(CSDeclarationStatement node) {		
 		printPrecedingComments(node);
 		
 		writeIndentation();
 		node.declaration().accept(this);
-		writeLine(";");
+		writeLine(";");	
+		
 	}
 	
 	public void visit(CSDeclarationExpression node) {

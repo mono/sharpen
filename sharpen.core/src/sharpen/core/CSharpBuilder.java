@@ -313,6 +313,8 @@ public class CSharpBuilder extends ASTVisitor {
 
 	protected CSTypeDeclaration processTypeDeclaration(TypeDeclaration node) {
 		CSTypeDeclaration type = mapTypeDeclaration(node);
+		
+		processDisableTags(node, type);
 
 		addType(type);
 
@@ -1588,12 +1590,12 @@ public class CSharpBuilder extends ASTVisitor {
 		_currentMethod = saved;
 	}
 
-	private void processDisableTags(BodyDeclaration node, CSMethodBase method) {
+	private void processDisableTags(BodyDeclaration node, CSMember member) {
 		TagElement tag = javadocTagFor(node, Annotations.SHARPEN_IF);
 		if (null == tag)
 			return;
 
-		method.addEnclosingIfDef(singleTextFragmentFrom(tag));
+		member.addEnclosingIfDef(singleTextFragmentFrom(tag));
 	}
 
 	private void processBlock(BodyDeclaration node, Block block, final CSBlock targetBlock) {

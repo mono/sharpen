@@ -1,0 +1,15 @@
+package disable;
+
+class OuterClass {
+
+	 private void foo() {
+	 }
+
+	/**
+	 * @sharpen.if !SILVERLIGHT
+	 */
+	 private static class DisableInnerClass {	 
+	 	private void bar() {
+	 	}
+	 }	 
+}

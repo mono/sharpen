@@ -1,0 +1,18 @@
+namespace disable
+{
+	internal class OuterClass
+	{
+		private void foo()
+		{
+		}
+
+		#if !SILVERLIGHT
+		private class DisableInnerClass
+		{
+			private void bar()
+			{
+			}
+		}
+		#endif // !SILVERLIGHT
+	}
+}

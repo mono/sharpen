@@ -1,0 +1,15 @@
+namespace disable
+{
+	#if !SILVERLIGHT
+	public class DisableClass
+	{
+		private void foo()
+		{
+		}
+
+		private void bar()
+		{
+		}
+	}
+	#endif // !SILVERLIGHT
+}

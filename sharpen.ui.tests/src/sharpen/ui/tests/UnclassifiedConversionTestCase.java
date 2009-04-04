@@ -72,10 +72,6 @@ public class UnclassifiedConversionTestCase extends AbstractConversionTestCase {
 		runResourceTestCase("Catch1");
 	}
 	
-	public void testDisableMethod() throws Throwable {
-		runResourceTestCase("disable/DisableMethod");
-	}
-	
 	public void testExternalMethodMapping() throws Throwable {
 		String jar = JarUtilities.createJar(BindingTestCaseSubject.class, BindingTestCaseSubject.Foo.class, BindingTestCaseSubject.Baz.class);
 		_project.addClasspathEntry(jar);

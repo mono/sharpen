@@ -1,0 +1,13 @@
+package disable;
+
+/**
+ * @sharpen.if !SILVERLIGHT
+ */
+public class DisableClass {
+
+	 private void foo() {
+	 }
+	 
+	 private void bar() {
+	 }	 
+}

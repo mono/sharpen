@@ -1,0 +1,17 @@
+package remove;
+
+/**
+ * @sharpen.remove
+ */
+class RemovedClassOne {
+}
+
+/**
+ * @sharpen.remove
+ */
+class RemovedClassTwo {
+}
+
+class RemoveAllClassesInArray {
+	static Class[] classes = { RemovedClassOne.class, RemovedClassTwo.class, };
+}

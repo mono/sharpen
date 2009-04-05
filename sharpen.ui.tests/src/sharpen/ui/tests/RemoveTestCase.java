@@ -31,6 +31,10 @@ public class RemoveTestCase extends AbstractConversionTestCase {
 		runResourceTestCase("remove/RemoveClass");
 	}
 
+	public void testRemoveAllClassesInArray() throws Throwable {
+		runResourceTestCase("remove/RemoveAllClassesInArray");
+	}
+
 	public void testRemoveMethod() throws Throwable {
 		runResourceTestCase("remove/RemoveMethod");
 	}

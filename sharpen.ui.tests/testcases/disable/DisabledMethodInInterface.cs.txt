@@ -1,0 +1,31 @@
+namespace disable
+{
+	internal interface DisableMethodInInterface
+	{
+		#if !CF_1_0
+		void foo();
+		#endif // !CF_1_0
+
+		void bar();
+	}
+
+	internal abstract class ClassInTheMiddle : disable.DisableMethodInInterface
+	{
+		public abstract void bar();
+
+		#if !CF_1_0
+		public abstract void foo();
+		#endif // !CF_1_0
+	}
+
+	internal class DisableMethodInInterfaceImplementer : disable.ClassInTheMiddle
+	{
+		public override void foo()
+		{
+		}
+
+		public override void bar()
+		{
+		}
+	}
+}

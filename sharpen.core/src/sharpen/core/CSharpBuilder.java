@@ -2869,6 +2869,13 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private CSProperty createAbstractPropertyStub(IMethodBinding method) {
+		CSProperty stub = newAbstractPropertyStubFor(method);		
+		safeProcessDisableTags(method, stub);		
+		
+		return stub;
+	}
+
+	private CSProperty newAbstractPropertyStubFor(IMethodBinding method) {
 		CSProperty stub = new CSProperty(mappedMethodName(method), mappedTypeReference(method.getReturnType()));
 		stub.modifier(CSMethodModifier.Abstract);
 		stub.visibility(mapVisibility(method.getModifiers()));
@@ -2877,7 +2884,15 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private CSMethod createAbstractMethodStub(IMethodBinding method) {
+		CSMethod stub = newAbstractMethodStubFor(method);
+		safeProcessDisableTags(method, stub);
+		
+		return stub;
+	}
+
+	private CSMethod newAbstractMethodStubFor(IMethodBinding method) {
 		CSMethod stub = new CSMethod(mappedMethodName(method));
+		
 		stub.modifier(CSMethodModifier.Abstract);
 		stub.visibility(mapVisibility(method.getModifiers()));
 		stub.returnType(mappedTypeReference(method.getReturnType()));
@@ -2886,8 +2901,14 @@ public class CSharpBuilder extends ASTVisitor {
 		for (int i = 0; i < parameters.length; ++i) {
 			stub.addParameter(new CSVariableDeclaration("arg" + (i + 1), mappedTypeReference(parameters[i])));
 		}
-
 		return stub;
+	}
+
+	private void safeProcessDisableTags(IMethodBinding method, CSMember member) {
+		final MethodDeclaration node = declaringNode(method);
+		if (node == null) return;
+		
+		processDisableTags(node, member);
 	}
 
 	CSMethodModifier mapMethodModifier(MethodDeclaration method) {

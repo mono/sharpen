@@ -37,5 +37,10 @@ public class DisableTestCase extends AbstractConversionTestCase {
 	public void testDisableInnerClass() throws Throwable {
 		runResourceTestCase("disable/DisableInnerClass");
 	}
+	
+	public void testDisableMethodInInterface() throws Throwable {
+		runResourceTestCase("disable/DisabledMethodInInterface");
+	}
+	
 
 }

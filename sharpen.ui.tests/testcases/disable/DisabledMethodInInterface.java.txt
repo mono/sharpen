@@ -1,0 +1,22 @@
+package disable;
+
+interface DisableMethodInInterface {
+
+	/**
+	 * @sharpen.if !CF_1_0
+	 */
+	 public void foo();
+	 
+	 public void bar();
+}
+
+abstract class ClassInTheMiddle implements DisableMethodInInterface {
+}
+
+class DisableMethodInInterfaceImplementer extends ClassInTheMiddle {
+	 public void foo() {
+	 }
+	 
+	 public void bar() {
+	 }
+}

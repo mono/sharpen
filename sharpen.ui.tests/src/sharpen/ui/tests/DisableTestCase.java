@@ -23,6 +23,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.ui.tests;
 
+import sharpen.core.*;
+
 
 public class DisableTestCase extends AbstractConversionTestCase {
 	
@@ -42,5 +44,19 @@ public class DisableTestCase extends AbstractConversionTestCase {
 		runResourceTestCase("disable/DisabledMethodInInterface");
 	}
 	
+	public void testConditionalCompilation() throws Throwable {
+		final Configuration config = conditionalCompilationConfigFor("DisabledByConfig");
+		runResourceTestCase(config, "disable/NotSubjectToConditionalCompilation");
+		runResourceTestCase(config, "disable/disabled/TypeSubjectToConditionalCompilation");
+		runResourceTestCase(config, "disable/disabled/subpackage/TypesInSubPackagesShouldBeDisabledAlso");
+		
+	}
+
+	private Configuration conditionalCompilationConfigFor(String expression) {
+		Configuration config= new Configuration();
+		config.conditionalCompilation("disable.disabled", expression);		
+		
+		return config;
+	}
 
 }

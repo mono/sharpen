@@ -1,0 +1,8 @@
+namespace disable.disabled.subpackage
+{
+	#if DisabledByConfig
+	internal class TypesInSubPackagesShouldBeDisabledAlso
+	{
+	}
+	#endif // DisabledByConfig
+}

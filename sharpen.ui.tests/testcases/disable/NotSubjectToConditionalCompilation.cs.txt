@@ -1,0 +1,6 @@
+namespace disable
+{
+	internal class IWillNotBeSubjectToConditionalCompilation
+	{
+	}
+}

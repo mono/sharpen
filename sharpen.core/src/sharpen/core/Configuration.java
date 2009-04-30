@@ -103,6 +103,12 @@ public class Configuration {
 	private final Set<String> _mappedEventAdds = new HashSet<String>();
 
 	private final Map<String, String> _mappedEvents = new HashMap<String, String>();
+	
+	/**
+	 * Maps package names to expressions used in conditional compilation. 
+	 * Sub-packages will be considered to match also. 
+	 */
+	private final Map<String, String> _conditionalCompilations = new HashMap<String, String>();
 
 	public Configuration() {
 		this(DEFAULT_RUNTIME_TYPE_NAME);
@@ -613,4 +619,22 @@ public class Configuration {
 	public boolean isIgnoredAnnotation(String typeName) {
 	    return typeName.equals("java.lang.Override");
     }
+
+	public void conditionalCompilation(String packageName, String expression) {
+		_conditionalCompilations.put(packageName, expression);
+	}
+	
+	public String conditionalCompilationExpressionFor(String packageName) {
+		for(String current : _conditionalCompilations.keySet()) {
+			if (isSubPackage(current, packageName)) {
+				return _conditionalCompilations.get(current);	
+			}
+		}
+		
+		return null;
+	}
+
+	private boolean isSubPackage(String parentPackage, String packageName) {
+		return packageName.startsWith(parentPackage);
+	}
 }

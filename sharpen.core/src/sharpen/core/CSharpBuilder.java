@@ -314,7 +314,7 @@ public class CSharpBuilder extends ASTVisitor {
 	protected CSTypeDeclaration processTypeDeclaration(TypeDeclaration node) {
 		CSTypeDeclaration type = mapTypeDeclaration(node);
 		
-		processDisableTags(node, type);
+		processDisabledType(node, type);
 
 		addType(type);
 
@@ -330,6 +330,20 @@ public class CSharpBuilder extends ASTVisitor {
 		moveInitializersDependingOnThisReferenceToConstructor(type);
 	
 		return type;
+	}
+
+	private void processDisabledType(TypeDeclaration node, CSTypeDeclaration type) {
+		final String expression = _configuration.conditionalCompilationExpressionFor(packageNameFor(node));
+		if (null != expression) {
+			type.addEnclosingIfDef(expression);
+		}
+		
+		processDisableTags(node, type);
+	}
+
+	private String packageNameFor(TypeDeclaration node) {
+		ITypeBinding type = node.resolveBinding();
+		return type.getPackage().getName();
 	}
 
 	protected void flushInstanceInitializers(CSTypeDeclaration type) {

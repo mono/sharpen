@@ -108,7 +108,7 @@ public class Configuration {
 	 * Maps package names to expressions used in conditional compilation. 
 	 * Sub-packages will be considered to match also. 
 	 */
-	private final Map<String, String> _conditionalCompilations = new HashMap<String, String>();
+	private Map<String, String> _conditionalCompilations = new HashMap<String, String>();
 
 	public Configuration() {
 		this(DEFAULT_RUNTIME_TYPE_NAME);
@@ -620,8 +620,8 @@ public class Configuration {
 	    return typeName.equals("java.lang.Override");
     }
 
-	public void conditionalCompilation(String packageName, String expression) {
-		_conditionalCompilations.put(packageName, expression);
+	public void conditionalCompilation(Map<String, String> conditionalCompilation) {
+		_conditionalCompilations = conditionalCompilation;
 	}
 	
 	public String conditionalCompilationExpressionFor(String packageName) {

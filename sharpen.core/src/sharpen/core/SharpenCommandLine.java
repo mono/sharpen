@@ -76,4 +76,5 @@ public class SharpenCommandLine {
 	public String xmldoc;
 	public final List<Configuration.NameMapping> eventMappings = new ArrayList<Configuration.NameMapping>();
 	public final List<String> eventAddMappings = new ArrayList<String>();
+	public final Map<String, String> conditionalCompilation = new HashMap<String, String>();
 }

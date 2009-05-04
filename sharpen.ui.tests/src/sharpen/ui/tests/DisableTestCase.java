@@ -23,6 +23,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.ui.tests;
 
+import java.util.*;
+
 import sharpen.core.*;
 
 
@@ -40,6 +42,17 @@ public class DisableTestCase extends AbstractConversionTestCase {
 		runResourceTestCase("disable/DisableInnerClass");
 	}
 	
+	public void testDisableCompilationUnit() throws Throwable {
+		runResourceTestCase(newConfigWIthOrganizeUsings(), "disable/DisableCompilationUnit");
+	}
+	
+	private Configuration newConfigWIthOrganizeUsings() {
+		Configuration config = new Configuration();
+		config.enableOrganizeUsings();
+		
+		return config;
+	}
+
 	public void testDisableMethodInInterface() throws Throwable {
 		runResourceTestCase("disable/DisabledMethodInInterface");
 	}
@@ -53,8 +66,10 @@ public class DisableTestCase extends AbstractConversionTestCase {
 	}
 
 	private Configuration conditionalCompilationConfigFor(String expression) {
+		Map<String, String> conditionals = new HashMap<String, String>();
+		conditionals.put("disable.disabled", expression);
 		Configuration config= new Configuration();
-		config.conditionalCompilation("disable.disabled", expression);		
+		config.conditionalCompilation(conditionals);		
 		
 		return config;
 	}

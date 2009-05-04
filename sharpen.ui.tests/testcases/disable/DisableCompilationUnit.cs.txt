@@ -1,0 +1,18 @@
+#if !SILVERLIGHT
+using System.Collections;
+
+namespace disable
+{
+	internal class DisableClass
+	{
+		private void foo()
+		{
+			ArrayList arrayList = new ArrayList();
+		}
+
+		private void bar()
+		{
+		}
+	}
+}
+#endif // !SILVERLIGHT

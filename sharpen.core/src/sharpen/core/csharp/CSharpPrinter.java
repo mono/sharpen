@@ -72,6 +72,7 @@ public class CSharpPrinter extends CSVisitor {
 	}
 
 	public void visit(CSCompilationUnit node) {
+		beginEnclosingIfDefs(node);
 		List<CSUsing> usings = printableUsingList(node.usings());
 		for (CSUsing using : usings) {
 			using.accept(this);
@@ -87,6 +88,7 @@ public class CSharpPrinter extends CSVisitor {
 		if (null != node.namespace()) {
 			leaveBody();
 		}
+		endEnclosingIfDefs(node);
 	}
 	
 	@Override
@@ -290,14 +292,14 @@ public class CSharpPrinter extends CSVisitor {
 		endEnclosingIfDefs(node);
 	}
 
-	private void endEnclosingIfDefs(CSMember node) {
+	private void endEnclosingIfDefs(CSNode node) {
 		for (String expression : node.enclosingIfDefs()) {
 			writeIndented("#endif // ");
 			writeLine(expression);
 		}
 	}
 
-	private void beginEnclosingIfDefs(CSMember node) {
+	private void beginEnclosingIfDefs(CSNode node) {
 		for (String expression : node.enclosingIfDefs()) {
 			writeIndented("#if ");
 			writeLine(expression);

@@ -1,0 +1,16 @@
+/**
+ * @sharpen.if !SILVERLIGHT
+ */
+package disable;
+
+import java.util.ArrayList;
+
+class DisableClass {
+
+	 private void foo() {
+	 	ArrayList arrayList = new ArrayList();
+	 }
+	 
+	 private void bar() {
+	 }	 
+}

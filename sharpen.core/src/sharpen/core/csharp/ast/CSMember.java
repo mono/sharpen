@@ -39,8 +39,6 @@ public abstract class CSMember extends CSNode {
 	
 	private List<CSAttribute> _attributes = new ArrayList<CSAttribute>();
 	
-	private List<String> _enclosingIfDefs = new ArrayList<String>();
-	
 	protected CSMember(String name) {
 		_name = name;
 	}
@@ -57,14 +55,6 @@ public abstract class CSMember extends CSNode {
 		return _visibility;
 	}
 	
-	public void addEnclosingIfDef(String expression) {
-		_enclosingIfDefs.add(expression);
-	}
-	
-	public List<String> enclosingIfDefs() {
-		return Collections.unmodifiableList(_enclosingIfDefs);
-	}
-
 	public void addDoc(CSDocNode node) {
 		if (null == _docs) {
 			_docs = new ArrayList<CSDocNode>();

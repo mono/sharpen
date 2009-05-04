@@ -111,6 +111,8 @@ class SharpenCommandLineParser extends CommandLineParser {
 			_cmdLine.eventMappings.add(consumeNameMapping());
 		} else if (areEqual(arg, "-eventAddMapping")){
 			_cmdLine.eventAddMappings.add(consumeNext());
+		} else if (areEqual(arg, "-conditionalCompilation")) {
+			_cmdLine.conditionalCompilation.put(consumeNext(), consumeNext());
 		} else {
 			illegalArgument(arg);
 		}

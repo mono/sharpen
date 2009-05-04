@@ -201,6 +201,8 @@ public class CSharpBuilder extends ASTVisitor {
 	public boolean visit(PackageDeclaration node) {
 		String namespace = node.getName().toString();
 		_compilationUnit.namespace(mappedNamespace(namespace));
+		
+		processDisableTags(node, _compilationUnit);
 		return false;
 	}
 
@@ -335,7 +337,7 @@ public class CSharpBuilder extends ASTVisitor {
 	private void processDisabledType(TypeDeclaration node, CSTypeDeclaration type) {
 		final String expression = _configuration.conditionalCompilationExpressionFor(packageNameFor(node));
 		if (null != expression) {
-			type.addEnclosingIfDef(expression);
+			compilationUnit().addEnclosingIfDef(expression);
 		}
 		
 		processDisableTags(node, type);
@@ -844,6 +846,10 @@ public class CSharpBuilder extends ASTVisitor {
 		((CSTypeDeclaration) member).partial(true);
 	}
 
+	private TagElement javadocTagFor(PackageDeclaration node, final String withName) {
+		return JavadocUtility.getJavadocTag(node, withName);
+	}
+	
 	private TagElement javadocTagFor(BodyDeclaration node, final String withName) {
 		return JavadocUtility.getJavadocTag(node, withName);
 	}
@@ -1604,12 +1610,20 @@ public class CSharpBuilder extends ASTVisitor {
 		_currentMethod = saved;
 	}
 
-	private void processDisableTags(BodyDeclaration node, CSMember member) {
+	private void processDisableTags(PackageDeclaration packageDeclaration, CSNode csNode) {
+		TagElement tag = javadocTagFor(packageDeclaration, Annotations.SHARPEN_IF);
+		if (null == tag)
+			return;
+
+		csNode.addEnclosingIfDef(singleTextFragmentFrom(tag));
+	}
+
+	private void processDisableTags(BodyDeclaration node, CSNode csNode) {
 		TagElement tag = javadocTagFor(node, Annotations.SHARPEN_IF);
 		if (null == tag)
 			return;
 
-		member.addEnclosingIfDef(singleTextFragmentFrom(tag));
+		csNode.addEnclosingIfDef(singleTextFragmentFrom(tag));
 	}
 
 	private void processBlock(BodyDeclaration node, Block block, final CSBlock targetBlock) {

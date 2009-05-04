@@ -21,11 +21,15 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.core.csharp.ast;
 
+import java.util.*;
+
 public abstract class CSNode {
 	
 	public static final int UNKNOWN_START_POSITION = Integer.MIN_VALUE;
 
 	private int _startPosition;
+
+	private Set<String> _enclosingIfDefs = new HashSet<String>();
 	
 	public CSNode() {
 		this(UNKNOWN_START_POSITION);
@@ -43,5 +47,13 @@ public abstract class CSNode {
 		_startPosition = value;
 	}
 
-	public abstract void accept(CSVisitor visitor);	
+	public abstract void accept(CSVisitor visitor);
+
+	public void addEnclosingIfDef(String expression) {
+		_enclosingIfDefs.add(expression);
+	}
+
+	public Set<String> enclosingIfDefs() {
+		return Collections.unmodifiableSet(_enclosingIfDefs);
+	}	
 }

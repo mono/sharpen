@@ -149,6 +149,11 @@ public class SharpenCommandLineTestCase extends TestCase {
 		assertEquals("foo.xml", cmdLine.xmldoc);
 	}
 	
+	public void testConditionalCompilation() {
+		final SharpenCommandLine cmdLine = parse("fooSourceFolder", "-conditionalCompilation", "package.name", "IAMRICH");
+		assertEquals("IAMRICH", cmdLine.conditionalCompilation.get("package.name"));
+	}
+	
 	private String createTempFileFromResource(String resourceName) throws Exception {
 		File temp = java.io.File.createTempFile("sharpen", null);
 		IO.writeFile(temp, ResourceUtility.getStringContents(resourceName));

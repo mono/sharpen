@@ -127,6 +127,7 @@ public class SharpenApplication implements IApplication {
 		configuration.mapEvents(_args.eventMappings);
 		configuration.mapNamespaces(_args.namespaceMappings);
 		configuration.mapMembers(_args.memberMappings);
+		configuration.conditionalCompilation(_args.conditionalCompilation);
 		
 		for (String fullyQualifiedType : _args.fullyQualifiedTypes) {
 			configuration.addFullyQualifiedTypeName(fullyQualifiedType);

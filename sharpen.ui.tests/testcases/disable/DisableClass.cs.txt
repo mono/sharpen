@@ -1,6 +1,6 @@
+#if !SILVERLIGHT
 namespace disable
 {
-	#if !SILVERLIGHT
 	public class DisableClass
 	{
 		private void foo()
@@ -11,5 +11,5 @@ namespace disable
 		{
 		}
 	}
-	#endif // !SILVERLIGHT
 }
+#endif // !SILVERLIGHT

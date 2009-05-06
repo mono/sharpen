@@ -316,7 +316,7 @@ public class CSharpBuilder extends ASTVisitor {
 	protected CSTypeDeclaration processTypeDeclaration(TypeDeclaration node) {
 		CSTypeDeclaration type = mapTypeDeclaration(node);
 		
-		processDisabledType(node, type);
+		processDisabledType(node, isMainType(node) ? _compilationUnit : type);
 
 		addType(type);
 
@@ -334,7 +334,7 @@ public class CSharpBuilder extends ASTVisitor {
 		return type;
 	}
 
-	private void processDisabledType(TypeDeclaration node, CSTypeDeclaration type) {
+	private void processDisabledType(TypeDeclaration node, CSNode type) {
 		final String expression = _configuration.conditionalCompilationExpressionFor(packageNameFor(node));
 		if (null != expression) {
 			compilationUnit().addEnclosingIfDef(expression);

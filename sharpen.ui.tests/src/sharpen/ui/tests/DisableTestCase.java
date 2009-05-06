@@ -1,4 +1,4 @@
-/* Copyright (C) 2004 - 2008  db4objects Inc.  http://www.db4o.com
+/* Copyright (C) 2004 - 2008  Versant Inc.  http://www.db4o.com
 
 This file is part of the sharpen open source java to c# translator.
 
@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
-/* Copyright (C) 2004 - 2006 db4objects Inc. http://www.db4o.com */
+/* Copyright (C) 2004 - 2006 Versant Inc. http://www.db4o.com */
 
 package sharpen.ui.tests;
 

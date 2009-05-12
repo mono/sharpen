@@ -1,45 +1,46 @@
 namespace events
 {
-	public delegate void QueryEventHandler(object sender, QueryEventArgs args);
-
 	internal interface EventRegistry
 	{
 		/// <summary>An event.</summary>
 		/// <remarks>An event.</remarks>
-		event QueryEventHandler QueryStarted;
+		event System.EventHandler<QueryEventArgs> QueryStarted;
 
-		event QueryEventHandler QueryFinished;
+		event System.EventHandler<QueryEventArgs> QueryFinished;
 	}
 
 	internal class EventRegistryImpl : events.EventRegistry
 	{
-		private QueryEventHandler _queryStarted;
+		private System.EventHandler<QueryEventArgs> _queryStarted;
 
-		private QueryEventHandler _queryFinished;
+		private System.EventHandler<QueryEventArgs> _queryFinished;
 
-		public virtual event QueryEventHandler QueryStarted
+		public virtual event System.EventHandler<QueryEventArgs> QueryStarted
 		{
 			add
 			{
-				_queryStarted = (QueryEventHandler)System.Delegate.Combine(_queryStarted, value);
+				_queryStarted = (System.EventHandler<QueryEventArgs>)System.Delegate.Combine(_queryStarted
+					, value);
 			}
 			remove
 			{
-				_queryStarted = (QueryEventHandler)System.Delegate.Remove(_queryStarted, value);
+				_queryStarted = (System.EventHandler<QueryEventArgs>)System.Delegate.Remove(_queryStarted
+					, value);
 			}
 		}
 
-		public virtual event QueryEventHandler QueryFinished
+		public virtual event System.EventHandler<QueryEventArgs> QueryFinished
 		{
 			add
 			{
-				_queryFinished = (QueryEventHandler)System.Delegate.Combine(_queryFinished, value
-					);
+				_queryFinished = (System.EventHandler<QueryEventArgs>)System.Delegate.Combine(_queryFinished
+					, value);
 				OnQueryFinishedListener();
 			}
 			remove
 			{
-				_queryFinished = (QueryEventHandler)System.Delegate.Remove(_queryFinished, value);
+				_queryFinished = (System.EventHandler<QueryEventArgs>)System.Delegate.Remove(_queryFinished
+					, value);
 			}
 		}
 

@@ -1507,30 +1507,11 @@ public class CSharpBuilder extends ASTVisitor {
 		String eventName = methodName(node);
 		CSEvent event = new CSEvent(eventName, eventHandlerType);
 		_currentType.addMember(event);
-		createEventTypeIfNeeded(eventHandlerType);
 		return event;
 	}
 
 	private String methodName(MethodDeclaration node) {
 		return methodName(node.getName().toString());
-	}
-
-	private void createEventTypeIfNeeded(CSTypeReference eventHandlerType) {
-		// the delegate is only generated along with the interface
-		if (!_currentType.isInterface())
-			return;
-
-		final String unqualifiedName = unqualifiedName(eventHandlerType.typeName());
-		for (CSType type : _compilationUnit.types()) {
-			if (type.name().equals(unqualifiedName))
-				return;
-		}
-
-		CSDelegate delegate = new CSDelegate(unqualifiedName);
-		delegate.visibility(CSVisibility.Public);
-		delegate.addParameter("sender", OBJECT_TYPE_REFERENCE);
-		delegate.addParameter("args", new CSTypeReference(buildEventArgsTypeName(eventHandlerType)));
-		_compilationUnit.insertTypeBefore(delegate, _currentType);
 	}
 
 	private String unqualifiedName(String typeName) {
@@ -1540,22 +1521,13 @@ public class CSharpBuilder extends ASTVisitor {
 		return typeName.substring(index + 1);
 	}
 
-	private String buildEventHandlerTypeName(ASTNode node, String typeName) {
-		if (!typeName.endsWith("EventArgs")) {
+	private String buildEventHandlerTypeName(ASTNode node, String eventArgsTypeName) {
+		if (!eventArgsTypeName.endsWith("EventArgs")) {
 			warning(node, Annotations.SHARPEN_EVENT + " type name must end with 'EventArgs'");
-			return typeName + "EventHandler";
+			return eventArgsTypeName + "EventHandler";
 		}
 
-		return buildEventTypeName(typeName, "EventArgs", "EventHandler");
-	}
-
-	private String buildEventArgsTypeName(CSTypeReference typeName) {
-		return buildEventTypeName(typeName.typeName(), "EventHandler", "EventArgs");
-	}
-
-	private String buildEventTypeName(String typeName, String expected, String suffix) {
-		String prefix = typeName.substring(0, typeName.length() - expected.length());
-		return prefix + suffix;
+		return "System.EventHandler<" + eventArgsTypeName + ">";
 	}
 
 	private String getEventArgsType(MethodDeclaration node) {

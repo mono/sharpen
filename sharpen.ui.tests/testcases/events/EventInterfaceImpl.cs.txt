@@ -2,19 +2,19 @@ namespace events
 {
 	public class EventInterfaceImpl : events.EventInterface
 	{
-		private events.QueryEventHandler _queryStarted;
+		private System.EventHandler<events.QueryEventArgs> _queryStarted;
 
-		public virtual event events.QueryEventHandler QueryStarted
+		public virtual event System.EventHandler<events.QueryEventArgs> QueryStarted
 		{
 			add
 			{
-				_queryStarted = (events.QueryEventHandler)System.Delegate.Combine(_queryStarted, 
-					value);
+				_queryStarted = (System.EventHandler<events.QueryEventArgs>)System.Delegate.Combine
+					(_queryStarted, value);
 			}
 			remove
 			{
-				_queryStarted = (events.QueryEventHandler)System.Delegate.Remove(_queryStarted, value
-					);
+				_queryStarted = (System.EventHandler<events.QueryEventArgs>)System.Delegate.Remove
+					(_queryStarted, value);
 			}
 		}
 	}

@@ -1,11 +1,9 @@
 namespace events
 {
-	public delegate void QueryEventHandler(object sender, events.QueryEventArgs args);
-
 	public interface EventInterface
 	{
 		/// <summary>An event.</summary>
 		/// <remarks>An event.</remarks>
-		event events.QueryEventHandler QueryStarted;
+		event System.EventHandler<events.QueryEventArgs> QueryStarted;
 	}
 }

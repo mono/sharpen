@@ -62,8 +62,6 @@ namespace javadoc
 		public const int BAZ = 0;
 	}
 
-	public delegate void QueryEventHandler(object sender, events.QueryEventArgs args);
-
 	/// <summary>
 	/// This was overlaid here.
 	/// 
@@ -74,6 +72,6 @@ namespace javadoc
 		/// <summary>
 		/// A query started.
 		/// </summary>
-		event events.QueryEventHandler queryStarted;
+		event System.EventHandler<events.QueryEventArgs> queryStarted;
 	}
 }

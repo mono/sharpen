@@ -1,10 +1,8 @@
 namespace events
 {
-	public delegate void FooEventHandler(object sender, events.FooEventArgs args);
-
 	internal interface EventRegistry
 	{
-		event events.FooEventHandler Foo;
+		event System.EventHandler<events.FooEventArgs> Foo;
 	}
 
 	public class EventConsumer
@@ -12,8 +10,8 @@ namespace events
 		public static void Main(string[] cmdLine)
 		{
 			events.EventRegistry registry = EventRegistry();
-			registry.Foo += new events.FooEventHandler(new _EventListener4_42(cmdLine).OnEvent
-				);
+			registry.Foo += new System.EventHandler<events.FooEventArgs>(new _EventListener4_42
+				(cmdLine).OnEvent);
 		}
 
 		private sealed class _EventListener4_42

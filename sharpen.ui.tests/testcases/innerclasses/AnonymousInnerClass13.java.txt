@@ -26,6 +26,11 @@ class AnonymousInnerClass13 {
 			public void run() {
 			}
 		};
+		
+		r = new Base(null) {
+			public void run() {
+			}
+		};
 	}
 	
 	private void foo() {

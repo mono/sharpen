@@ -78,21 +78,29 @@ public class CSAnonymousClassBuilder extends AbstractNestedClassBuilder {
 			return;
 		}
 		
+		final ITypeBinding[] ctorParameterTypes = classInstanceCreation().resolveConstructorBinding().getParameterTypes();
+		
 		_constructor.chainedConstructorInvocation(new CSConstructorInvocationExpression(new CSBaseExpression()));
 		
-		int i = 0;		
-		for (Object arg : arguments) {
-			Expression expression = (Expression)arg;			
-			String parameterName = "baseArg" + (++i);
-			_constructor.addParameter(parameterName, mappedTypeReference(expression.resolveTypeBinding()));
+		for (int i=0; i<ctorParameterTypes.length; ++i) {
+			ITypeBinding parameterType = ctorParameterTypes[i];
+			Expression argument = (Expression)arguments.get(i);	
+			
+			String parameterName = "baseArg" + (i + 1);
+			_constructor.addParameter(parameterName, mappedTypeReference(parameterType));
 			_constructor.chainedConstructorInvocation().addArgument(new CSReferenceExpression(parameterName));
-			invocation.addArgument(_parent.mapExpression(expression));
+			
+			invocation.addArgument(_parent.mapExpression(argument));
 		}
 	}
 	
 	private List classInstanceCreationArguments() {
-		return ((ClassInstanceCreation)_node.getParent()).arguments();
+		return classInstanceCreation().arguments();
 	}
+
+	private ClassInstanceCreation classInstanceCreation() {
+	    return ((ClassInstanceCreation)_node.getParent());
+    }
 
 	public void run() {
 		captureExternalLocalVariables();

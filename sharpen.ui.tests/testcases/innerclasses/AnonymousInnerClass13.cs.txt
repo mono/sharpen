@@ -19,6 +19,7 @@ namespace innerclasses
 			r = new _Base_19(f);
 			string s = "bar";
 			r = new _Base_25(s);
+			r = new _Base_30(null);
 		}
 
 		private sealed class _Base_13 : innerclasses.Base
@@ -51,6 +52,17 @@ namespace innerclasses
 		private sealed class _Base_25 : innerclasses.Base
 		{
 			public _Base_25(string baseArg1) : base(baseArg1)
+			{
+			}
+
+			public override void run()
+			{
+			}
+		}
+
+		private sealed class _Base_30 : innerclasses.Base
+		{
+			public _Base_30(string baseArg1) : base(baseArg1)
 			{
 			}
 

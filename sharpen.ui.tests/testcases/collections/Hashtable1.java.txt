@@ -7,6 +7,7 @@ public class Hashtable1 {
 		Hashtable subject = (Hashtable)collection;
 		subject.put("foo", "bar");
 		if (subject.size() > 0) {
-		}
+			Object found = subject.get("foo");
+		} 
 	}
 }

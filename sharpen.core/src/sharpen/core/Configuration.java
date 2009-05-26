@@ -335,6 +335,7 @@ public class Configuration {
 	    mapProperty("java.util.Map.values", "Values");
 	    mapProperty("java.util.Map.keySet", "Keys");
 	    mapIndexer("java.util.Map.get");
+	    mapIndexer("java.util.Dictionary.get");
 	    
 	    //  jdk 1.0 collection framework
 	    mapType("java.util.Vector", "System.Collections.ArrayList");

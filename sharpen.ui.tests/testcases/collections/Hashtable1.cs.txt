@@ -8,6 +8,7 @@ namespace collections
 			subject["foo"] = "bar";
 			if (subject.Count > 0)
 			{
+				object found = subject["foo"];
 			}
 		}
 	}

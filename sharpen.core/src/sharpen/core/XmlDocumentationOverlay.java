@@ -102,6 +102,8 @@ public class XmlDocumentationOverlay implements DocumentationOverlay {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setIgnoringComments(true);
 		factory.setIgnoringElementContentWhitespace(true);
+		factory.setNamespaceAware(true);
+		factory.setXIncludeAware(true);
 		return factory;
 	}
 

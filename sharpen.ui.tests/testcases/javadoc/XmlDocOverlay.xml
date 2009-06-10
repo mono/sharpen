@@ -1,5 +1,8 @@
 <?xml version="1.0"?>
-<doc>
+<doc xmlns:xi="http://www.w3.org/2001/XInclude">
+
+	<xi:include href="javadoc.IEventInterface.xml" />
+
 	<type name="javadoc.XmlDocOverlay">
 	
 		<doc>
@@ -51,21 +54,4 @@
 		</member>
 	</type>
 	
-	<type name="javadoc.IEventInterface">
-		<doc>
-			<summary>
-			This was overlaid here.
-			
-			And this is the IEventInterface.
-			</summary>
-		</doc>
-		
-		<member name="queryStarted">
-			<doc>
-				<summary>
-				A query started.
-				</summary>
-			</doc>
-		</member>
-	</type>
 </doc>

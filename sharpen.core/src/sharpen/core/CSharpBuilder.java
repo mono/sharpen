@@ -816,18 +816,59 @@ public class CSharpBuilder extends ASTVisitor {
 
 	private String getWholeText(TagElement element) {
 		StringBuilder builder = new StringBuilder();
-		final List fragments = element.fragments();
-		for (Object fragment : fragments) {
+		
+		for (Object fragment : element.fragments()) {
 			if (fragment instanceof TextElement) {
 				TextElement textElement = (TextElement) fragment;
 				String text = textElement.getText();
-				builder.append(text);
-				builder.append(" ");
+				appendWithSpaceIfRequired(builder, text);
+			} else if (fragment instanceof TagElement) {
+				builder.append(getWholeText((TagElement) fragment));
+			} else if (fragment instanceof MethodRef) {
+				builder.append(getFullyQualifiedMethodSignature((MethodRef) fragment));
+			} else if (fragment instanceof MemberRef) {
+				builder.append(getFullyQualifiedMemberName((MemberRef) fragment));
 			} else {
 				break;
 			}
 		}
 		return builder.toString().trim();
+	}
+
+	private String getFullyQualifiedMemberName(MemberRef ref) {
+		return mappedQualifiedName(ref.resolveBinding());
+	}
+
+	private String getFullyQualifiedMethodSignature(MethodRef ref) {
+		StringBuilder methodFQN = new StringBuilder(mappedQualifiedName((IMethodBinding) ref.resolveBinding()));	
+		
+		final String parameterList = parameterListSeparatedBy((IMethodBinding) ref.resolveBinding(), 	", ");
+		
+		methodFQN.append("(");
+		methodFQN.append(parameterList);
+		methodFQN.append(")");
+		
+		return methodFQN.toString();		
+	}
+
+	private String parameterListSeparatedBy(final IMethodBinding binding,
+			final String separator) {
+		StringBuilder parameters= new StringBuilder();
+		for (ITypeBinding parameter : binding.getParameterTypes()) {
+			if (parameters.length() > 0) {
+				parameters.append(separator);
+			}
+			parameters.append(mappedTypeName(parameter));			
+		}
+		final String parameterList = parameters.toString();
+		return parameterList;
+	}
+
+	private void appendWithSpaceIfRequired(StringBuilder builder, String text) {
+		if (builder.length() > 0 && builder.charAt(builder.length()-1) != ' ' && text.startsWith(" ") == false) {
+			builder.append(" ");
+		}
+		builder.append(text);
 	}
 
 	private String toLiteralStringForm(String s) {

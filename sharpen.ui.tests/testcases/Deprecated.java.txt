@@ -16,4 +16,28 @@ class Deprecated {
 	  */
 	  public void foo(int bar) {
 	  }
+	  
+	  /**
+	   * @deprecated becase we can. Use {@link foo(int)} instead.
+	   */
+	  public void bar(){
+	  }
+	  
+	  /**
+	   * @deprecated Use {@link DeprecatedAlternatives#methodReference()} instead.
+	   */
+	  public void methodReference() {
+	  }
+	  
+	  /**
+	   * @deprecated Use {@link DeprecatedAlternatives#memberReference} instead.
+	   */
+	  public int memberReference;
+}
+
+class DeprecatedAlternatives {
+	public void methodReference() {
+	}
+	
+	public int memberReference;
 }

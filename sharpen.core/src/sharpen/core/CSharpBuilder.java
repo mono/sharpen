@@ -2282,13 +2282,25 @@ public class CSharpBuilder extends ASTVisitor {
 		pushExpression(mie);
 	}
 
+	public boolean visit(MethodInvocation node) {
+		IMethodBinding binding = originalMethodBinding(node.resolveMethodBinding());
+		Configuration.MemberMapping mapping = mappingForInvocation(node, binding);
+
+		if (null == mapping) {
+			processUnmappedMethodInvocation(node);
+		} else {
+			processMappedMethodInvocation(node, binding, mapping);
+		}
+		return false;
+	}
+	
 	public boolean visit(SuperMethodInvocation node) {
 		if (null != node.getQualifier()) {
 			notImplemented(node);
 		}
 
 		IMethodBinding binding = originalMethodBinding(node.resolveMethodBinding());
-		Configuration.MemberMapping mapping = configuredMappingFor(binding);
+		Configuration.MemberMapping mapping = mappingForInvocation(node, binding);
 		CSExpression target = new CSMemberReferenceExpression(new CSBaseExpression(), mappedMethodName(binding));
 
 		if (mapping != null && mapping.kind != MemberKind.Method) {
@@ -2301,31 +2313,24 @@ public class CSharpBuilder extends ASTVisitor {
 		pushExpression(mie);
 		return false;
 	}
-
-	public boolean visit(MethodInvocation node) {
-		IMethodBinding binding = originalMethodBinding(node.resolveMethodBinding());
+	
+	private Configuration.MemberMapping mappingForInvocation(ASTNode node, IMethodBinding binding) {
 		Configuration.MemberMapping mapping = configuredMappingFor(binding);
 
 		if (null == mapping) {
-			if (isIndexer(node)) {
+			if (isIndexer(binding)) {
 				mapping = new MemberMapping(null, MemberKind.Indexer);
-			} else if (isTaggedMethodInvocation(node, Annotations.SHARPEN_EVENT)) {
+			} else if (isTaggedMethodInvocation(binding, Annotations.SHARPEN_EVENT)) {
 				mapping = new MemberMapping(binding.getName(), MemberKind.Property);
-			} else if (isTaggedMethodInvocation(node, Annotations.SHARPEN_PROPERTY)) {
+			} else if (isTaggedMethodInvocation(binding, Annotations.SHARPEN_PROPERTY)) {
 				mapping = new MemberMapping(propertyName(binding), MemberKind.Property);
 			}
 		}
-
-		if (null == mapping) {
-			processUnmappedMethodInvocation(node);
-		} else {
-			processMappedMethodInvocation(node, binding, mapping);
-		}
-		return false;
+		return mapping;
 	}
 
-	private boolean isIndexer(MethodInvocation node) {
-		final MethodDeclaration declaration = declaringNode(node.resolveMethodBinding());
+	private boolean isIndexer(final IMethodBinding binding) {
+		final MethodDeclaration declaration = declaringNode(binding);
 		if (null == declaration) {
 			return false;
 		}
@@ -2519,7 +2524,11 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private boolean isTaggedMethodInvocation(MethodInvocation node, final String tag) {
-		final MethodDeclaration method = declaringNode(originalMethodBinding(node.resolveMethodBinding()));
+		return isTaggedMethodInvocation(node.resolveMethodBinding(), tag);
+	}
+
+	private boolean isTaggedMethodInvocation(final IMethodBinding binding, final String tag) {
+		final MethodDeclaration method = declaringNode(originalMethodBinding(binding));
 		if (null == method) {
 			return false;
 		}

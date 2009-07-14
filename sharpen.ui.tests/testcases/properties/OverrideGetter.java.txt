@@ -3,6 +3,6 @@ package properties;
 public class OverrideGetter extends InterfaceGetterImpl {
 	
 	public boolean isCancelled() {
-		return true;
+		return super.isCancelled();
 	}
 }

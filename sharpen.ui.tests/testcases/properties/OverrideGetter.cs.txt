@@ -6,7 +6,7 @@ namespace properties
 		{
 			get
 			{
-				return true;
+				return base.IsCancelled;
 			}
 		}
 	}

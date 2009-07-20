@@ -319,6 +319,7 @@ public class Configuration {
 	    
 	    mapProperty("java.util.List.size", "Count");
 	    mapIndexer("java.util.List.get");
+	    mapMethod("java.util.Collection.addAll", runtimeMethod("AddAll"));
 	    
 	    mapMethod("java.lang.Iterable.iterator", "GetEnumerator");
 	    mapMethod("java.util.Collection.iterator", "GetEnumerator");

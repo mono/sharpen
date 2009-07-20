@@ -9,6 +9,7 @@ namespace collections
 			{
 				object value = l[0];
 			}
+			Sharpen.Runtime.AddAll(new System.Collections.ArrayList(), l);
 		}
 	}
 }

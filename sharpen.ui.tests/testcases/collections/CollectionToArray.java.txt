@@ -1,0 +1,9 @@
+package collections;
+
+class CollectionToArray extends java.util.ArrayList{
+
+  public Object[] toArray(){
+    return null;
+  }
+
+}

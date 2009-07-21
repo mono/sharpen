@@ -1,0 +1,11 @@
+namespace collections
+{
+	[System.Serializable]
+	internal class CollectionToArray : System.Collections.ArrayList
+	{
+		public override object[] toArray()
+		{
+			return null;
+		}
+	}
+}

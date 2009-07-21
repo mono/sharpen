@@ -51,6 +51,10 @@ public class CollectionConversionTestCase extends AbstractConversionTestCase {
 		runResourceTestCase("Hashtable1");
 	}
 	
+	public void testCollectionToArray() throws Throwable {
+		runResourceTestCase("CollectionToArray");
+	}
+	
 	@Override
 	protected void runResourceTestCase(String resourceName) throws Throwable {
 		super.runResourceTestCase("collections/" + resourceName);

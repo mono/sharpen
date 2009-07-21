@@ -6,6 +6,8 @@ public class List1 {
 		if (l.size() > 0) {
 			Object value = l.get(0);
 		}
-		new java.util.ArrayList().addAll(l);
+		java.util.ArrayList arrayList = new java.util.ArrayList();
+		arrayList.addAll(l);
+		arrayList.toArray(new Object[arrayList.size()]);
 	}
 }

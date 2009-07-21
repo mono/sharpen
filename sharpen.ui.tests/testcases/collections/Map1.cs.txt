@@ -15,7 +15,7 @@ namespace collections
 			foreach (object key in map.Keys)
 			{
 			}
-			object removed = Sharpen.Util.Collections.Remove(map, "foo");
+			object removed = Sharpen.Collections.Remove(map, "foo");
 			map["foo"] = "bar";
 		}
 

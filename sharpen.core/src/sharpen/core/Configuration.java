@@ -319,7 +319,8 @@ public class Configuration {
 	    
 	    mapProperty("java.util.List.size", "Count");
 	    mapIndexer("java.util.List.get");
-	    mapMethod("java.util.Collection.addAll", runtimeMethod("AddAll"));
+	    mapMethod("java.util.Collection.addAll", collectionRuntimeMethod("AddAll"));
+	    mapMethod("java.util.Collection.toArray", collectionRuntimeMethod("ToArray"));
 	    
 	    mapMethod("java.lang.Iterable.iterator", "GetEnumerator");
 	    mapMethod("java.util.Collection.iterator", "GetEnumerator");
@@ -328,7 +329,7 @@ public class Configuration {
 	    mapMethod("java.util.Iterator.hasNext", "MoveNext");
 	    mapProperty("java.util.Iterator.next", "Current");
 	    mapIndexer("java.util.Map.put");
-	    mapMethod("java.util.Map.remove", "Sharpen.Util.Collections.Remove");
+	    mapMethod("java.util.Map.remove", collectionRuntimeMethod("Remove"));
 	    mapMethod("java.util.Map.entrySet", "");
 	    mapProperty("java.util.Map.Entry.getKey", "Key");
 	    mapProperty("java.util.Map.Entry.getValue", "Value");
@@ -355,6 +356,18 @@ public class Configuration {
 	    mapIndexer("java.util.Dictionary.put");
 	    mapProperty("java.util.Dictionary.size", "Count");
 	}
+
+	private String collectionRuntimeMethod(String methodName) {
+		return collectionRuntimeType() + "." + methodName;
+    }
+
+	private String collectionRuntimeType() {
+		return runtimeTypeNamespace() + ".Collections";
+    }
+
+	private String runtimeTypeNamespace() {
+		return _runtimeTypeName.substring(0, _runtimeTypeName.lastIndexOf('.'));
+    }
 
 	private String runtimeMethod(String methodName) {
 		return _runtimeTypeName + "." + methodName;

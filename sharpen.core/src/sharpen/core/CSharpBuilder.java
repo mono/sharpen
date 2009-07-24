@@ -2283,14 +2283,16 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(MethodInvocation node) {
+		
 		IMethodBinding binding = originalMethodBinding(node.resolveMethodBinding());
 		Configuration.MemberMapping mapping = mappingForInvocation(node, binding);
 
-		if (null == mapping) {
-			processUnmappedMethodInvocation(node);
-		} else {
+		if (null != mapping) {
 			processMappedMethodInvocation(node, binding, mapping);
+		} else {
+			processUnmappedMethodInvocation(node);
 		}
+		
 		return false;
 	}
 	
@@ -2330,12 +2332,16 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private boolean isIndexer(final IMethodBinding binding) {
-		final MethodDeclaration declaration = declaringNode(binding);
+		return isTaggedMethod(binding, Annotations.SHARPEN_INDEXER);
+	}
+
+	private boolean isTaggedMethod(final IMethodBinding binding, final String tag) {
+	    final MethodDeclaration declaration = declaringNode(binding);
 		if (null == declaration) {
 			return false;
 		}
-		return isTaggedDeclaration(declaration, Annotations.SHARPEN_INDEXER);
-	}
+		return isTaggedDeclaration(declaration, tag);
+    }
 
 	private IMethodBinding originalMethodBinding(IMethodBinding binding) {
 		IMethodBinding original = Bindings.findMethodDefininition(binding, _ast.getAST());
@@ -2365,9 +2371,37 @@ public class CSharpBuilder extends ASTVisitor {
 			processUnwrapInvocation(node);
 			return;
 		}
+		
+		if (isMacro(node)) {
+			processMacroInvocation(node);
+			return;
+		}
 
 		processOrdinaryMethodInvocation(node);
 	}
+
+	private boolean isMacro(MethodInvocation node) {
+	    return isTaggedMethodInvocation(node, Annotations.SHARPEN_MACRO);
+    }
+
+	private void processMacroInvocation(MethodInvocation node) {
+		final MethodDeclaration declaration = declaringNode(node.resolveMethodBinding());
+		final TagElement macro = effectiveJavadocTagFor(declaration, Annotations.SHARPEN_MACRO);
+		final CSMacro code = new CSMacro(singleTextFragmentFrom(macro));
+		
+		code.addVariable("expression", mapExpression(node.getExpression()));
+		code.addVariable("arguments", mapExpressions(node.arguments()));
+		
+		pushExpression(new CSMacroExpression(code));
+    }
+
+	private List<CSExpression> mapExpressions(List expressions) {
+		final ArrayList<CSExpression> result = new ArrayList<CSExpression>(expressions.size());
+		for (Object expression : expressions) {
+			result.add(mapExpression((Expression) expression));
+		}
+		return result;
+    }
 
 	private boolean isUnwrapInvocation(MethodInvocation node) {
 	    return isTaggedMethodInvocation(node, Annotations.SHARPEN_UNWRAP);
@@ -3032,7 +3066,32 @@ public class CSharpBuilder extends ASTVisitor {
 		return mappedTypeReference(type.resolveBinding());
 	}
 
+	private CSTypeReferenceExpression mappedMacroTypeReference(ITypeBinding typeUsage, final TypeDeclaration typeDeclaration) {
+		
+	    final CSMacro macro = new CSMacro(singleTextFragmentFrom(javadocTagFor(typeDeclaration, Annotations.SHARPEN_MACRO)));
+	    
+	    final ITypeBinding[] typeArguments = typeUsage.getTypeArguments();
+	    if (typeArguments.length > 0) {
+		    final ITypeBinding[] typeParameters = typeUsage.getTypeDeclaration().getTypeParameters();
+			for (int i = 0; i < typeParameters.length; i++) {
+				macro.addVariable(typeParameters[i].getName(), mappedTypeReference(typeArguments[i]));
+	        }
+	    }
+	    
+	    return new CSMacroTypeReference(macro);
+    }
+
+	private boolean isMacroType(final ASTNode declaration) {
+	    return declaration instanceof TypeDeclaration
+	    	&& containsJavadoc((TypeDeclaration)declaration, Annotations.SHARPEN_MACRO);
+    }
+
 	protected CSTypeReferenceExpression mappedTypeReference(ITypeBinding type) {
+		final ASTNode declaration = findDeclaringNode(type);
+		if (isMacroType(declaration)) {
+			return mappedMacroTypeReference(type, (TypeDeclaration) declaration);
+		}
+		
 		if (type.isArray()) {
 			return mappedArrayTypeReference(type);
 		}

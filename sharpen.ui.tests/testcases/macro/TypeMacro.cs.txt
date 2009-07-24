@@ -1,0 +1,11 @@
+namespace macro
+{
+	internal class TypeMacro
+	{
+		internal System.EventHandler<int> _field;
+
+		internal virtual void foo(System.EventHandler<string> parameter)
+		{
+		}
+	}
+}

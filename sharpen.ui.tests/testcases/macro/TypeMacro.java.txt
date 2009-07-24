@@ -1,0 +1,16 @@
+package macro;
+
+/**
+ * @sharpen.macro System.EventHandler<$T1>
+ * @sharpen.ignore
+ */
+class TypeWithMacro<T1, T2> {
+}
+
+class TypeMacro {
+
+	TypeWithMacro<Integer, Object> _field;
+
+	void foo(TypeWithMacro<String, Object> parameter) {
+	}
+}

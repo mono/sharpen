@@ -73,5 +73,5 @@ public class Annotations {
 	
 	static final String SHARPEN_STRUCT = "@sharpen.struct";
 
-	
+	static final String SHARPEN_MACRO = "@sharpen.macro";	
 }

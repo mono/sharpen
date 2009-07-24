@@ -1,0 +1,17 @@
+package macro;
+
+class Event4Impl {
+
+	/**
+	 * @sharpen.macro if (null != $expression) $expression(null, $arguments)
+	 */
+	public void trigger(Object args) {
+	}
+}
+
+class Program {
+	static void run() {
+		Event4Impl e = new Event4Impl();
+		e.trigger("foo");
+	}
+}

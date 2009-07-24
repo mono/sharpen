@@ -23,6 +23,7 @@ package sharpen.core.csharp;
 
 import java.io.*;
 import java.util.*;
+import java.util.regex.*;
 
 import sharpen.core.csharp.ast.*;
 import sharpen.core.io.*;
@@ -69,6 +70,39 @@ public class CSharpPrinter extends CSVisitor {
 			}
 		});
 		return list;
+	}
+
+	static final Pattern META_VARIABLE_PATTERN = Pattern.compile("\\$(\\w+)");
+	
+	@Override
+	public void visit(CSMacroExpression node) {
+		node.macro().accept(this);
+	}
+	
+	@Override
+	public void visit(CSMacroTypeReference node) {
+		node.macro().accept(this);
+    }
+	
+	@Override
+	public void visit(CSMacro node) {
+		final String template = node.template();
+		final Matcher matcher = META_VARIABLE_PATTERN.matcher(template);
+		int last = 0;
+		while (matcher.find()) {
+			write(template.substring(last, matcher.start()));
+			
+			Object value = node.resolveVariable(matcher.group(1));
+			// value is either a single node or a list of nodes
+			if (value instanceof CSNode) {
+				((CSNode)value).accept(this);
+			} else {
+				writeCommaSeparatedList((Iterable<CSNode>) value);
+			}
+			
+			last = matcher.end();
+		}
+		write(template.substring(last));
 	}
 
 	public void visit(CSCompilationUnit node) {

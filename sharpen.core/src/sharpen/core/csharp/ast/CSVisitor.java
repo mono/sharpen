@@ -227,4 +227,13 @@ public class CSVisitor {
 
 	public void visit(CSRemovedExpression node) {
     }
+
+	public void visit(CSMacroExpression node) {
+    }
+
+	public void visit(CSMacro node) {
+    }
+
+	public void visit(CSMacroTypeReference node) {
+    }
 }

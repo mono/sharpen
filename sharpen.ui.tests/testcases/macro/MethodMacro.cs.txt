@@ -1,0 +1,18 @@
+namespace macro
+{
+	internal class Event4Impl
+	{
+		public virtual void trigger(object args)
+		{
+		}
+	}
+
+	internal class Program
+	{
+		internal static void run()
+		{
+			macro.Event4Impl e = new macro.Event4Impl();
+			if (null != e) e(null, "foo");
+		}
+	}
+}

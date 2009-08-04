@@ -44,7 +44,7 @@ package sharpen.core.framework;
 
 import org.eclipse.jdt.core.dom.*;
 
-public class Bindings {	
+public class BindingUtils {	
 	
 	/**
 	 * Finds the method in the given <code>type</code> that is overrideen by the specified <code>method<code> . Returns <code>null</code> if no such method exits.
@@ -81,7 +81,7 @@ public class Bindings {
 	 * Finds a method in the hierarchy of <code>type</code> that is overridden by </code>binding</code>.
 	 * Returns <code>null</code> if no such method exists. First the super class is examined and than the implemented interfaces.
 	 * @param type The type to search the method in
-	 * @param binding The method that overrrides
+	 * @param binding The method that overrides
 	 * @return the method binding overridden the method
 	 */
 	public static IMethodBinding findOverriddenMethodInHierarchy(ITypeBinding type, IMethodBinding binding) {
@@ -181,5 +181,14 @@ public class Bindings {
 
 	public static String qualifiedName(final ITypeBinding declaringClass) {
 		return declaringClass.getTypeDeclaration().getQualifiedName();
+	}
+
+	public static String qualifiedName(IVariableBinding binding) {
+		ITypeBinding declaringClass = binding.getDeclaringClass();
+	
+		if (null == declaringClass) {
+			return binding.getName();
+		}
+		return qualifiedName(declaringClass) + "." + binding.getName();
 	}
 }

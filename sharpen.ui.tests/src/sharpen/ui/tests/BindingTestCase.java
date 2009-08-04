@@ -87,7 +87,7 @@ public class BindingTestCase extends TestCase {
 	}
 	
 	private Object findMethodDefinition(MethodDeclaration subject) {
-		return Bindings.findMethodDefininition(subject.resolveBinding(), null);
+		return BindingUtils.findMethodDefininition(subject.resolveBinding(), null);
 	}
 
 	public void testMethodInExternalInterface() throws Exception {
@@ -100,8 +100,8 @@ public class BindingTestCase extends TestCase {
 		CompilationUnit ast = createAST(source);
 		MethodDeclaration method = getType(ast, "Gazonk").getMethods()[0];
 		MethodInvocation invocation = getFirstMethodInvocation(method);
-		IMethodBinding definition = Bindings.findMethodDefininition(invocation.resolveMethodBinding(), null);
-		assertEquals("sharpen.ui.tests.BindingTestCaseSubject.Foo.bar", Bindings.qualifiedName(definition));
+		IMethodBinding definition = BindingUtils.findMethodDefininition(invocation.resolveMethodBinding(), null);
+		assertEquals("sharpen.ui.tests.BindingTestCaseSubject.Foo.bar", BindingUtils.qualifiedName(definition));
 	}
 
 	private MethodInvocation getFirstMethodInvocation(MethodDeclaration method) {

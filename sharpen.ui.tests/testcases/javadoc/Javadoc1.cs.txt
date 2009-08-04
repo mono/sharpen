@@ -24,14 +24,17 @@ namespace javadoc
 		/// Methods should have a summary.
 		/// Multiple lines also allowed.
 		/// Try with -
-		/// <see cref="javadoc.Javadoc1.BAR">javadoc.Javadoc1.BAR</see>
+		/// <see cref="BAR">BAR</see>
+		/// And also with -
+		/// <see cref="BAR">BAR</see>
 		/// </remarks>
 		/// <param name="bar">the bar argument</param>
+		/// <param name="object">the object argument</param>
 		/// <returns>the ultimate answer</returns>
 		/// <exception cref="System.InvalidOperationException">when things go crazy</exception>
 		/// <seealso cref="int.MaxValue">int.MaxValue</seealso>
 		/// <seealso><a href="http://a-valid-url.com/resource">Ancor Text</a></seealso>
-		public virtual int foo(int bar)
+		public virtual int foo(int bar, object @object)
 		{
 			return 42;
 		}

@@ -4,11 +4,43 @@ package javadoc;
  * {@link Linked}
  */
 interface Linked {
+	void foo();
+	void foo(int value);
 }
 
 /**
+ * {@link Linked Label}
+ * {@link javadoc.Linked Double Label}
  * {@link Linked Linked}
  * {@link javadoc.Linked Linked}
+ * {@link #foo}
  */
 public class LinkWithLabel {
+	public int foo;
+}
+
+/**
+ * {@link Linked#foo}
+ * {@link Linked#foo()}
+ * {@link Linked#foo(int)}
+ * {@link Link#bar}
+ * {@link Link#bar()}
+ * {@link #bar()}
+ */
+class Link {
+    private static class Inner {
+    }
+
+	/**
+	 * {@link Linked#foo()}
+	 * {@link Linked}
+	 * {@link fooBar()}
+	 * {@link LinkWithLabel#foo}
+     * {@link Link#bar}
+	 */
+	public void bar() {
+	}
+	
+	private void fooBar() {
+	} 
 }

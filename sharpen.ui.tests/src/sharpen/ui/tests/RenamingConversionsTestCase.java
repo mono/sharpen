@@ -21,7 +21,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.ui.tests;
 
-import sharpen.core.Configuration;
 
 public class RenamingConversionsTestCase extends AbstractConversionTestCase {
 
@@ -33,11 +32,11 @@ public class RenamingConversionsTestCase extends AbstractConversionTestCase {
 		runResourceTestCase(newPascalCasePlusConfiguration(), "renaming/AllUpperCaseIdentifiers");
 	}
 	
+	public void testRenamingInTypeHierarchy() throws Throwable {
+		runResourceTestCase(newPascalCasePlusConfiguration(), "renaming/RenamingInTypeHierarchy");
+	}
+	
 	public void testRenamingTypes() throws Throwable {
-		// TODO: explicitly configuring the renaming should be unnecessary
-		// just like it is with method or interface names
-		final Configuration configuration = getConfiguration();
-		configuration.mapType("renaming.TypeRenaming", "renaming.Renamed");
-		runResourceTestCase(configuration, "renaming/TypeRenaming", "renaming/Renamed");
+		runResourceTestCase(getConfiguration(), "renaming/TypeRenaming", "renaming/Renamed");
 	}
 }

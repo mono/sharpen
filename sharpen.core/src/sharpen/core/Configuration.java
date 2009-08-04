@@ -652,4 +652,11 @@ public class Configuration {
 	private boolean isSubPackage(String parentPackage, String packageName) {
 		return packageName.startsWith(parentPackage);
 	}
+
+	public String toInterfaceName(String name) {
+		if (!nativeInterfaces()) {
+			return name;
+		}
+		return "I" + name;
+	}
 }

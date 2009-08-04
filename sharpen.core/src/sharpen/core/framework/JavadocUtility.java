@@ -52,9 +52,33 @@ public class JavadocUtility {
 		return accumulator;
 	}
 
-	public static String textFragment(List fragments, final int index) {
-		String text = ((TextElement)fragments.get(index)).getText();
-		return text.trim();
+
+	public static boolean isTextFragment(List<ASTNode> fragments, int index) {
+		return (fragments.get(index) instanceof TextElement);
+	}
+
+
+	public static String textFragment(List<ASTNode> fragments, final int index) {
+		return ((TextElement)fragments.get(index)).getText().trim();
+	}
+
+
+	public static List<ASTNode> fragmentsFrom(TagElement element) {
+	    return Types.cast(element.fragments());
+	}
+
+
+	public static boolean hasSingleTextFragment(TagElement element) {
+	    final List<ASTNode> fragments = fragmentsFrom(element);
+		return fragments.size() == 1 && isTextFragment(fragments, 0);
+	}
+
+
+	public static String singleTextFragmentFrom(TagElement element) {
+		if (!hasSingleTextFragment(element)) {
+			throw new IllegalArgumentException(ASTUtility.sourceInformation(element) + ": expecting a single textual argument");
+		}
+		return textFragment(fragmentsFrom(element), 0);
 	}
 
 }

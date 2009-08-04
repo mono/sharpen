@@ -1,0 +1,16 @@
+package javadoc;
+
+/**
+ * {@link Item}
+ * {@link Item#foo}
+ *
+ */
+class GenericTypeReference {
+}
+
+class Item<T> {
+	public T value;
+	
+	public <R> void foo() {	
+	}
+}

@@ -1,0 +1,20 @@
+namespace Renaming
+{
+	public class RenamingInTypeHierarchy
+	{
+		public virtual void Bar()
+		{
+		}
+
+		public virtual void OverridenInDerived()
+		{
+		}
+	}
+
+	internal class RenameDerived
+	{
+		public virtual void Baz()
+		{
+		}
+	}
+}

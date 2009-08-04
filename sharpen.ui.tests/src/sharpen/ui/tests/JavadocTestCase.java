@@ -36,6 +36,14 @@ public class JavadocTestCase extends AbstractConversionTestCase {
 		runResourceTestCase("javadoc/LinkWithLabel");
 	}
 	
+	public void testPropertyParamTag() throws Throwable {
+		runResourceTestCase("javadoc/PropertyParamTag");
+	}
+	
+	public void testGenericTypeReference() throws Throwable {
+		runResourceTestCase("javadoc/GenericTypeReference");
+	}
+	
 	public void testXmlDocumentOverlay() throws Throwable {
 		String resourceName = "javadoc/XmlDocOverlay";
 		runResourceTestCase(newDocumentationOverlayConfiguration(resourceName + ".xml"), resourceName);

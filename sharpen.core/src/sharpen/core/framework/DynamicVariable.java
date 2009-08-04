@@ -25,6 +25,10 @@ package sharpen.core.framework;
 
 public class DynamicVariable<T> {
 
+	public static <T> DynamicVariable<T> newInstance(T initialValue) {
+		return new DynamicVariable<T>(initialValue);
+	}
+	
 	private T _value;
 	
 	public DynamicVariable(T initialValue) {
@@ -54,4 +58,5 @@ public class DynamicVariable<T> {
 		});
 		return result.value;
 	}
+
 }

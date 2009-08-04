@@ -8,7 +8,6 @@ package javadoc;
  * But not html tags such as <p></p>, <br> and <code>foo</code> which are legal.
  */
 public abstract class Javadoc1 {
-
 	/**
 	 * Constructors can have it too.
 	 */
@@ -19,13 +18,15 @@ public abstract class Javadoc1 {
 	 * Methods should have a summary.
 	 * Multiple lines also allowed. 
 	 * Try with - {@link Javadoc1#BAR}
+	 * And also with -{@link #BAR}
 	 * @param bar the bar argument
+	 * @param object the object argument
 	 * @return the ultimate answer
 	 * @throws IllegalStateException when things go crazy
 	 * @see Integer#MAX_VALUE
 	 * @see <a href="http://a-valid-url.com/resource">Ancor Text</a>
 	 */
-	public int foo(int bar) throws IllegalStateException {
+	public int foo(int bar, Object object) throws IllegalStateException {
 		return 42;
 	}
 	

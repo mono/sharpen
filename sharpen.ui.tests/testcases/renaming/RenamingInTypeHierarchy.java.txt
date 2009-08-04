@@ -1,0 +1,23 @@
+package renaming;
+
+public class RenamingInTypeHierarchy {
+	/**
+	 * @sharpen.rename bar
+	 */	 
+	 public void foo(){
+	 }
+	 
+	 public void overridenInDerived() { 
+	 }
+}
+
+/**
+ * @sharpen.ignore.extends
+ */
+class RenameDerived extends RenamingInTypeHierarchy {
+	/**
+	 * @sharpen.rename baz
+	 */
+	public void overridenInDerived() { 
+	}
+}

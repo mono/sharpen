@@ -6,9 +6,9 @@ namespace renaming
 		{
 		}
 
-		public virtual renaming.Renamed foo(object o)
+		public virtual Renamed foo(object o)
 		{
-			return (renaming.Renamed)o;
+			return (Renamed)o;
 		}
 	}
 }

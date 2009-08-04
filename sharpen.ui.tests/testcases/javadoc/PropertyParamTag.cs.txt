@@ -1,0 +1,14 @@
+namespace javadoc
+{
+	internal class PropertyParamTag
+	{
+		/// <value>the argument</value>
+		public virtual int foo
+		{
+			set
+			{
+				int v = value;
+			}
+		}
+	}
+}

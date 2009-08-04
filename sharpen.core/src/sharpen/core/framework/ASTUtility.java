@@ -32,8 +32,29 @@ import org.eclipse.jdt.core.dom.*;
  */
 public class ASTUtility {
 	
-	public static String sourceInformation(CompilationUnit ast, ASTNode node) {
-		return compilationUnitPath(ast) + ":" + lineNumber(ast, node);
+	public static String sourceInformation(ASTNode node) {
+		
+		final CompilationUnit compilationUnit = compilationUnitFor(node);
+		return sourceInformation(compilationUnit, node);
+	}
+
+	public static String sourceInformation(final CompilationUnit compilationUnit, ASTNode node) {
+		return compilationUnitPath(compilationUnit) + ":" + lineNumber(compilationUnit, node);
+	}
+
+	private static CompilationUnit compilationUnitFor(ASTNode node) {
+		return ancestorOf(node, CompilationUnit.class);
+	}
+
+	public static <T extends ASTNode> T ancestorOf(ASTNode node, Class<T> ancestorType) {
+		ASTNode parent = node.getParent();
+		do {
+			if (ancestorType.isInstance(parent))
+				return (T) parent;
+			parent = parent.getParent();
+		} while (parent != null);
+		
+		throw new IllegalArgumentException(node + " has no ancestor of type " + ancestorType.getName());
 	}
 
 	public static String compilationUnitPath(CompilationUnit ast) {

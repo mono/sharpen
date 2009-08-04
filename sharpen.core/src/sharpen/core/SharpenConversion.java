@@ -35,8 +35,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.*;
 
 public class SharpenConversion {
 
@@ -44,7 +43,12 @@ public class SharpenConversion {
 	protected ICompilationUnit _source;
 	protected Writer _writer;
 	protected final Configuration _configuration;
-	private ASTResolver _resolver;
+	private ASTResolver _resolver = new ASTResolver() {
+		@Override
+		public ASTNode findDeclaringNode(IBinding binding) {
+			return null;
+		}
+	};
 
 	public SharpenConversion(Configuration configuration) {
 		_configuration = configuration;
@@ -111,12 +115,14 @@ public class SharpenConversion {
 	}
 
 	private CSCompilationUnit convert(final CompilationUnit ast) {
-		CSharpBuilder builder = new CSharpBuilder(_configuration);
-		builder.setSourceCompilationUnit(ast);
-		builder.setASTResolver(_resolver);
+		final CSCompilationUnit compilationUnit = new CSCompilationUnit();
+		final Environment environment = Environments.newConventionBasedEnvironment(ast, _configuration, _resolver, compilationUnit);
+		Environments.runWith(environment, new Runnable() { public void run() {
+			CSharpBuilder builder = new CSharpBuilder();
+			builder.run();
+		}});
 		
-		builder.run();
-		return builder.compilationUnit();
+		return compilationUnit;
 	}
 	
 	private boolean ignoringErrors() {

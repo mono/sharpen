@@ -1,0 +1,11 @@
+package javadoc;
+
+class PropertyParamTag {
+	/**
+	 * @param v the argument 
+	 * 
+	 * @sharpen.property
+	 */
+	 public void foo(int v) {
+	 }
+}

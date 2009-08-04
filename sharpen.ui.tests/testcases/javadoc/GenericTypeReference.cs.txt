@@ -1,0 +1,19 @@
+namespace javadoc
+{
+	/// <summary>
+	/// <see cref="Item{T}">Item&lt;T&gt;</see>
+	/// <see cref="Item{T}.foo{R}()">Item&lt;T&gt;.foo&lt;R&gt;()</see>
+	/// </summary>
+	internal class GenericTypeReference
+	{
+	}
+
+	internal class Item<T>
+	{
+		public T value;
+
+		public virtual void foo<R>()
+		{
+		}
+	}
+}

@@ -44,7 +44,7 @@ public class IgnoreAnnotationsTestCase extends AbstractConversionTestCase {
 	
 	public void testIgnore() throws Throwable {
 		final String converted = sharpenResource(getConfiguration(), new TestCaseResource("ignore/Ignore"));
-		StringAssert.assertEqualLines("namespace ignore\n{\n}", converted);
+		StringAssert.assertEqualLines("", converted);
 	}
 	
 	public void testIgnoreMethod() throws Throwable {

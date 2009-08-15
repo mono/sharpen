@@ -104,7 +104,7 @@ public class SharpenConversion {
 		processProblems(ast);
 		prepareForConversion(ast);		
 		CSCompilationUnit cs = convert(ast);
-		if (!cs.ignore()) {
+		if (!cs.ignore() && !cs.types().isEmpty()) {
 			print(cs);
 		}
 		return cs;

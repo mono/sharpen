@@ -61,11 +61,11 @@ public class CSCompilationUnit extends CSNode {
 		_types.add(type);
 	}
 	
-	public Iterable<CSUsing> usings() {
+	public Collection<CSUsing> usings() {
 		return Collections.unmodifiableList(_usings);
 	}
 	
-	public Iterable<CSType> types() {
+	public Collection<CSType> types() {
 		return Collections.unmodifiableList(_types);
 	}
 	

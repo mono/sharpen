@@ -70,7 +70,7 @@ public class SharpenConversionBatch extends ConversionBatch {
 		converter.setSource(source);
 		converter.setASTResolver(resolver);
 		CSCompilationUnit result = converter.run(ast);
-		if (!result.ignore()) {
+		if (writer.getBuffer().length() > 0) {
 			saveConvertedFile(source, result, writer);
 		}
 	}

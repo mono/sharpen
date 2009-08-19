@@ -111,7 +111,7 @@ public class TestCaseResource {
 
 	public void assertFile(IFile actualFile) throws IOException, CoreException {
 		if (expectedStringContents().isEmpty()) {
-			Assert.assertFalse("Unexpected file: "  + actualFile, actualFile.exists());
+			Assert.assertFalse("No content in expected file: "  + actualFile, actualFile.exists());
 			return;
 		}
 		Assert.assertTrue("Expected file: " + actualFile, actualFile.exists());

@@ -75,7 +75,7 @@ public class SharpenBuilderTestCase extends AbstractConversionTestCase {
 
 	private IFile getConvertedFile(IProject convertedProject,
 			TestCaseResource resource) {
-		return convertedProject.getFolder(SharpenConstants.DEFAULT_TARGET_FOLDER).getFile(resource.packageName().replace('.', '/') + '/' + resource.getSimpleName() + ".cs");
+		return convertedProject.getFolder(SharpenConstants.DEFAULT_TARGET_FOLDER).getFile(resource.packageName().replace('.', '/') + '/' + resource.targetSimpleName() + ".cs");
 	}
 
 	public void testConvertsUpdatedFiles() throws Throwable {

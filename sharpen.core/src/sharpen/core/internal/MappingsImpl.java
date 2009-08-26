@@ -48,7 +48,7 @@ public class MappingsImpl implements Mappings {
 		if (!hasMapping(type)) {
 			String annotatedRenaming = annotatedRenaming(type);
 			if (annotatedRenaming != null) {
-				return registerMappedType(type, annotatedRenaming);
+				return registerMappedType(type, fullyQualifyIfNeeded(annotatedRenaming, type));
 			}
 		}
 		
@@ -58,6 +58,32 @@ public class MappingsImpl implements Mappings {
 		}
 		
 		return registerMappedType(type, mappedTypeName);
+	}
+
+	private String fullyQualifyIfNeeded(String typeName, ITypeBinding type) {
+		if (isFullyQualified(typeName)) {
+			return typeName;
+		}
+		
+		final String originalNamespace = namespace(qualifiedName(type));
+		final String mappedNamespace = _configuration.mappedNamespace(originalNamespace);
+		if (originalNamespace.equals(mappedNamespace)) {
+			return typeName;
+		}
+		
+		return mappedNamespace + "." + typeName;
+	}
+	
+	private String namespace(final String typeName) {
+		return substringBeforeLast(typeName, '.');
+	}
+
+	private String substringBeforeLast(String s, char marker) {
+		return s.substring(0, s.lastIndexOf(marker));
+	}
+
+	private boolean isFullyQualified(String typeName) {
+		return typeName.contains(".");
 	}
 
 	private String annotatedRenaming(ITypeBinding type) {

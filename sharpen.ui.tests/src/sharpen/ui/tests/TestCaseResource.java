@@ -68,7 +68,7 @@ public class TestCaseResource {
 	}
 	
 	public String javaFileName() {
-		return getSimpleName() + ".java";
+		return _simpleName + ".java";
 	}
 	
 	public String actualStringContents() throws IOException {
@@ -87,7 +87,7 @@ public class TestCaseResource {
 		return ".cs.txt";
 	}
 	
-	public String getSimpleName() {	
+	public String targetSimpleName() {	
 		return _simpleName;
 	}
 	

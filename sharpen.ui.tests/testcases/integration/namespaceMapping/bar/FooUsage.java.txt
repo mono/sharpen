@@ -1,0 +1,8 @@
+package integration.namespaceMapping.bar;
+
+import integration.namespaceMapping.foo.*;
+
+class FooUsage {
+
+	Foo foo = new Foo();
+}

@@ -1,0 +1,9 @@
+using UbberFoo;
+
+namespace integration.namespaceMapping.bar
+{
+	internal class FooUsage
+	{
+		internal FooFactory foo = new FooFactory();
+	}
+}

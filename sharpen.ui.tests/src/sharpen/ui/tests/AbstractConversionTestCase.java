@@ -165,7 +165,7 @@ public abstract class AbstractConversionTestCase extends TestCase {
 	 */
 	private void checkConversionResult(Configuration configuration, IFolder targetFolder, ICompilationUnit cu, TestCaseResource resource) throws Throwable {
 		String path = pathFromNamespace(configuration.mappedNamespace(getNamespace(cu)));
-		IFile file = targetFolder.getFile(path + "/" + resource.getSimpleName() + ".cs");
+		IFile file = targetFolder.getFile(path + "/" + resource.targetSimpleName() + ".cs");
 		assertFile(resource, file);
 	}
 

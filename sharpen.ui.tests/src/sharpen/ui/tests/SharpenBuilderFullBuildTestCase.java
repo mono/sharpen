@@ -37,7 +37,7 @@ public class SharpenBuilderFullBuildTestCase extends AbstractConversionTestCase 
 
 	private void assertConvertedFile(final TestCaseResource resource,
 			final ICompilationUnit cu) throws IOException, CoreException {
-		resource.assertFile(getConvertedProject().getFile(cu.getResource().getParent().getProjectRelativePath() + "/" + resource.getSimpleName() + ".cs"));
+		resource.assertFile(getConvertedProject().getFile(cu.getResource().getParent().getProjectRelativePath() + "/" + resource.targetSimpleName() + ".cs"));
 	}
 
 	private IPackageFragmentRoot addSourceFolder(String path) throws CoreException {

@@ -107,9 +107,9 @@ public class CSAnonymousClassBuilder extends AbstractNestedClassBuilder {
 		setUpAnonymousType();
 		setUpConstructor();
 		processAnonymousBody();
-		flushCapturedVariables();
+		int capturedVariableCount = flushCapturedVariables();
 		flushFieldInitializers();
-		flushInstanceInitializers(_type);
+		flushInstanceInitializers(_type, capturedVariableCount);
 	}
 
 	private void flushFieldInitializers() {
@@ -221,14 +221,19 @@ public class CSAnonymousClassBuilder extends AbstractNestedClassBuilder {
 		_type.addMember(_constructor);
 	}
 	
-	private void flushCapturedVariables() {		
+	private int flushCapturedVariables() {		
+		int capturedVariableCount = 0;
 		if (isEnclosingReferenceRequired()) {
+			capturedVariableCount++;
 			addFieldParameter(createEnclosingField());
 		}
 		
 		for (IVariableBinding variable : _capturedVariables) {
+			capturedVariableCount++;
 			addFieldParameter(identifier(variable.getName()), mappedTypeReference(variable.getType()));
 		}
+		
+		return capturedVariableCount;
 	}
 	
 	private void captureExternalLocalVariables() {

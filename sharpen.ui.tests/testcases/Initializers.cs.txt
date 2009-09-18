@@ -41,10 +41,10 @@ public class Initializers
 	{
 		public _Initializers_24(string m)
 		{
+			this.m = m;
 			{
 				Initializers.bar(m);
 			}
-			this.m = m;
 		}
 
 		private readonly string m;

@@ -340,7 +340,7 @@ public class CSharpBuilder extends ASTVisitor {
 		return type.getPackage().getName();
 	}
 
-	protected void flushInstanceInitializers(CSTypeDeclaration type) {
+	protected void flushInstanceInitializers(CSTypeDeclaration type, int startStatementIndex) {
 		
 		if (_instanceInitializers.isEmpty()) {
 			return;
@@ -348,7 +348,7 @@ public class CSharpBuilder extends ASTVisitor {
 		
 		ensureConstructorsFor(type);
 		
-		int initializerIndex = 0;
+		int initializerIndex = startStatementIndex;
 		for (Initializer node : _instanceInitializers) {
 			final CSBlock body = mapInitializer(node);
 			
@@ -630,7 +630,7 @@ public class CSharpBuilder extends ASTVisitor {
 		try {
 			visit(node.bodyDeclarations());
 			createInheritedAbstractMemberStubs(node);
-			flushInstanceInitializers(type);
+			flushInstanceInitializers(type, 0);
 		} finally {
 			_currentType = saved;
 		}

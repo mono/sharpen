@@ -1,0 +1,15 @@
+package collections;
+
+import java.util.*;
+
+public class ComparatorSort implements Comparator {
+
+	public int compare(Object x, Object y) {
+		return x.toString().compareTo(y.toString());
+	}
+	
+	public void sort(ArrayList list) {
+		Collections.sort(list, this);
+	}
+	
+}

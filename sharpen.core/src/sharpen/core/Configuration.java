@@ -314,6 +314,9 @@ public class Configuration {
 	    mapType("java.util.LinkedList<>", "System.Collections.Generic.LinkedList");
 	    mapType("java.util.Stack", "System.Collections.Stack");	    
 	    
+	    mapType("java.util.Comparator", "System.Collections.IComparer");
+	    mapMethod("java.util.Collections.sort", "Sort");
+	    
 	    mapProperty("java.util.Collection.size", "Count");
 	    mapProperty("java.util.Map.size", "Count");
 	    

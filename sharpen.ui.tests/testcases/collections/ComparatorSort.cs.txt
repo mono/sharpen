@@ -1,0 +1,15 @@
+namespace Collections
+{
+	public class ComparatorSort : System.Collections.IComparer
+	{
+		public virtual int Compare(object x, object y)
+		{
+			return x.ToString().CompareTo(y.ToString());
+		}
+
+		public virtual void Sort(System.Collections.ArrayList list)
+		{
+			list.Sort(this);
+		}
+	}
+}

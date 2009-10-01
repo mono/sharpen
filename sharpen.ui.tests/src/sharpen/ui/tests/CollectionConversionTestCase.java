@@ -23,6 +23,10 @@ package sharpen.ui.tests;
 
 public class CollectionConversionTestCase extends AbstractConversionTestCase {
 	
+	public void testComparatorSort() throws Throwable {
+		runResourceTestCase(newPascalCasePlusConfiguration(), resourcePath("ComparatorSort"));
+	}
+	
 	public void testSet() throws Throwable {
 		runResourceTestCase("Set");
 	}
@@ -57,7 +61,11 @@ public class CollectionConversionTestCase extends AbstractConversionTestCase {
 	
 	@Override
 	protected void runResourceTestCase(String resourceName) throws Throwable {
-		super.runResourceTestCase("collections/" + resourceName);
+		super.runResourceTestCase(resourcePath(resourceName));
+	}
+
+	private String resourcePath(String resourceName) {
+		return "collections/" + resourceName;
 	}
 
 }

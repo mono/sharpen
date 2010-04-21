@@ -1,0 +1,66 @@
+public class Break
+{
+	internal static int j = 42;
+
+	public virtual void testSwitch()
+	{
+mylabel:
+		switch (j)
+		{
+			case 42:
+			{
+				return;
+			}
+
+			case 43:
+			{
+				goto mylabel;
+			}
+
+			case 44:
+			{
+				break;
+			}
+		}
+	}
+
+	public virtual void testWhile()
+	{
+mylabel:
+		while (true)
+		{
+			if (j == 1)
+			{
+				break;
+			}
+			else
+			{
+				if (j == 2)
+				{
+					goto mylabel;
+				}
+			}
+			goto mylabel;
+		}
+	}
+
+	public virtual void testFor()
+	{
+mylabel:
+		for (int i = 0; i < 10; i++)
+		{
+			if (j == 1)
+			{
+				break;
+			}
+			else
+			{
+				if (j == 2)
+				{
+					goto mylabel;
+				}
+			}
+			goto mylabel;
+		}
+	}
+}

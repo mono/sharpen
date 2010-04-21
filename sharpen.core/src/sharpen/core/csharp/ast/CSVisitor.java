@@ -236,4 +236,10 @@ public class CSVisitor {
 
 	public void visit(CSMacroTypeReference node) {
     }
+
+	public void visit(CSLabelStatement node) {
+	}
+
+	public void visit(CSGotoStatement node) {
+	}
 }

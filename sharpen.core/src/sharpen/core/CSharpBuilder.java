@@ -171,7 +171,8 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(LabeledStatement node) {
-		notImplemented(node);
+		addStatement(new CSLabelStatement(node.getLabel().getIdentifier()));
+		node.getBody().accept(this);
 		return false;
 	}
 
@@ -1810,8 +1811,10 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(BreakStatement node) {
-		if (null != node.getLabel()) {
-			notImplemented(node.getLabel());
+		SimpleName labelName = node.getLabel();
+		if(labelName != null){
+			addStatement(new CSGotoStatement(node.getStartPosition(), labelName.getIdentifier()));
+			return false;
 		}
 		addStatement(new CSBreakStatement(node.getStartPosition()));
 		return false;

@@ -512,6 +512,11 @@ public class CSharpPrinter extends CSVisitor {
 		writeIndentedLine("break;");
 	}
 	
+	public void visit(CSGotoStatement node) {
+		printPrecedingComments(node);
+		writeIndentedLine("goto " + node.label() + ";");
+	}
+	
 	public void visit(CSContinueStatement node) {
 		printPrecedingComments(node);
 		writeIndentedLine("continue;");
@@ -819,6 +824,11 @@ public class CSharpPrinter extends CSVisitor {
 			writeParameterList(node.arguments());
 		}
 		writeLine("]");
+	}
+	
+	@Override
+	public void visit(CSLabelStatement node) {
+		writeLine(node.label() + ":");
 	}
 	
 	@Override

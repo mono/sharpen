@@ -171,8 +171,8 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(LabeledStatement node) {
-		addStatement(new CSLabelStatement(node.getLabel().getIdentifier()));
 		node.getBody().accept(this);
+		addStatement(new CSLabelStatement(node.getLabel().getIdentifier()));
 		return false;
 	}
 

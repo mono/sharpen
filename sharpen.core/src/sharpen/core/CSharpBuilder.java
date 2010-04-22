@@ -65,6 +65,8 @@ public class CSharpBuilder extends ASTVisitor {
 	protected CSMethodBase _currentMethod;
 
 	protected BodyDeclaration _currentBodyDeclaration;
+	
+	private CSLabelStatement _currentContinueLabel;
 
 	private static final Pattern SUMMARY_CLOSURE_PATTERN = Pattern.compile("\\.(\\s|$)");
 
@@ -81,6 +83,7 @@ public class CSharpBuilder extends ASTVisitor {
 	private final DynamicVariable<Boolean> _ignoreExtends = new DynamicVariable<Boolean>(Boolean.FALSE);
 
 	private List<Initializer> _instanceInitializers = new ArrayList<Initializer>();
+
 
 	protected NamingStrategy namingStrategy() {
 		return _configuration.getNamingStrategy();
@@ -170,10 +173,24 @@ public class CSharpBuilder extends ASTVisitor {
 		return false;
 	}
 
-	public boolean visit(LabeledStatement node) {
-		node.getBody().accept(this);
-		addStatement(new CSLabelStatement(node.getLabel().getIdentifier()));
+	public boolean visit(final LabeledStatement node) {
+		String identifier = node.getLabel().getIdentifier();
+		_currentContinueLabel = new CSLabelStatement(continueLabel(identifier));
+		try{
+			node.getBody().accept(this);
+		}finally{
+			_currentContinueLabel = null;
+		}
+		addStatement(new CSLabelStatement(breakLabel(identifier)));
 		return false;
+	}
+
+	private String breakLabel(String identifier) {
+		return identifier + "_break";
+	}
+
+	private String continueLabel(String identifier) {
+		return identifier + "_continue";
 	}
 
 	public boolean visit(SuperFieldAccess node) {
@@ -1613,6 +1630,9 @@ public class CSharpBuilder extends ASTVisitor {
 
 		CSBlock saved = _currentBlock;
 		_currentBlock = block;
+		
+		_currentContinueLabel = null;
+		
 		node.accept(this);
 		_currentBlock = saved;
 	}
@@ -1716,17 +1736,29 @@ public class CSharpBuilder extends ASTVisitor {
 		return null;
 	}
 
-	public boolean visit(WhileStatement node) {
-		CSWhileStatement stmt = new CSWhileStatement(node.getStartPosition(), mapExpression(node.getExpression()));
-		visitBlock(stmt.body(), node.getBody());
-		addStatement(stmt);
+	public boolean visit(final WhileStatement node) {
+		consumeContinueLabel(new Function<CSBlock>() {
+			@Override
+			public CSBlock apply() {
+				CSWhileStatement stmt = new CSWhileStatement(node.getStartPosition(), mapExpression(node.getExpression()));
+				visitBlock(stmt.body(), node.getBody());
+				addStatement(stmt);
+				return stmt.body();
+			}
+		});
 		return false;
 	}
 
-	public boolean visit(DoStatement node) {
-		CSDoStatement stmt = new CSDoStatement(node.getStartPosition(), mapExpression(node.getExpression()));
-		visitBlock(stmt.body(), node.getBody());
-		addStatement(stmt);
+	public boolean visit(final DoStatement node) {
+		consumeContinueLabel(new Function<CSBlock>() {
+			@Override
+			public CSBlock apply() {
+				CSDoStatement stmt = new CSDoStatement(node.getStartPosition(), mapExpression(node.getExpression()));
+				visitBlock(stmt.body(), node.getBody());
+				addStatement(stmt);
+				return stmt.body();
+			}
+		});
 		return false;
 	}
 
@@ -1813,7 +1845,7 @@ public class CSharpBuilder extends ASTVisitor {
 	public boolean visit(BreakStatement node) {
 		SimpleName labelName = node.getLabel();
 		if(labelName != null){
-			addStatement(new CSGotoStatement(node.getStartPosition(), labelName.getIdentifier()));
+			addStatement(new CSGotoStatement(node.getStartPosition(), breakLabel(labelName.getIdentifier())));
 			return false;
 		}
 		addStatement(new CSBreakStatement(node.getStartPosition()));
@@ -1821,8 +1853,10 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(ContinueStatement node) {
-		if (null != node.getLabel()) {
-			notImplemented(node.getLabel());
+		SimpleName labelName = node.getLabel();
+		if(labelName != null){
+			addStatement(new CSGotoStatement(node.getStartPosition(), continueLabel(labelName.getIdentifier())));
+			return false;
 		}
 		addStatement(new CSContinueStatement(node.getStartPosition()));
 		return false;
@@ -1996,20 +2030,36 @@ public class CSharpBuilder extends ASTVisitor {
 		return false;
 	}
 
-	public boolean visit(ForStatement node) {
-		CSForStatement stmt = new CSForStatement(node.getStartPosition(), mapExpression(node.getExpression()));
-		for (Object i : node.initializers()) {
-			stmt.addInitializer(mapExpression((Expression) i));
-		}
-		for (Object u : node.updaters()) {
-			stmt.addUpdater(mapExpression((Expression) u));
-		}
-		visitBlock(stmt.body(), node.getBody());
-		addStatement(stmt);
+	public boolean visit(final ForStatement node) {
+		consumeContinueLabel(new Function<CSBlock>() {
+			@Override
+			public CSBlock apply() {
+				CSForStatement stmt = new CSForStatement(node.getStartPosition(), mapExpression(node.getExpression()));
+				for (Object i : node.initializers()) {
+					stmt.addInitializer(mapExpression((Expression) i));
+				}
+				for (Object u : node.updaters()) {
+					stmt.addUpdater(mapExpression((Expression) u));
+				}
+				visitBlock(stmt.body(), node.getBody());
+				addStatement(stmt);
+				return stmt.body();
+			}
+		});
 		return false;
 	}
 
+	private void consumeContinueLabel(Function<CSBlock> func) {
+		CSLabelStatement label = _currentContinueLabel;
+		_currentContinueLabel = null;
+		CSBlock body = func.apply();
+		if(label != null){
+			body.addStatement(label);
+		}
+	}
+
 	public boolean visit(SwitchStatement node) {
+		_currentContinueLabel = null;
 		CSBlock saved = _currentBlock;
 
 		CSSwitchStatement mappedNode = new CSSwitchStatement(node.getStartPosition(), mapExpression(node.getExpression()));
@@ -3141,4 +3191,11 @@ public class CSharpBuilder extends ASTVisitor {
 	private String mappedNamespace(String namespace) {
 		return _configuration.mappedNamespace(namespace);
 	}
+	
+	@Override
+	public boolean visit(Block node) {
+		_currentContinueLabel = null;
+		return super.visit(node);
+	}
+	
 }

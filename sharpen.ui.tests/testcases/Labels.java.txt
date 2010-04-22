@@ -1,0 +1,121 @@
+public class Labels
+{
+
+	static int j = 42;
+	
+	public void testBreakSwitch(){
+mylabel:
+		switch(j) {
+			case 42:
+				return;
+			case 43:
+				break mylabel;
+			case 44:
+				break;
+		}
+	}
+	
+	public void testBreakWhile(){
+mylabel:
+		while(true){
+			if(j == 1){
+				break;
+			} else if(j == 2) {
+				break mylabel;
+			}
+			break mylabel;
+		}
+	}
+	
+	public void testBreakFor(){
+mylabel:
+		for (int i = 0; i < 10; i++) {
+			if(j == 1){
+				break;
+			} else if(j == 2) {
+				break mylabel;
+			}
+			break mylabel;
+		}
+	}
+	
+	public void testBreakNestedLoops(){
+mylabel1:
+		for (int i = 0; i < 10; i++) {
+mylabel2:            
+            for( int k = 0; k < 10; k++) {
+                for( int m = 0; m < 10; m++) {
+                    if( i == 5 && k == 5 && m == 5) {
+                        break mylabel1;
+                    } else {
+                        break mylabel2;
+                    }
+                }
+            }
+		}
+	}
+	
+	
+	public void testContinueFor(){
+mylabel:
+		for (int i = 0; i < 10; i++) {
+			if(j == 1){
+				continue;
+			} else if(j == 2) {
+				for(int j = 0; j < 10; j++) {
+					// no labels here please
+				}
+				continue mylabel;
+			}
+			continue mylabel;
+		}
+	}
+	
+	public void testContinueDo(){
+mylabel:
+		do{
+			if(j == 1){
+				continue;
+			} else if(j == 2) {
+				for(int j = 0; j < 10; j++) {
+					// no labels here please
+				}
+				continue mylabel;
+			}
+		} while(true);
+	}
+	
+	public void testContinueWhile(){
+mylabel:
+		while(true) {
+			if(j == 1){
+				continue;
+			} else if(j == 2) {
+				for(int j = 0; j < 10; j++) {
+					
+				}
+				continue mylabel;
+			}
+		}
+	}
+	
+	public void testNoContinueLabel(){
+mylabel:{
+			for (int i = 0; i < 10; i++) {
+			
+			}
+		}
+	}
+	
+	public void testNoContinueLabelInSwitch(){
+mylabel:
+		switch(j) {
+			case 42:
+				for (int i = 0; i < 10; i++) {
+				
+				}
+				return;
+		}
+	}
+	
+}

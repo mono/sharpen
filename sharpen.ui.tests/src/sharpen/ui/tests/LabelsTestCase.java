@@ -2,10 +2,10 @@
 
 package sharpen.ui.tests;
 
-public class BreakTestCase extends AbstractConversionTestCase {
+public class LabelsTestCase extends AbstractConversionTestCase {
 	
 	public void test() throws Throwable{
-		runResourceTestCase("Break");
+		runResourceTestCase("Labels");
 	}
 
 }

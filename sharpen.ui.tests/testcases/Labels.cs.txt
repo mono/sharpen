@@ -186,4 +186,20 @@ mylabel_break:
 		}
 mylabel_break:
 	}
+
+	public virtual void testContinueFromCatch()
+	{
+		for (; ; )
+		{
+			try
+			{
+			}
+			catch (System.Exception)
+			{
+				goto mylabel_continue;
+			}
+mylabel_continue:
+		}
+mylabel_break:
+	}
 }

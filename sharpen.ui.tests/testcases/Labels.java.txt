@@ -118,4 +118,15 @@ mylabel:
 		}
 	}
 	
+	public void testContinueFromCatch(){
+	
+mylabel:
+		for (;;){   
+			try {
+   				
+     		} catch (RuntimeException ex) { 
+   				continue mylabel;
+   			}
+		}
+	}
 }

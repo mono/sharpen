@@ -1482,7 +1482,11 @@ public class CSharpBuilder extends ASTVisitor {
 
 		@Override
 		public boolean visit(SimpleName name) {
-			if (name.resolveBinding().equals(_var)) {
+			IBinding binding = name.resolveBinding();
+			if(binding == null){
+				return false;
+			}
+			if (binding.equals(_var)) {
 				_used = true;
 			}
 

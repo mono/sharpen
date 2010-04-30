@@ -5,5 +5,8 @@ public class Arrays4 {
 		
 		String[][] s2 = new String[2][1];
 		s2[0][0] = "bar";
+		
+		String[][] s3 = new String[2][];
+		String[][][] s4 = new String[1][2][];		
 	}
 }

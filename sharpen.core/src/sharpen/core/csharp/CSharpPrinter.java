@@ -169,7 +169,7 @@ public class CSharpPrinter extends CSVisitor {
 	}
 	
 	@Override
-	public void visit(CSArrayTypeReference node) {
+	public void visit(final CSArrayTypeReference node) {
 		node.elementType().accept(this);
 		for (int i=0; i<node.dimensions(); ++i) {
 			write("[]");
@@ -673,16 +673,23 @@ public class CSharpPrinter extends CSVisitor {
 	
 	public void visit(CSArrayCreationExpression node) {
 		write("new ");
-		node.elementType().accept(this);
+		
+		CSharpTypeReferenceVisitor arrayElementTypeVisitor = new CSharpTypeReferenceVisitor(this);
+		
+		node.elementType().accept(arrayElementTypeVisitor);
+		
 		write("[");
 		if (null != node.length()) {
 			node.length().accept(this);
 		}
 		write("]");
+		
+		write(arrayElementTypeVisitor.sufix());
+		
 		if (null != node.initializer()) {
 			write(" ");
 			node.initializer().accept(this);
-		}
+		}		
 	}
 	
 	public void visit(CSArrayInitializerExpression node) {
@@ -1024,5 +1031,34 @@ public class CSharpPrinter extends CSVisitor {
 		outdent();
         writeIndentedLine("}");
 	}
-
+	
+	class CSharpTypeReferenceVisitor extends CSVisitor {
+		private CSVisitor _delegate;
+		private StringBuffer _sb = new StringBuffer();
+		
+		CSharpTypeReferenceVisitor(CSVisitor delegate) {
+			_delegate = delegate;
+		}
+		
+		@Override
+		public void visit(CSArrayTypeReference node) {
+			node.elementType().accept(_delegate);
+			
+			for (int i=0; i < node.dimensions(); ++i) {
+				_sb.append("[]");
+			}		
+		}
+		
+		public void visit(CSTypeReferenceExpression node) {
+			node.accept(_delegate);
+		}
+		
+		public void visit(CSTypeReference node) {
+			node.accept(_delegate);
+		}
+		
+		String sufix() {
+			return _sb.toString(); 
+		}
+	}	
 }

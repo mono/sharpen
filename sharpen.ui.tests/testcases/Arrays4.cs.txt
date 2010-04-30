@@ -8,5 +8,7 @@ public class Arrays4
 		s[0][1][2] = "foo";
 		string[][] s2 = new string[][] { new string[1], new string[1] };
 		s2[0][0] = "bar";
+		string[][] s3 = new string[2][];
+		string[][][] s4 = new string[][][] { new string[2][] };
 	}
 }

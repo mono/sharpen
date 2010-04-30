@@ -151,27 +151,7 @@ public class UnclassifiedConversionTestCase extends AbstractConversionTestCase {
 
 	public void testStringMethodsInvocation() throws Throwable {
 		runResourceTestCase("StringMethods1");
-	}
-	
-	public void testArrayAccess() throws Throwable {
-		runResourceTestCase("Arrays1");
-	}
-	
-	public void testArrayCreation() throws Throwable {
-		runResourceTestCase("Arrays2");
-	}
-	
-	public void testArrayInitializer() throws Throwable {
-		runResourceTestCase("Arrays3");
-	}
-	
-	public void testNestedArrayInitializer() throws Throwable {
-		runResourceTestCase("Arrays4");
-	}
-	
-	public void testUntypedArrayInitializer() throws Throwable {
-		runResourceTestCase("Arrays5");
-	}
+	}	
 	
 	public void testStandardConstants() throws Throwable {
 		runResourceTestCase("StandardConstants1");

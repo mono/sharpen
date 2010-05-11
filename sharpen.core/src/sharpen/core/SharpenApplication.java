@@ -24,13 +24,13 @@ package sharpen.core;
 import java.io.*;
 import java.util.*;
 
-import sharpen.core.framework.*;
-import sharpen.core.io.*;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.app.*;
 import org.eclipse.jdt.core.*;
+
+import sharpen.core.framework.*;
+import sharpen.core.io.*;
 
 /**
  * Start this application with: <code>
@@ -45,6 +45,8 @@ public class SharpenApplication implements IApplication {
 		try {
 			String[] args = argv(context);
 			_args = SharpenCommandLine.parse(args);
+			System.err.println("Configuration Class: " + _args.configurationClass);
+			Sharpen.getDefault().configuration(ConfigurationFactory.newConfiguration(_args.configurationClass, _args.runtimeTypeName));
 			safeRun();
 		} catch (Exception x) {
 			System.err.println("ERROR: " + x.getMessage());
@@ -99,7 +101,7 @@ public class SharpenApplication implements IApplication {
 	}
 
 	private Configuration getConfiguration() throws IOException {
-		final Configuration configuration = new Configuration(_args.runtimeTypeName);
+		final Configuration configuration = Sharpen.getDefault().configuration();
 		
 		ods("Pascal case mode: " + _args.pascalCase);
 		configuration.setNamingStrategy(_args.pascalCase.getNamingStrategy());

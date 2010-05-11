@@ -38,6 +38,8 @@ public class Sharpen extends Plugin {
 	private static Sharpen plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
+
+	private Configuration _configuration;
 	
 	/**
 	 * The constructor.
@@ -91,5 +93,13 @@ public class Sharpen extends Plugin {
 	 */
 	public ResourceBundle getResourceBundle() {
 		return resourceBundle;
+	}
+
+	public void configuration(Configuration configuration) {
+		_configuration = configuration;
+	}
+	
+	public Configuration configuration() {
+		return _configuration;
 	}
 }

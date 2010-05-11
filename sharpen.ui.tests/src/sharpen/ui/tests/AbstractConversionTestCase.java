@@ -38,11 +38,16 @@ public abstract class AbstractConversionTestCase extends TestCase {
 	protected JavaProject _project;
 
 	protected void setUp() throws Exception {
-		_project = new JavaProject();
+		Sharpen.getDefault().configuration(configuration());
+		_project = new JavaProject();		
 	}
 
 	protected void tearDown() throws Exception {
 		_project.dispose();
+	}
+	
+	protected Configuration configuration() {
+		return ConfigurationFactory.defaultConfiguration();
 	}
 
 	/**
@@ -89,7 +94,7 @@ public abstract class AbstractConversionTestCase extends TestCase {
 	}
 
 	private Configuration newConfiguration() {
-		return new Configuration("Sharpen.Runtime");
+		return ConfigurationFactory.defaultConfiguration();
 	}
 
 	protected Configuration newPascalCaseIdentifiersConfiguration() {

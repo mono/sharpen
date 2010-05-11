@@ -1771,7 +1771,7 @@ public class CSharpBuilder extends ASTVisitor {
 		visitBlock(stmt.body(), node.getBody());
 		for (Object o : node.catchClauses()) {
 			CatchClause clause = (CatchClause) o;
-			if (!isIgnoredExceptionType(clause.getException().getType().resolveBinding())) {
+			if (!_configuration.isIgnoredExceptionType(qualifiedName(clause.getException().getType().resolveBinding()))) {
 				stmt.addCatchClause(mapCatchClause(clause));
 			}
 		}
@@ -1789,10 +1789,6 @@ public class CSharpBuilder extends ASTVisitor {
 			_currentBlock.addAll(stmt.body());
 		}
 		return false;
-	}
-
-	private boolean isIgnoredExceptionType(ITypeBinding exceptionType) {
-		return qualifiedName(exceptionType).equals("java.lang.CloneNotSupportedException");
 	}
 
 	private CSCatchClause mapCatchClause(CatchClause node) {

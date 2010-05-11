@@ -47,7 +47,7 @@ public class SharpenConversionBatch extends ConversionBatch {
 	private final Configuration _configuration;	
 
 	public SharpenConversionBatch() {
-		this(new Configuration());
+		this(Sharpen.getDefault().configuration());
 	}
 	
 	public SharpenConversionBatch(Configuration configuration) {

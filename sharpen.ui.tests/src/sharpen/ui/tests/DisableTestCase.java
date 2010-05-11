@@ -43,11 +43,11 @@ public class DisableTestCase extends AbstractConversionTestCase {
 	}
 	
 	public void testDisableCompilationUnit() throws Throwable {
-		runResourceTestCase(newConfigWIthOrganizeUsings(), "disable/DisableCompilationUnit");
+		runResourceTestCase(newConfigWithOrganizeUsings(), "disable/DisableCompilationUnit");
 	}
 	
-	private Configuration newConfigWIthOrganizeUsings() {
-		Configuration config = new Configuration();
+	private Configuration newConfigWithOrganizeUsings() {
+		Configuration config = ConfigurationFactory.defaultConfiguration();
 		config.enableOrganizeUsings();
 		
 		return config;
@@ -68,7 +68,7 @@ public class DisableTestCase extends AbstractConversionTestCase {
 	private Configuration conditionalCompilationConfigFor(String expression) {
 		Map<String, String> conditionals = new HashMap<String, String>();
 		conditionals.put("disable.disabled", expression);
-		Configuration config= new Configuration();
+		Configuration config = ConfigurationFactory.defaultConfiguration();
 		config.conditionalCompilation(conditionals);		
 		
 		return config;

@@ -49,14 +49,33 @@ public class CSTypeReference extends CSTypeReferenceExpression implements CSType
 	}
 	
 	public List<CSTypeReferenceExpression> typeArguments() {
-		return _typeArguments.typeArguments();
-		
+		return _typeArguments.typeArguments();		
 	}
 
 	public void addTypeArgument(CSTypeReferenceExpression typeArgument) {
 		
-		_typeArguments.addTypeArgument(typeArgument);
-		
+		_typeArguments.addTypeArgument(typeArgument);		
 	}
+	
+	@Override
+	public int hashCode() {
+		return _typeName.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if( o instanceof CSTypeReference ) {
+			CSTypeReference other = (CSTypeReference) o;
+			boolean retval = other._typeName.equals(this._typeName);
+
+			List<CSTypeReferenceExpression> typeArgs = other.typeArguments();
+			List<CSTypeReferenceExpression> myTypeArgs = this.typeArguments();
+			retval = retval && typeArgs.equals(myTypeArgs);
+
+			return retval;
+		} else {
+			return false;
+		}
+	}		
 
 }

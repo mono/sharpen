@@ -12,6 +12,8 @@ public class Fields1
 
 	private readonly object _defaultLock;
 
+	private readonly int _readOnlyInt = 42;
+
 	private const int value = 42;
 
 	private int defaultValue = value;

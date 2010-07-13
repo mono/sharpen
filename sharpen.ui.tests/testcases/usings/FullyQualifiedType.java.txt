@@ -1,8 +1,11 @@
 package usings;
 
 class Test {
+	static class SubTest {
+	}
 }
 
 public class FullyQualifiedType {
 	private Test _test;
+	private Test.SubTest _subTest;
 }

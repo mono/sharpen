@@ -29,5 +29,6 @@ public enum CSVisibility {
 	Private,
 	Internal,
 	Protected,
+	ProtectedInternal { @Override public String toString() {return "protected internal";} },
 	Public
 }

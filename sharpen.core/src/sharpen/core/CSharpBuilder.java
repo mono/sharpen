@@ -1131,7 +1131,9 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private boolean isConstField(FieldDeclaration node, VariableDeclarationFragment fragment) {
-		return Modifier.isFinal(node.getModifiers()) && node.getType().isPrimitiveType() && hasConstValue(fragment);
+		//
+		return Modifier.isFinal(node.getModifiers()) && node.getType().isPrimitiveType() && 
+			hasConstValue(fragment) && Modifier.isStatic(node.getModifiers());
 	}
 
 	private boolean hasConstValue(VariableDeclarationFragment fragment) {
@@ -2088,7 +2090,12 @@ public class CSharpBuilder extends ASTVisitor {
 		}
 
 		if (null != defaultClause) {
-			defaultClause.body().addStatement(new CSBreakStatement(Integer.MIN_VALUE));
+			List<CSStatement> stats = defaultClause.body().statements();
+			
+			CSStatement lastStmt = stats.size() > 0 ? stats.get(stats.size()-1) : null;
+			if( ! ( lastStmt instanceof CSThrowStatement) ) {
+				defaultClause.body().addStatement(new CSBreakStatement(Integer.MIN_VALUE));
+			}
 		}
 
 		_currentBlock = saved;
@@ -2903,7 +2910,12 @@ public class CSharpBuilder extends ASTVisitor {
 			if (stubIsProperty(method)) {
 				_currentType.addMember(createAbstractPropertyStub(method));
 			} else {
-				_currentType.addMember(createAbstractMethodStub(method));
+				CSMethod newMethod = createAbstractMethodStub(method);
+				//the same method might be defined in multiple interfaces
+				//but only a single stub must be created for those
+				if( ! _currentType.members().contains(newMethod)) {
+					_currentType.addMember(newMethod);
+				}
 			}
 		}
 	}
@@ -3015,6 +3027,10 @@ public class CSharpBuilder extends ASTVisitor {
 		if (containsJavadoc(node, SharpenAnnotations.SHARPEN_PRIVATE)) {
 			return CSVisibility.Private;
 		}
+		
+		if (containsJavadoc(node, SharpenAnnotations.SHARPEN_PROTECTED)) {
+			return CSVisibility.Protected;
+		}		
 
 		return mapVisibility(node.getModifiers());
 	}
@@ -3024,7 +3040,9 @@ public class CSharpBuilder extends ASTVisitor {
 			return CSVisibility.Public;
 		}
 		if (Modifier.isProtected(modifiers)) {
-			return CSVisibility.Protected;
+			return _configuration.mapProtectedToProtectedInternal() ?  
+						CSVisibility.ProtectedInternal :
+						CSVisibility.Protected;
 		}
 		if (Modifier.isPrivate(modifiers)) {
 			return CSVisibility.Private;

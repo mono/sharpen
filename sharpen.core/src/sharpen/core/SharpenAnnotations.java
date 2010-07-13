@@ -36,6 +36,8 @@ public class SharpenAnnotations {
 	
 	static final String SHARPEN_PRIVATE = "@sharpen.private";
 	
+	static final String SHARPEN_PROTECTED = "@sharpen.protected";
+	
 	static final String SHARPEN_INTERNAL = "@sharpen.internal";
 	
 	public static final String SHARPEN_EVENT = "@sharpen.event";	

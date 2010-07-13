@@ -208,7 +208,11 @@ public class UnclassifiedConversionTestCase extends AbstractConversionTestCase {
 	public void testCascadingSwitchCase() throws Throwable {
 		runResourceTestCase("SwitchCase2");
 	}
-	
+
+	public void testSwitchCaseDefaultThrows() throws Throwable {
+		runResourceTestCase("SwitchCaseDefaultThrows");
+	}
+
 	public void testFinalClass() throws Throwable {
 		runResourceTestCase("FinalClass1");
 	}

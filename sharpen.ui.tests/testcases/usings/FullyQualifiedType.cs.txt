@@ -2,10 +2,15 @@ namespace Usings
 {
 	internal class Test
 	{
+		internal class SubTest
+		{
+		}
 	}
 
 	public class FullyQualifiedType
 	{
 		private Usings.Test _test;
+
+		private Usings.Test.SubTest _subTest;
 	}
 }

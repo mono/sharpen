@@ -835,7 +835,8 @@ public class CSharpPrinter extends CSVisitor {
 	
 	@Override
 	public void visit(CSLabelStatement node) {
-		writeLine(node.label() + ":");
+		//labels can't be free-standing, for simplicity simply emit an empty statement
+		writeLine(node.label() + ": ;");
 	}
 	
 	@Override

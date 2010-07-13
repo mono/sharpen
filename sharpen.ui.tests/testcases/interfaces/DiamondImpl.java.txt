@@ -1,0 +1,11 @@
+package interfaces;
+
+interface DiamondA {
+	int diamondFoo();
+}
+
+interface DiamondB {
+	int diamondFoo();
+}
+abstract class DiamondImpl implements DiamondA, DiamondB {
+}

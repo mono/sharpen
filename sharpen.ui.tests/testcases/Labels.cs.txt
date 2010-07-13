@@ -21,7 +21,7 @@ public class Labels
 				break;
 			}
 		}
-mylabel_break:
+mylabel_break: ;
 	}
 
 	public virtual void testBreakWhile()
@@ -40,9 +40,9 @@ mylabel_break:
 				}
 			}
 			goto mylabel_break;
-mylabel_continue:
+mylabel_continue: ;
 		}
-mylabel_break:
+mylabel_break: ;
 	}
 
 	public virtual void testBreakFor()
@@ -61,9 +61,9 @@ mylabel_break:
 				}
 			}
 			goto mylabel_break;
-mylabel_continue:
+mylabel_continue: ;
 		}
-mylabel_break:
+mylabel_break: ;
 	}
 
 	public virtual void testBreakNestedLoops()
@@ -83,12 +83,12 @@ mylabel_break:
 						goto mylabel2_break;
 					}
 				}
-mylabel2_continue:
+mylabel2_continue: ;
 			}
-mylabel2_break:
-mylabel1_continue:
+mylabel2_break: ;
+mylabel1_continue: ;
 		}
-mylabel1_break:
+mylabel1_break: ;
 	}
 
 	public virtual void testContinueFor()
@@ -111,9 +111,9 @@ mylabel1_break:
 				}
 			}
 			goto mylabel_continue;
-mylabel_continue:
+mylabel_continue: ;
 		}
-mylabel_break:
+mylabel_break: ;
 	}
 
 	public virtual void testContinueDo()
@@ -135,10 +135,10 @@ mylabel_break:
 					goto mylabel_continue;
 				}
 			}
-mylabel_continue:
+mylabel_continue: ;
 		}
 		while (true);
-mylabel_break:
+mylabel_break: ;
 	}
 
 	public virtual void testContinueWhile()
@@ -159,9 +159,9 @@ mylabel_break:
 					goto mylabel_continue;
 				}
 			}
-mylabel_continue:
+mylabel_continue: ;
 		}
-mylabel_break:
+mylabel_break: ;
 	}
 
 	public virtual void testNoContinueLabel()
@@ -169,7 +169,7 @@ mylabel_break:
 		for (int i = 0; i < 10; i++)
 		{
 		}
-mylabel_break:
+mylabel_break: ;
 	}
 
 	public virtual void testNoContinueLabelInSwitch()
@@ -184,7 +184,7 @@ mylabel_break:
 				return;
 			}
 		}
-mylabel_break:
+mylabel_break: ;
 	}
 
 	public virtual void testContinueFromCatch()
@@ -198,8 +198,8 @@ mylabel_break:
 			{
 				goto mylabel_continue;
 			}
-mylabel_continue:
+mylabel_continue: ;
 		}
-mylabel_break:
+mylabel_break: ;
 	}
 }

@@ -1,0 +1,17 @@
+namespace Interfaces
+{
+	internal interface IDiamondA
+	{
+		int DiamondFoo();
+	}
+
+	internal interface IDiamondB
+	{
+		int DiamondFoo();
+	}
+
+	internal abstract class DiamondImpl : Interfaces.IDiamondA, Interfaces.IDiamondB
+	{
+		public abstract int DiamondFoo();
+	}
+}

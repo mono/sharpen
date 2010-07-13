@@ -118,17 +118,33 @@ public abstract class Configuration {
 		mapType("java.lang.Deprecated", "System.Obsolete");
     }
 
-	protected void setUpStringMappings() {
+	protected void setUpStringMappings() {		
 		mapType("java.lang.StringBuffer", "System.Text.StringBuilder");
 	    mapProperty("java.lang.StringBuffer.length", "Length");
+	    mapMethod("java.lang.StringBuffer.append", "Append");	    
+	    //"append" is also defined in an interface, and that must be mapped as well
+	    //(so that it works with all JREs):
+	    mapMethod("java.lang.Appendable.append", "Append");	
+	    mapMethod("java.lang.AbstractStringBuilder.append", "Append");  
+	    
+	    mapMethod("java.lang.StringBuffer.deleteCharAt", runtimeMethod("deleteCharAt"));
+	    mapMethod("java.lang.AbstractStringBuilder.deleteCharAt", runtimeMethod("deleteCharAt"));
+	    mapMethod("java.lang.StringBuffer.setCharAt", runtimeMethod("setCharAt"));
+	    mapMethod("java.lang.AbstractStringBuilder.setCharAt", runtimeMethod("setCharAt"));
+	    
+	    mapProperty("java.lang.StringBuffer.setLength", "Length");
+	    mapProperty("java.lang.AbstractStringBuilder.setLength", "Length");
 	    
 	    mapMethod("java.lang.String.intern", "string.Intern");
-	    mapMethod("java.lang.String.substring", "Substring");
 	    mapMethod("java.lang.String.indexOf", "IndexOf");
 	    mapMethod("java.lang.String.lastIndexOf", "LastIndexOf");
 	    mapMethod("java.lang.String.trim", "Trim");
 	    mapMethod("java.lang.String.toUpperCase", "ToUpper");
 	    mapMethod("java.lang.String.toLowerCase", "ToLower");
+	    mapMethod("java.lang.String.compareTo", "CompareTo");
+	    mapMethod("java.lang.Comparable.compareTo(java.lang.String)", "CompareTo");
+	    mapMethod("java.lang.String.toCharArray", "ToCharArray");
+	    mapMethod("java.lang.String.replace", "Replace");
 	    mapMethod("java.lang.String.startsWith", "StartsWith");
 	    mapMethod("java.lang.String.endsWith", "EndsWith");
 		mapMethod("java.lang.String.substring", runtimeMethod("substring"));
@@ -146,11 +162,15 @@ public abstract class Configuration {
 	protected void setUpIoMappings() {
 		mapProperty("java.lang.System.out", "System.Console.Out");
 		mapProperty("java.lang.System.err", "System.Console.Error");
+		
 		mapType("java.io.PrintStream", "System.IO.TextWriter");
+
 		mapType("java.io.Writer", "System.IO.TextWriter");
+		mapMethod("java.io.Writer.flush", "Flush");
 		mapType("java.io.StringWriter", "System.IO.StringWriter");
+
 		mapMethod("java.io.PrintStream.print", "Write");
-		mapMethod("java.io.PrintStream.println", "WriteLine");
+		mapMethod("java.io.PrintStream.println", "WriteLine");			
 	}
 
 	protected String collectionRuntimeMethod(String methodName) {
@@ -198,6 +218,7 @@ public abstract class Configuration {
 		mapMethod("java.lang.reflect.Array.getLength", runtimeMethod("GetArrayLength"));
 		mapMethod("java.lang.reflect.Array.get", runtimeMethod("GetArrayValue"));
 		mapMethod("java.lang.reflect.Array.set", runtimeMethod("SetArrayValue"));
+		mapMethod("java.lang.reflect.Array.newInstance", "System.Array.CreateInstance");
 		
 		mapMethod("java.lang.Object.getClass", "GetType");
 		mapType("java.lang.Class", "System.Type");
@@ -211,10 +232,13 @@ public abstract class Configuration {
 		mapJavaLangClassMethod("newInstance", "System.Activator.CreateInstance");
 		mapJavaLangClassMethod("forName", runtimeMethod("GetType"));
 		mapJavaLangClassMethod("getComponentType", "GetElementType");
+		mapJavaLangClassMethod("getField", "GetField");
+		mapJavaLangClassMethod("getFields", "GetFields");
 		mapJavaLangClassMethod("getDeclaredField", runtimeMethod("GetDeclaredField"));		
 		mapJavaLangClassMethod("getDeclaredFields", runtimeMethod("GetDeclaredFields"));
 		mapJavaLangClassMethod("getDeclaredMethod", runtimeMethod("GetDeclaredMethod"));
 		mapJavaLangClassMethod("getDeclaredMethods", runtimeMethod("GetDeclaredMethods"));
+		mapJavaLangClassMethod("isAssignableFrom", "IsAssignableFrom");
 		
 		mapProperty("java.lang.reflect.Member.getName", "Name");
 		mapProperty("java.lang.reflect.Member.getDeclaringClass", "DeclaringType");
@@ -363,7 +387,14 @@ public abstract class Configuration {
 	}
 	
 	public boolean shouldFullyQualifyTypeName(String name) {
-		return _fullyQualifiedTypes.contains(name);
+		//if a type is configured to be fully qualified,
+		//then also nested types of it need to be fully qualified
+		for( String s : _fullyQualifiedTypes ) {
+			if( name.equals(s) || name.startsWith(s + ".") ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void setCreateProblemMarkers(boolean value) {
@@ -457,4 +488,8 @@ public abstract class Configuration {
 	}
 	
 	public abstract boolean isIgnoredExceptionType(String exceptionType);
+	
+	public boolean mapProtectedToProtectedInternal() {
+		return false;
+	}
 }

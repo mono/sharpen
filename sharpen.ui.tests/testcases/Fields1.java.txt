@@ -6,6 +6,7 @@ public class Fields1 {
 	public volatile boolean _stopped;
 	private final Object _lock = new Object();
 	private final Object _defaultLock = _lock;
+	private final int _readOnlyInt = 42;
 	private static final int value = 42;
 	private int defaultValue = value;
 	private static final Object _typeLock = new Object();

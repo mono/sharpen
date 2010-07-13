@@ -67,5 +67,33 @@ public class CSMethod extends CSMethodBase implements CSTypeParameterProvider {
 	public List<CSTypeParameter> typeParameters() {
 		return Collections.unmodifiableList(_typeParameters);
 	}
+	
+	@Override
+	public int hashCode() {
+		return _name.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if( o instanceof CSMethod ) {
+			CSMethod other = (CSMethod) o;
+			boolean retval = other._name.equals(this._name);
+			retval = retval && other._visibility == this._visibility;
+			retval = retval && other._returnType.equals(this._returnType);
+			retval = retval && other._modifier == this._modifier;
+			List<CSVariableDeclaration> params = other.parameters();
+			List<CSVariableDeclaration> myParams = this.parameters();
+			retval = retval && params.size() == myParams.size();
+
+			//parameter names don't matter, just type and position
+			for(int i=0; retval && i<params.size(); i++) {
+				retval = retval && params.get(i).type().equals(myParams.get(i).type());
+			}
+
+			return retval;
+		} else {
+			return false;
+		}
+	}	
 
 }

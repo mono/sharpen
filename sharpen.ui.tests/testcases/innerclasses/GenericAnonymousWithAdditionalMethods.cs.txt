@@ -1,0 +1,27 @@
+namespace innerclasses
+{
+	public class GenericAnonymousWithPrivateMethod<T>
+	{
+		public static java.lang.Comparable run(object obj)
+		{
+			return new _Comparable_5();
+		}
+
+		private sealed class _Comparable_5 : java.lang.Comparable
+		{
+			public _Comparable_5()
+			{
+			}
+
+			public int compareTo(object target)
+			{
+				return result(target);
+			}
+			
+			private int result()
+			{
+				return 0;
+			}
+		}
+	}
+}

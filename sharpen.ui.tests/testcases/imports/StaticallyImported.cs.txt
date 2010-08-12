@@ -1,0 +1,10 @@
+namespace imports
+{
+	internal class StaticallyImported
+	{
+		internal static int foo()
+		{
+			return 42;
+		}
+	}
+}

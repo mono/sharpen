@@ -1,0 +1,10 @@
+namespace imports
+{
+	internal class StaticImports
+	{
+		internal virtual void bar()
+		{
+			imports.StaticallyImported.foo();
+		}
+	}
+}

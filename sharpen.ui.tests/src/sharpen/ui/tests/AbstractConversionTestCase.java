@@ -63,7 +63,7 @@ public abstract class AbstractConversionTestCase extends TestCase {
 	protected ICompilationUnit createCompilationUnit(IPackageFragmentRoot srcFolder, TestCaseResource resource) throws CoreException, IOException {
 		return _project.createCompilationUnit(srcFolder, resource.packageName(), resource.javaFileName(), resource.actualStringContents());
 	}
-
+	
 	protected void runResourceTestCase(String resourceName) throws Throwable {		
 		runResourceTestCase(getConfiguration(), resourceName);
 	}

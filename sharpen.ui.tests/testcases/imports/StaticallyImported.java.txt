@@ -1,0 +1,9 @@
+package imports;
+
+class StaticallyImported {
+
+  static int foo() {
+    return 42;
+  }
+
+}

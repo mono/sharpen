@@ -1,0 +1,11 @@
+package imports;
+
+import static imports.StaticallyImported.*;
+
+class StaticImports {
+
+  void bar() {
+    foo();
+  }
+
+}

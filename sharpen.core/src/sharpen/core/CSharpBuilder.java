@@ -21,6 +21,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.core;
 
+
 import java.util.*;
 import java.util.regex.*;
 
@@ -30,6 +31,8 @@ import org.eclipse.jdt.core.dom.*;
 import sharpen.core.Configuration.*;
 import sharpen.core.csharp.ast.*;
 import sharpen.core.framework.*;
+import static sharpen.core.framework.StaticImports.*;
+
 import static sharpen.core.framework.Environments.*;
 
 public class CSharpBuilder extends ASTVisitor {
@@ -2401,7 +2404,8 @@ public class CSharpBuilder extends ASTVisitor {
 
 	private void processOrdinaryMethodInvocation(MethodInvocation node) {
 		final CSExpression targetExpression = mapMethodTargetExpression(node);
-		String name = mappedMethodName(node.resolveMethodBinding());
+		
+		String name = resolveTargetMethodName(node);
 		CSExpression target = null == targetExpression
 				? new CSReferenceExpression(name)
 		        : new CSMemberReferenceExpression(targetExpression, name);
@@ -2410,6 +2414,14 @@ public class CSharpBuilder extends ASTVisitor {
 		mapTypeArguments(mie, node);
 		pushExpression(mie);
     }
+
+	private String resolveTargetMethodName(MethodInvocation node) {
+		final IMethodBinding method = staticImportMethodBinding(node.getName(), _ast.imports());
+		if(method != null){
+			return mappedTypeName(method.getDeclaringClass()) + "." + mappedMethodName(node.resolveMethodBinding());
+		}
+		return mappedMethodName(node.resolveMethodBinding());
+	}
 
 	private void mapTypeArguments(CSMethodInvocationExpression mie, MethodInvocation node) {
 	    for (Object o : node.typeArguments()) {
@@ -2580,7 +2592,7 @@ public class CSharpBuilder extends ASTVisitor {
 		if (null == expression || isMappingToStaticMethod) {
 			target = new CSReferenceExpression(name);
 		} else {
-			if (isStatic(binding) && arguments.size() > 0) {
+			if (BindingUtils.isStatic(binding) && arguments.size() > 0) {
 				// mapping static method to instance member
 				// typical example is String.valueOf(arg) => arg.ToString()
 				target = new CSMemberReferenceExpression(parensIfNeeded(mapExpression(arguments.get(0))), name);
@@ -2669,7 +2681,7 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private boolean isInstanceMethod(IMethodBinding binding) {
-		return !isStatic(binding);
+		return !BindingUtils.isStatic(binding);
 	}
 
 	private boolean isMappingToStaticMember(String name) {
@@ -3175,10 +3187,6 @@ public class CSharpBuilder extends ASTVisitor {
 
 	protected String identifier(String name) {
 		return namingStrategy().identifier(name);
-	}
-
-	private boolean isStatic(IMethodBinding binding) {
-		return Modifier.isStatic(binding.getModifiers());
 	}
 
 	private void unresolvedTypeBinding(ASTNode node) {

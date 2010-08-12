@@ -191,4 +191,13 @@ public class BindingUtils {
 		}
 		return qualifiedName(declaringClass) + "." + binding.getName();
 	}
+
+	public static boolean isStatic(IMethodBinding binding) {
+		return Modifier.isStatic(binding.getModifiers());
+	}
+	
+	public static boolean isStatic(MethodInvocation invocation) {
+		return isStatic(invocation.resolveMethodBinding());
+	}
+
 }

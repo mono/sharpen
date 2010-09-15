@@ -17,9 +17,10 @@ public class StringMethods1 {
 		if (s.endsWith("bar")) print("bar");
 		print(String.valueOf(42));
 		print("foo".intern());
+		s.compareTo("bar");
 	}
 	
 	private static void print(String s) {
 	}
-	
+
 }

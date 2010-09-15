@@ -3,32 +3,36 @@ package sharpen.core;
 public class VODConfiguration extends Configuration {
 
 	VODConfiguration(String runtimeTypeName) {
-		super(runtimeTypeName);
-		
-		setUpPrimitiveMappings();
-		setUpAnnotationMappings();
-	
-		mapType("java.lang.System", runtimeTypeName);
-		mapMethod("java.lang.Math.abs", "System.Math.Abs");
-		mapMethod("java.lang.Math.min", "System.Math.Min");
-		mapMethod("java.lang.Math.max", "System.Math.Max");
-		mapMethod("java.lang.System.exit", "System.Environment.Exit");
-		
-		mapType("java.lang.Cast", "Sharpen.Cast");
-		
-		setUpIoMappings();
-		mapMethod("System.IO.TextWriter.flush", "Flush");
-		mapMethod("System.IO.TextWriter.print", "Write");
-		mapMethod("System.IO.TextWriter.println", "WriteLine");
+	    super(runtimeTypeName);
 
-		setUpExceptionMappings();
-	    
+	    setUpPrimitiveMappings();
+	    setUpAnnotationMappings();
+
+	    mapType("java.lang.System", runtimeTypeName);
+	    mapMethod("java.lang.Math.abs", "System.Math.Abs");
+	    mapMethod("java.lang.Math.min", "System.Math.Min");
+	    mapMethod("java.lang.Math.max", "System.Math.Max");
+	    mapMethod("java.lang.System.exit", "System.Environment.Exit");
+
+	    mapType("java.lang.Cast", "Sharpen.Cast");
+
+	    setUpIoMappings();
+	    mapMethod("System.IO.TextWriter.flush", "Flush");
+	    mapMethod("System.IO.TextWriter.print", "Write");
+	    mapMethod("System.IO.TextWriter.println", "WriteLine");
+
+	    setUpExceptionMappings();
+
 	    //setUpCollectionMappings();
-	    
+
 	    //mapType("java.lang.Cloneable", "System.ICloneable");
-	    
+
+	    mapType("java.lang.Comparable", "System.IComparable");
+	    mapMethod("java.lang.Comparable.compareTo", "CompareTo");
+
+	    mapMethod("java.lang.Comparable.compareTo(java.lang.String)", runtimeMethod("CompareOrdinal"));
 	    //mapType("java.util.Date", "System.DateTime");
-	
+
 	    mapMethod("java.lang.Object.toString", "ToString");
 	    mapMethod("java.lang.Object.hashCode", "GetHashCode");
 	    mapMethod("java.lang.Object.equals", "Equals");
@@ -37,11 +41,11 @@ public class VODConfiguration extends Configuration {
 	    mapMethod("java.lang.Double.isNaN", "double.IsNaN");
 	    
 	    setUpStringMappings();
-	
+
 	    mapMethod("java.lang.Throwable.printStackTrace", runtimeMethod("printStackTrace"));
-	    mapMethod("System.DateTime.TryParse", runtimeMethod("DateTimeTryParse"));
-	    mapMethod("System.Int64.TryParse", runtimeMethod("Int64TryParse"));
-	    
+	    //mapMethod("System.DateTime.TryParse", runtimeMethod("DateTimeTryParse"));
+	    //mapMethod("System.Int64.TryParse", runtimeMethod("Int64TryParse"));
+
 	    mapMethod("java.lang.System.arraycopy", "System.Array.Copy");
 	    //mapMethod("java.lang.Object.clone", "MemberwiseClone");
 	    mapMethod("java.lang.Object.wait", runtimeMethod("wait"));

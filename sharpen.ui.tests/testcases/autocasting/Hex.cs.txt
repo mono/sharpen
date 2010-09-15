@@ -1,0 +1,21 @@
+namespace autocasting
+{
+	public class Hex
+	{
+		public virtual void withLiterals()
+		{
+			withInt(unchecked((int)(0xab)));
+			withLong(unchecked((int)(0xab)));
+			withLong(unchecked((long)(0xabL)));
+			withLong(unchecked((long)(0xabl)));
+		}
+
+		private void withLong(long l)
+		{
+		}
+
+		private void withInt(int i)
+		{
+		}
+	}
+}

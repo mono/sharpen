@@ -29,4 +29,8 @@ public class AutoCastingTestCase extends AbstractConversionTestCase {
 		runResourceTestCase("autocasting/Char");
 	}
 
+	public void testHex() throws Throwable {
+		runResourceTestCase("autocasting/Hex");
+	}
+
 }

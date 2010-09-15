@@ -1,0 +1,17 @@
+package autocasting;
+
+public class Hex {
+
+	public void withLiterals() {
+		withInt(0xab);
+		withLong(0xab);
+		withLong(0xabL);
+		withLong(0xabl);
+	}
+
+	private void withLong(long l) {
+	}
+
+	private void withInt(int i) {
+	}
+}

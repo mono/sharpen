@@ -1885,7 +1885,12 @@ public class CSharpBuilder extends ASTVisitor {
 		CSNumberLiteralExpression literal = new CSNumberLiteralExpression(token);
 
 		if (token.startsWith("0x")) {
-			pushExpression(uncheckedCast("int", literal));
+			if (token.endsWith("l") || token.endsWith("L")) {
+				pushExpression(uncheckedCast("long", literal));
+			} else {
+				pushExpression(uncheckedCast("int", literal));
+			}
+
 		} else {
 			pushExpression(literal);
 		}

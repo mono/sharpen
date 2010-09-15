@@ -231,4 +231,10 @@ public class DefaultConfiguration extends Configuration {
 	public boolean isIgnoredExceptionType(String exceptionType) {
 		return exceptionType.equals("java.lang.CloneNotSupportedException");
 	}	
+
+	@Override
+	public boolean mapByteToSbyte() {
+		return false;
+	}
 }
+

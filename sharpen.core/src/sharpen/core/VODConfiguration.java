@@ -138,4 +138,9 @@ public class VODConfiguration extends Configuration {
 	public boolean mapProtectedToProtectedInternal() {
 		return true;
 	}
+
+	@Override
+	public boolean mapByteToSbyte() {
+		return true;
+	}
 }

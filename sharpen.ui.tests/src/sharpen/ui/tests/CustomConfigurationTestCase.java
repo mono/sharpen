@@ -23,6 +23,10 @@ public class CustomConfigurationTestCase extends AbstractConversionTestCase {
 			return false;
 		}
 		
+		@Override
+		public boolean mapByteToSbyte() {
+			return false;
+		}
 	}
 	
 	public void test() {

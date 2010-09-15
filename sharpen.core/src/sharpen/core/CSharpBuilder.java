@@ -2793,8 +2793,11 @@ public class CSharpBuilder extends ASTVisitor {
 			return "void";
 		if (name.equals(JAVA_LANG_BOOLEAN_TYPE))
 			return "bool";
-		if (name.equals(JAVA_LANG_BYTE_TYPE))
-			return "byte";
+		if (name.equals(JAVA_LANG_BYTE_TYPE)) {
+			return _configuration.mapByteToSbyte() ?
+					"sbyte" :
+					"byte";
+		}
 		if (name.equals(JAVA_LANG_CHARACTER_TYPE))
 			return "char";
 		if (name.equals(JAVA_LANG_SHORT_TYPE))

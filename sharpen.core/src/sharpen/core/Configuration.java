@@ -492,4 +492,7 @@ public abstract class Configuration {
 	public boolean mapProtectedToProtectedInternal() {
 		return false;
 	}
+
+	public abstract boolean mapByteToSbyte();
+
 }

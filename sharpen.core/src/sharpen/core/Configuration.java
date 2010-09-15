@@ -122,10 +122,12 @@ public abstract class Configuration {
 		mapType("java.lang.StringBuffer", "System.Text.StringBuilder");
 	    mapProperty("java.lang.StringBuffer.length", "Length");
 	    mapMethod("java.lang.StringBuffer.append", "Append");	    
+	    mapMethod("java.lang.StringBuffer.insert", "Insert");
 	    //"append" is also defined in an interface, and that must be mapped as well
 	    //(so that it works with all JREs):
 	    mapMethod("java.lang.Appendable.append", "Append");	
 	    mapMethod("java.lang.AbstractStringBuilder.append", "Append");  
+	    mapMethod("java.lang.AbstractStringBuilder.insert", "Insert");
 	    
 	    mapMethod("java.lang.StringBuffer.deleteCharAt", runtimeMethod("deleteCharAt"));
 	    mapMethod("java.lang.AbstractStringBuilder.deleteCharAt", runtimeMethod("deleteCharAt"));

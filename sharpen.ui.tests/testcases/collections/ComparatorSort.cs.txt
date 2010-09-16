@@ -4,7 +4,7 @@ namespace Collections
 	{
 		public virtual int Compare(object x, object y)
 		{
-			return x.ToString().CompareTo(y.ToString());
+			return Sharpen.Runtime.CompareOrdinal(x.ToString(), y.ToString());
 		}
 
 		public virtual void Sort(System.Collections.ArrayList list)

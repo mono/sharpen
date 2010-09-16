@@ -30,7 +30,6 @@ public class VODConfiguration extends Configuration {
 	    mapType("java.lang.Comparable", "System.IComparable");
 	    mapMethod("java.lang.Comparable.compareTo", "CompareTo");
 
-	    mapMethod("java.lang.Comparable.compareTo(java.lang.String)", runtimeMethod("CompareOrdinal"));
 	    //mapType("java.util.Date", "System.DateTime");
 
 	    mapMethod("java.lang.Object.toString", "ToString");

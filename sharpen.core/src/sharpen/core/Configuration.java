@@ -144,7 +144,7 @@ public abstract class Configuration {
 	    mapMethod("java.lang.String.toUpperCase", "ToUpper");
 	    mapMethod("java.lang.String.toLowerCase", "ToLower");
 	    mapMethod("java.lang.String.compareTo", "CompareTo");
-	    mapMethod("java.lang.Comparable.compareTo(java.lang.String)", "CompareTo");
+	    mapMethod("java.lang.Comparable.compareTo(java.lang.String)", runtimeMethod("CompareOrdinal"));
 	    mapMethod("java.lang.String.toCharArray", "ToCharArray");
 	    mapMethod("java.lang.String.replace", "Replace");
 	    mapMethod("java.lang.String.startsWith", "StartsWith");

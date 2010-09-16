@@ -32,7 +32,7 @@ public class StringMethods1
 		}
 		print(Sharpen.Runtime.getStringValueOf(42));
 		print(string.Intern("foo"));
-		s.CompareTo("bar");
+		Sharpen.Runtime.CompareOrdinal(s, "bar");
 	}
 
 	private static void print(string s)

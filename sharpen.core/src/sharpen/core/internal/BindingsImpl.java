@@ -12,7 +12,6 @@ public class BindingsImpl implements Bindings {
 	private final CompilationUnit _ast = my(CompilationUnit.class);
 	private final ASTResolver _resolver = my(ASTResolver.class);
 
-	@Override
 	public IMethodBinding originalBindingFor(IMethodBinding binding) {
 		IMethodBinding original = BindingUtils.findMethodDefininition(binding, my(CompilationUnit.class).getAST());
 		return (null != original) 
@@ -20,7 +19,6 @@ public class BindingsImpl implements Bindings {
 				: binding;
 	}
 
-	@Override
 	public <T extends ASTNode> T findDeclaringNode(IBinding binding) {
 		final ASTNode declaringNode = _ast.findDeclaringNode(binding);
 		if (null != declaringNode)

@@ -6,12 +6,10 @@ import sharpen.core.framework.*;
 
 public class PreserveFullyQualifiedNamesStateImpl implements PreserveFullyQualifiedNamesState {
 
-	@Override
 	public void using(boolean value, Runnable runnable) {
 		_value.using(value, runnable);
 	}
 
-	@Override
 	public boolean value() {
 		return _value.value();
 	}

@@ -44,7 +44,6 @@ public class SharpenConversion {
 	protected Writer _writer;
 	protected final Configuration _configuration;
 	private ASTResolver _resolver = new ASTResolver() {
-		@Override
 		public ASTNode findDeclaringNode(IBinding binding) {
 			return null;
 		}

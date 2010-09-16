@@ -13,7 +13,6 @@ public class AnnotationsImpl implements Annotations {
 	private final CompilationUnit _ast = my(CompilationUnit.class);
 	private final Bindings _bindings = my(Bindings.class);
 
-	@Override
 	public TagElement effectiveAnnotationFor(MethodDeclaration node, String annotation) {
 		TagElement eventTag = javadocTagFor(node, annotation);
 		if (null != eventTag)
@@ -42,7 +41,6 @@ public class AnnotationsImpl implements Annotations {
 		return _bindings.findDeclaringNode(definition);
 	}
 
-	@Override
 	public String annotatedPropertyName(MethodDeclaration node) {
 		final TagElement propertyTag = effectiveAnnotationFor(node, SharpenAnnotations.SHARPEN_PROPERTY);
 		if (JavadocUtility.hasSingleTextFragment(propertyTag)) {
@@ -51,7 +49,6 @@ public class AnnotationsImpl implements Annotations {
 		return null;
 	}
 
-	@Override
 	public String annotatedRenaming(BodyDeclaration node) {
 		TagElement renameTag = JavadocUtility.getJavadocTag(node, SharpenAnnotations.SHARPEN_RENAME);
 		if (null == renameTag)

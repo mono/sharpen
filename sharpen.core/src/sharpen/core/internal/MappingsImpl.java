@@ -22,7 +22,6 @@ public class MappingsImpl implements Mappings {
 	private final Bindings _bindings = my(Bindings.class);
 	private final PreserveFullyQualifiedNamesState _preserveFQNState = my(PreserveFullyQualifiedNamesState.class);
 	
-	@Override
 	public String mappedFieldName(IVariableBinding binding) {
 		if (!binding.isField())
 			return null;
@@ -33,13 +32,11 @@ public class MappingsImpl implements Mappings {
 				: null;
 	}
 
-	@Override
 	public String mappedMethodName(IMethodBinding binding) {
 		Configuration.MemberMapping mapping = effectiveMappingFor(binding);
 		return computeMethodName(binding, mapping);
 	}
 
-	@Override
 	public String mappedTypeName(ITypeBinding type) {
 		if (type.isArray() || type.isWildcardType()) {
 			return type.getQualifiedName();
@@ -176,7 +173,6 @@ public class MappingsImpl implements Mappings {
 		return _configuration.toInterfaceName(name);
 	}
 
-	@Override
 	public Configuration.MemberMapping effectiveMappingFor(final IMethodBinding binding) {
 		final MemberMapping mapping = configuredMappingFor(binding);
 		if (null != mapping)

@@ -1747,7 +1747,6 @@ public class CSharpBuilder extends ASTVisitor {
 
 	public boolean visit(final WhileStatement node) {
 		consumeContinueLabel(new Function<CSBlock>() {
-			@Override
 			public CSBlock apply() {
 				CSWhileStatement stmt = new CSWhileStatement(node.getStartPosition(), mapExpression(node.getExpression()));
 				visitBlock(stmt.body(), node.getBody());
@@ -1760,7 +1759,6 @@ public class CSharpBuilder extends ASTVisitor {
 
 	public boolean visit(final DoStatement node) {
 		consumeContinueLabel(new Function<CSBlock>() {
-			@Override
 			public CSBlock apply() {
 				CSDoStatement stmt = new CSDoStatement(node.getStartPosition(), mapExpression(node.getExpression()));
 				visitBlock(stmt.body(), node.getBody());
@@ -2042,7 +2040,6 @@ public class CSharpBuilder extends ASTVisitor {
 
 	public boolean visit(final ForStatement node) {
 		consumeContinueLabel(new Function<CSBlock>() {
-			@Override
 			public CSBlock apply() {
 				CSForStatement stmt = new CSForStatement(node.getStartPosition(), mapExpression(node.getExpression()));
 				for (Object i : node.initializers()) {

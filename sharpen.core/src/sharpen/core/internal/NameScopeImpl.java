@@ -11,12 +11,10 @@ import static sharpen.core.framework.Environments.*;
 public class NameScopeImpl implements NameScope {
 
 
-	@Override
 	public boolean contains(String name) {
 		return _mappedMethodDeclarations.contains(name);
 	}
 
-	@Override
 	public void enterTypeDeclaration(TypeDeclaration node) {
 		_currentType.push(node);
 		
@@ -29,12 +27,10 @@ public class NameScopeImpl implements NameScope {
 		}
 	}
 
-	@Override
 	public void leaveTypeDeclaration(TypeDeclaration node) {
 		_currentType.pop();
 	}
 	
-	@Override
 	public TypeDeclaration currentType() {
 		return _currentType.peek();
 	}

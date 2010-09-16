@@ -110,7 +110,7 @@ public class TestCaseResource {
 	}
 
 	public void assertFile(IFile actualFile) throws IOException, CoreException {
-		if (expectedStringContents().isEmpty()) {
+		if (expectedStringContents().length() == 0) {
 			Assert.assertFalse("No content in expected file: "  + actualFile, actualFile.exists());
 			return;
 		}

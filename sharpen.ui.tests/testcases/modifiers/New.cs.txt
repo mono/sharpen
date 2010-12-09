@@ -1,0 +1,29 @@
+namespace modifiers
+{
+	internal class Base
+	{
+		public virtual void foo()
+		{
+		}
+
+		public virtual void bar()
+		{
+		}
+
+		public int fooBar;
+	}
+
+	internal abstract class Derived : modifiers.Base
+	{
+		new public int foo;
+
+		new public void bar()
+		{
+			// As of today, this will be translated incorrectly to C# (which requires the "base" keyword to qualify fooBar)
+			// but if you write code like this you deserve it :)
+			fooBar = 42;
+		}
+
+		new public abstract void fooBar();
+	}
+}

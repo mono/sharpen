@@ -1,0 +1,11 @@
+namespace visibility
+{
+	public class Public
+	{
+		public int _field;
+	}
+
+	public class PackagePrivate
+	{
+	}
+}

@@ -1,0 +1,23 @@
+namespace modifiers
+{
+	internal interface Foo
+	{
+		void foo();
+	}
+
+	internal interface Bar : modifiers.Foo
+	{
+	}
+
+	internal abstract class FooImpl1 : modifiers.Bar
+	{
+		public abstract void foo();
+	}
+
+	internal class FooImpl2 : modifiers.FooImpl1
+	{
+		public override void foo()
+		{
+		}
+	}
+}

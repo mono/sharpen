@@ -1,0 +1,13 @@
+package visibility;
+
+public class Public {
+
+	/**
+	 * @sharpen.public
+	 */
+	private int _field;
+}
+
+/** @sharpen.public */
+class PackagePrivate {
+}

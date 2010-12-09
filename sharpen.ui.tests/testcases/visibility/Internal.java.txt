@@ -1,3 +1,5 @@
+package visibility;
+
 /**
  * @sharpen.internal
  */

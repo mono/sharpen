@@ -259,6 +259,9 @@ public class CSharpPrinter extends CSVisitor {
 	private void writeVisibility(CSMember member) {
 		writeIndentation();
 		
+		if (member.isNewModifier())
+			write("new ");
+		
 		if (isExplicitMember(member)) return;
 		
 		CSVisibility visibility = member.visibility();

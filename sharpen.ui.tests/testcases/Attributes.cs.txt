@@ -1,0 +1,13 @@
+[Single]
+internal class Attributes
+{
+	[Multiple1]
+	[Multiple2]
+	public virtual void foo()
+	{
+	}
+
+	public virtual void bar(int value)
+	{
+	}
+}

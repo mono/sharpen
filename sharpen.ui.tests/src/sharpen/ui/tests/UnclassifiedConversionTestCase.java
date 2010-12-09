@@ -97,10 +97,6 @@ public class UnclassifiedConversionTestCase extends AbstractConversionTestCase {
 		runResourceTestCase("SignatureMapping");
 	}
 	
-	public void testOverrideAbstract() throws Throwable {
-		runResourceTestCase("Override4");
-	}	
-	
 	public void testIntLiterals() throws Throwable {
 		runResourceTestCase("IntLiterals1");
 	}
@@ -119,14 +115,6 @@ public class UnclassifiedConversionTestCase extends AbstractConversionTestCase {
 	
 	public void testExtends() throws Throwable {
 		runResourceTestCase("Extends");
-	}
-	
-	public void testInternal() throws Throwable {
-		runResourceTestCase("Internal");
-	}
-	
-	public void testSharpenPrivate() throws Throwable {
-		runResourceTestCase("Private");
 	}
 	
 	public void testContinue() throws Throwable {
@@ -253,10 +241,6 @@ public class UnclassifiedConversionTestCase extends AbstractConversionTestCase {
 		runResourceTestCase("Serializable3");
 	}
 	
-	public void testVirtualMethod() throws Throwable {
-		runResourceTestCase("VirtualMethod1");
-	}
-	
 	public void testDoWhile() throws Throwable {
 		runResourceTestCase("DoWhile1");
 	}
@@ -311,18 +295,6 @@ public class UnclassifiedConversionTestCase extends AbstractConversionTestCase {
 
 	public void testReturnField() throws Throwable {
 		runResourceTestCase("Return2");
-	}
-	
-	public void testSimpleOverride() throws Throwable {
-		runResourceTestCase("Override1");
-	}
-	
-	public void testDeepOverride() throws Throwable {
-		runResourceTestCase("Override2");
-	}
-	
-	public void testOverrideMethodDefinedInInterface() throws Throwable {
-		runResourceTestCase("Override3");
 	}
 	
 	public void testSimpleInterface() throws Throwable {

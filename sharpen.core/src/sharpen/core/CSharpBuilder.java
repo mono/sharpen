@@ -732,6 +732,7 @@ public class CSharpBuilder extends ASTVisitor {
 		if (null == javadoc) {
 			return;
 		}
+		
 		mapJavadocTags(javadoc, member);
 	}
 
@@ -803,6 +804,26 @@ public class CSharpBuilder extends ASTVisitor {
 		if (!isConversionTag(element.getTagName())) {
 			member.addDoc(mapTagElement(element));
 		}
+		else if (isAttributeAnnotation(element)){
+			processAttribute(member, element);
+		}
+		else if (isNewAnnotation(element)){
+			member.setNewModifier(true);
+		}
+	}
+
+	private boolean isAttributeAnnotation(TagElement element) {
+		return element.getTagName().equals(SharpenAnnotations.SHARPEN_ATTRIBUTE);
+	}
+
+	private boolean isNewAnnotation(TagElement element) {
+		return element.getTagName().equals(SharpenAnnotations.SHARPEN_NEW);
+	}
+	
+	private void processAttribute(CSMember member, TagElement element) {
+		String attrType = mappedTypeName(JavadocUtility.singleTextFragmentFrom(element));
+		CSAttribute attribute = new CSAttribute(attrType);
+		member.addAttribute(attribute);
 	}
 
 	private boolean processSemanticallySignificantTagElement(CSMember member, TagElement element) {
@@ -3012,9 +3033,15 @@ public class CSharpBuilder extends ASTVisitor {
 		}
 		boolean isFinal = Modifier.isFinal(modifiers);
 		if (override) {
-			return isFinal ? CSMethodModifier.Sealed : CSMethodModifier.Override;
+			return isFinal ? CSMethodModifier.Sealed : modifierIfNewAnnotationNotApplied(method, CSMethodModifier.Override);
 		}
 		return isFinal || _currentType.isSealed() ? CSMethodModifier.None : CSMethodModifier.Virtual;
+	}
+
+	private CSMethodModifier modifierIfNewAnnotationNotApplied(MethodDeclaration method, CSMethodModifier modifier) {
+		return containsJavadoc(method, SharpenAnnotations.SHARPEN_NEW) 
+						? CSMethodModifier.None 
+						: modifier;
 	}
 
 	private boolean isOverride(MethodDeclaration method) {
@@ -3047,7 +3074,11 @@ public class CSharpBuilder extends ASTVisitor {
 		
 		if (containsJavadoc(node, SharpenAnnotations.SHARPEN_PROTECTED)) {
 			return CSVisibility.Protected;
-		}		
+		}	
+		
+		if (containsJavadoc(node, SharpenAnnotations.SHARPEN_PUBLIC)) {
+			return CSVisibility.Public;
+		}
 
 		return mapVisibility(node.getModifiers());
 	}

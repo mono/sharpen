@@ -33,6 +33,8 @@ public class SharpenAnnotations {
 	static final String SHARPEN_ENUM = "@sharpen.enum";
 
 	public static final String SHARPEN_RENAME = "@sharpen.rename";
+
+	static final String SHARPEN_PUBLIC = "@sharpen.public";
 	
 	static final String SHARPEN_PRIVATE = "@sharpen.private";
 	
@@ -80,6 +82,10 @@ public class SharpenAnnotations {
 	static final String SHARPEN_STRUCT = "@sharpen.struct";
 
 	static final String SHARPEN_MACRO = "@sharpen.macro";
+	
+	static final String SHARPEN_NEW = "@sharpen.new";
+	
+	static final String SHARPEN_ATTRIBUTE = "@sharpen.attribute";
 
 	public static boolean hasIgnoreAnnotation(BodyDeclaration node) {
 		return JavadocUtility.containsJavadoc(node, SHARPEN_IGNORE);

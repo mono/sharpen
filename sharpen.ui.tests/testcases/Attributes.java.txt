@@ -1,0 +1,11 @@
+/** @sharpen.attribute Single */
+class Attributes {
+
+	/** @sharpen.attribute Multiple1 
+	      @sharpen.attribute Multiple2 */
+	public void foo() {
+	}
+	
+	public void bar( /** @sharpen.attribute JAVADOCS_ARE_NOT_SUPPORTED_HERE */ int value) {
+	}
+}

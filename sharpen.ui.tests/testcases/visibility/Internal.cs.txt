@@ -1,0 +1,6 @@
+namespace visibility
+{
+	internal class Internal
+	{
+	}
+}

@@ -59,7 +59,7 @@ public class IO {
 		String line = null;
 		while (null != (line = reader.readLine())) {
 			line = line.trim();
-			if (line.length() > 0) {
+			if (line.length() > 0 && !line.startsWith("#")) {
 				for (String arg : line.split("\\s+")) {
 					lines.add(arg);
 				}

@@ -1,0 +1,16 @@
+namespace modifiers
+{
+	internal class Override1Base
+	{
+		public virtual void foo()
+		{
+		}
+	}
+
+	internal class Override1 : modifiers.Override1Base
+	{
+		public override void foo()
+		{
+		}
+	}
+}

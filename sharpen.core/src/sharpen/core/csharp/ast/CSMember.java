@@ -39,6 +39,9 @@ public abstract class CSMember extends CSNode {
 	
 	private List<CSAttribute> _attributes = new ArrayList<CSAttribute>();
 	
+    private boolean _newModifier;
+	
+
 	protected CSMember(String name) {
 		_name = name;
 	}
@@ -80,6 +83,14 @@ public abstract class CSMember extends CSNode {
 	
 	public String signature() {
 		return _name;
+	}
+	
+	public boolean isNewModifier() {
+		return _newModifier;
+	}
+
+	public void setNewModifier(boolean newModifier) {
+		_newModifier = newModifier;
 	}
 
 }

@@ -1,3 +1,5 @@
+package modifiers;
+
 class Override1Base {
 	
 	public void foo() {

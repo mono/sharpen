@@ -1,6 +1,0 @@
-public class VirtualMethod1
-{
-	public virtual void foo()
-	{
-	}
-}

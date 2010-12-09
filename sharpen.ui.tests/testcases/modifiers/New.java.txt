@@ -1,0 +1,29 @@
+package modifiers;
+
+class Base {
+	
+	public void foo() {
+	}
+	
+	public void bar() {
+	}
+	
+	public int fooBar;
+}
+
+abstract class Derived extends Base {
+	
+	/** @sharpen.new */
+	public int foo;
+
+	/** @sharpen.new */
+	public void bar() {
+		
+		// As of today, this will be translated incorrectly to C# (which requires the "base" keyword to qualify fooBar)
+		// but if you write code like this you deserve it :)
+		fooBar = 42;
+	}
+	
+	/** @sharpen.new */
+	public abstract void fooBar();
+}

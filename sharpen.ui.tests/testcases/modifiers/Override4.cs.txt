@@ -1,0 +1,21 @@
+namespace modifiers
+{
+	internal class YapField
+	{
+		internal virtual void delete()
+		{
+		}
+	}
+
+	internal abstract class YapFieldVirtual : modifiers.YapField
+	{
+		internal abstract override void delete();
+	}
+
+	internal class YapFieldVersion : modifiers.YapFieldVirtual
+	{
+		internal override void delete()
+		{
+		}
+	}
+}

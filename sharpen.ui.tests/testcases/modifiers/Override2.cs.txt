@@ -1,0 +1,20 @@
+namespace modifiers
+{
+	internal class BaseClass
+	{
+		public virtual void foo()
+		{
+		}
+	}
+
+	internal class DerivedClass : modifiers.BaseClass
+	{
+	}
+
+	internal class MostDerivedClass : modifiers.DerivedClass
+	{
+		public override void foo()
+		{
+		}
+	}
+}

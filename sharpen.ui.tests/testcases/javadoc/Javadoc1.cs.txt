@@ -19,15 +19,20 @@ namespace javadoc
 		{
 		}
 
-		/// <summary>Methods should have a summary.</summary>
-		/// <remarks>
+		/// <summary>
+		/// Link to method with no args specified:
+		/// <see cref="depracatedMethod(string[], string[][])">depracatedMethod(string[], string[][])
+		/// 	</see>
+		/// Link to method with args specified   :
+		/// <see cref="depracatedMethod(string[], string[][])">depracatedMethod(string[], string[][])
+		/// 	</see>
 		/// Methods should have a summary.
 		/// Multiple lines also allowed.
 		/// Try with -
 		/// <see cref="BAR">BAR</see>
 		/// And also with -
 		/// <see cref="BAR">BAR</see>
-		/// </remarks>
+		/// </summary>
 		/// <param name="bar">the bar argument</param>
 		/// <param name="object">the object argument</param>
 		/// <returns>the ultimate answer</returns>
@@ -57,5 +62,10 @@ namespace javadoc
 		/// .
 		/// </remarks>
 		public abstract void typeReferences();
+
+		[System.ObsoleteAttribute(@"Use java.lang.Thread class instead.")]
+		public virtual void depracatedMethod(string[] args, string[][] args2)
+		{
+		}
 	}
 }

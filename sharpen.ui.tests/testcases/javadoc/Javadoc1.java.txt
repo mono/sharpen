@@ -15,6 +15,8 @@ public abstract class Javadoc1 {
 	}
 	
 	/**
+	 * Link to method with no args specified: {@link #depracatedMethod}
+	 * Link to method with args specified   : {@link #depracatedMethod(String[], String[][])}
 	 * Methods should have a summary.
 	 * Multiple lines also allowed. 
 	 * Try with - {@link Javadoc1#BAR}
@@ -42,4 +44,9 @@ public abstract class Javadoc1 {
 	 * the c# code. {@link Thread}.
 	 */
 	public abstract void typeReferences();
+	
+	/**
+	 * @deprecated Use {@link Thread} class instead.
+	 */
+	public void depracatedMethod(String[] args, String[][] args2) {}
 }

@@ -124,6 +124,15 @@ public class CRefBuilder {
 	}
 
 	private String mappedTypeName(ITypeBinding type) {
+		if (type.isArray()){
+			int dimensions = type.getDimensions();
+			StringBuilder sb = new StringBuilder();
+			for(int i =0; i < dimensions; i++){
+				sb.append("[]");
+			}
+			return mappedTypeName(type.getElementType()) + sb;
+		}		
+		
 		final String mappedTypeName = my(Mappings.class).mappedTypeName(type);
 
 		final String effectiveTypeName = _currentType.getPackage() == type.getPackage() 

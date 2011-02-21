@@ -1,0 +1,40 @@
+namespace javadoc
+{
+	[System.ObsoleteAttribute(@"Use DeprecatedAlternatives class instead.")]
+	internal class Deprecated
+	{
+		[System.ObsoleteAttribute(@"because so")]
+		public virtual void foo()
+		{
+		}
+
+		/// <param name="bar">unused</param>
+		[System.ObsoleteAttribute(@"first line and second line third line")]
+		public virtual void foo(int bar)
+		{
+		}
+
+		[System.ObsoleteAttribute(@"becase we can. Use foo(int) instead.")]
+		public virtual void bar()
+		{
+		}
+
+		[System.ObsoleteAttribute(@"Use DeprecatedAlternatives.methodReference() instead."
+			)]
+		public virtual void methodReference()
+		{
+		}
+
+		[System.ObsoleteAttribute(@"Use DeprecatedAlternatives.memberReference instead.")]
+		public int memberReference;
+	}
+
+	internal class DeprecatedAlternatives
+	{
+		public virtual void methodReference()
+		{
+		}
+
+		public int memberReference;
+	}
+}

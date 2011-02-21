@@ -1,5 +1,6 @@
+package javadoc;
 /**
- * @deprecated
+ * @deprecated Use {@link DeprecatedAlternatives} class instead.
  */
 class Deprecated {
 	/**

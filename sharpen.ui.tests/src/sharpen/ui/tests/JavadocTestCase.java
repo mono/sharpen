@@ -44,6 +44,10 @@ public class JavadocTestCase extends AbstractConversionTestCase {
 		runResourceTestCase("javadoc/GenericTypeReference");
 	}
 	
+	public void testDeprecatedBecomesObsolete() throws Throwable {
+		runResourceTestCase("javadoc/Deprecated");
+	}
+	
 	public void testXmlDocumentOverlay() throws Throwable {
 		String resourceName = "javadoc/XmlDocOverlay";
 		runResourceTestCase(newDocumentationOverlayConfiguration(resourceName + ".xml"), resourceName);

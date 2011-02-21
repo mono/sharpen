@@ -858,6 +858,8 @@ public class CSharpBuilder extends ASTVisitor {
 				builder.append(mapCRefTarget(fragment));
 			} else if (fragment instanceof MemberRef) {
 				builder.append(mapCRefTarget(fragment));
+			} else if (fragment instanceof Name) {
+				builder.append(mapCRefTarget(fragment));
 			} else {
 				break;
 			}

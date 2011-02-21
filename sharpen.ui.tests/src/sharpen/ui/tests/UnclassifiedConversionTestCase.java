@@ -55,11 +55,7 @@ public class UnclassifiedConversionTestCase extends AbstractConversionTestCase {
 	public void testStruct() throws Throwable {
 		runResourceTestCase("structs/Struct1");
 	}
-	
-	public void testDeprecatedBecomesObsolete() throws Throwable {
-		runResourceTestCase("Deprecated");
-	}
-	
+
 	public void testStaticBlocks() throws Throwable {
 		runResourceTestCase("StaticBlocks1");
 	}

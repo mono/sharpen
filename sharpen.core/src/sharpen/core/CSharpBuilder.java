@@ -616,10 +616,18 @@ public class CSharpBuilder extends ASTVisitor {
 		return new CSClass(typeName, mapClassModifier(node.getModifiers()));
 	}
 
-	private String typeName(TypeDeclaration node) {
-		final String renamed = annotatedRenaming(node);
+	private String typeName(AbstractTypeDeclaration node) {
+		String renamed = annotatedRenaming(node);
 		if (renamed != null)
 			return renamed;
+		renamed = mappedTypeName(node.resolveBinding());
+		if (renamed != null) {
+			int i = renamed.lastIndexOf('.');
+			if (i != -1)
+				return renamed.substring(i + 1);
+			else
+				return renamed;
+		}
 		return node.getName().toString();
 	}
 

@@ -1836,6 +1836,18 @@ public class CSharpBuilder extends ASTVisitor {
 		        || isRemoved(invocation.resolveMethodBinding());
 
 	}
+	
+	public boolean isEnumOrdinalMethodInvocation (MethodInvocation node) {
+		return node.getName().getIdentifier().equals("ordinal") && 
+			node.getExpression() != null &&
+			node.getExpression().resolveTypeBinding().isEnum();
+	}
+
+	public boolean isEnumNameMethodInvocation (MethodInvocation node) {
+		return node.getName().getIdentifier().equals("name") && 
+			node.getExpression() != null &&
+			node.getExpression().resolveTypeBinding().isEnum();
+	}
 
 	public boolean visit(IfStatement node) {
 		Expression expression = node.getExpression();
@@ -2548,6 +2560,16 @@ public class CSharpBuilder extends ASTVisitor {
 			processMacroInvocation(node);
 			return;
 		}
+		
+		if (isEnumOrdinalMethodInvocation (node)) {
+			processEnumOrdinalMethodInvocation (node);
+			return;
+		}
+		
+		if (isEnumNameMethodInvocation (node)) {
+			processEnumNameMethodInvocation (node);
+			return;
+		}
 
 		processOrdinaryMethodInvocation(node);
 	}
@@ -2629,6 +2651,18 @@ public class CSharpBuilder extends ASTVisitor {
 		pushExpression(new CSReferenceExpression(exchangeValue));
 	}
 
+	private void processEnumOrdinalMethodInvocation (MethodInvocation node)
+	{
+		CSExpression exp = mapExpression(node.getExpression());
+		pushExpression(new CSCastExpression (new CSTypeReference ("int"), new CSParenthesizedExpression (exp)));
+	}
+	
+	private void processEnumNameMethodInvocation (MethodInvocation node)
+	{
+		CSExpression exp = mapExpression(node.getExpression());
+		pushExpression(new CSMethodInvocationExpression(new CSMemberReferenceExpression (exp, "ToString")));
+	}
+	
 	private void mapMethodInvocationArguments(CSMethodInvocationExpression mie, MethodInvocation node) {
 		final List arguments = node.arguments();
 		final IMethodBinding actualMethod = node.resolveMethodBinding();

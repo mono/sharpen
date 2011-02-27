@@ -306,7 +306,7 @@ public class CSharpBuilder extends ASTVisitor {
 		final CSEnum theEnum = new CSEnum(typeName(node));
 		mapVisibility(node, theEnum);
 		mapJavadoc(node, theEnum);
-		addType(theEnum);
+		addType(node.resolveBinding(), theEnum);
 
 		node.accept(new ASTVisitor() {
 			public boolean visit(VariableDeclarationFragment node) {
@@ -360,7 +360,8 @@ public class CSharpBuilder extends ASTVisitor {
 		if (_configuration.shouldMakePartial(node.getName().getFullyQualifiedName()))
 			type.partial(true);
 
-		addType(type);
+		ITypeBinding typeBinding = node.resolveBinding();
+		addType(typeBinding, type);
 
 		mapSuperTypes(node, type);
 
@@ -703,8 +704,8 @@ public class CSharpBuilder extends ASTVisitor {
 	    return Modifier.isStatic(binding.getModifiers());
     }
 
-	private void addType(CSType type) {
-		if (null != _currentType) {
+	private void addType(ITypeBinding binding, CSType type) {
+		if (null != _currentType && !isExtractedNestedType(binding)) {
 			_currentType.addMember(type);
 		} else {
 			_compilationUnit.addType(type);
@@ -3130,6 +3131,10 @@ public class CSharpBuilder extends ASTVisitor {
 		return containsJavadoc(method, SharpenAnnotations.SHARPEN_NEW) 
 						? CSMethodModifier.None 
 						: modifier;
+	}
+	
+	private boolean isExtractedNestedType (ITypeBinding type) {
+		return _configuration.typeHasMapping(BindingUtils.typeMappingKey(type));
 	}
 
 	private boolean isOverride(MethodDeclaration method) {

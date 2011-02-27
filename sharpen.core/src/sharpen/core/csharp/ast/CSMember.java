@@ -77,6 +77,16 @@ public abstract class CSMember extends CSNode {
 		_attributes.add(attribute);
 	}
 	
+	public boolean removeAttribute (String name) {
+		for (CSAttribute at : _attributes) {
+			if (at.name().equals(name)) {
+				_attributes.remove(at);
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public List<CSAttribute> attributes() {
 		return Collections.unmodifiableList(_attributes);
 	}

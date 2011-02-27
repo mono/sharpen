@@ -179,8 +179,30 @@ public class BindingUtils {
 		return buf.toString();
 	}
 
+	public static String typeMappingKey(final ITypeBinding type) {
+		ITypeBinding[] typeArguments = type.getTypeArguments();
+		if (typeArguments.length == 0)
+			typeArguments = type.getTypeParameters();
+		if (typeArguments.length > 0) {
+			return qualifiedName(type) + "<" + repeat(',', typeArguments.length - 1) + ">";
+		}
+		return qualifiedName(type);
+	}	
+	
+	private static String repeat(char c, int count) {
+		StringBuilder builder = new StringBuilder(count);
+		for (int i = 0; i < count; ++i) {
+			builder.append(c);
+		}
+		return builder.toString();
+	}
+	
 	public static String qualifiedName(final ITypeBinding declaringClass) {
-		return declaringClass.getTypeDeclaration().getQualifiedName();
+		String qn = declaringClass.getTypeDeclaration().getQualifiedName();
+		if (qn.length() > 0)
+			return qn;
+		else
+			return declaringClass.getQualifiedName();
 	}
 
 	public static String qualifiedName(IVariableBinding binding) {
@@ -193,6 +215,10 @@ public class BindingUtils {
 	}
 
 	public static boolean isStatic(IMethodBinding binding) {
+		return Modifier.isStatic(binding.getModifiers());
+	}
+	
+	public static boolean isStatic(IVariableBinding binding) {
 		return Modifier.isStatic(binding.getModifiers());
 	}
 	

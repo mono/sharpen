@@ -49,7 +49,9 @@ public class MappingsImpl implements Mappings {
 			}
 		}
 		
-		String mappedTypeName = mappedTypeName(typeMappingKey(type), qualifiedName(type));
+		String mappedTypeName = mappedTypeName(BindingUtils.typeMappingKey(type), qualifiedName(type));
+		if (mappedTypeName.length() == 0)
+			mappedTypeName = "_T" + Math.abs(type.getKey().hashCode());
 		if (shouldPrefixInterface(type)) {
 			return registerMappedType(type, mappedInterfaceName(mappedTypeName));
 		}
@@ -153,16 +155,8 @@ public class MappingsImpl implements Mappings {
 	}
 
 	private boolean hasMapping(ITypeBinding type) {
-		return _configuration.typeHasMapping(typeMappingKey(type));
+		return _configuration.typeHasMapping(BindingUtils.typeMappingKey(type));
 	}
-	
-	private String typeMappingKey(ITypeBinding type) {
-		final ITypeBinding[] typeArguments = type.getTypeArguments();
-		if (typeArguments.length > 0) {
-			return qualifiedName(type) + "<" + repeat(',', typeArguments.length - 1) + ">";
-		}
-		return qualifiedName(type);
-	}	
 	
 	private String mappedInterfaceName(String name) {
 		int pos = name.lastIndexOf('.');
@@ -276,14 +270,6 @@ public class MappingsImpl implements Mappings {
 	
 	private IMethodBinding originalMethodBinding(IMethodBinding binding) {
 		return _bindings.originalBindingFor(binding);
-	}
-	
-	private String repeat(char c, int count) {
-		StringBuilder builder = new StringBuilder(count);
-		for (int i = 0; i < count; ++i) {
-			builder.append(c);
-		}
-		return builder.toString();
 	}
 	
 	private String mappedTypeName(String typeName, String defaultValue) {

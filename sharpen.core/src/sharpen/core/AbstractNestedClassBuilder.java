@@ -118,7 +118,8 @@ public abstract class AbstractNestedClassBuilder extends CSharpBuilder {
 	}
 
 	private boolean isSuperclass(ITypeBinding type, ITypeBinding candidate) {
-		ITypeBinding superClass = type.getSuperclass();
+		ITypeBinding superClass = type.getSuperclass().getTypeDeclaration();
+		candidate = candidate.getTypeDeclaration();
 		while (null != superClass) {
 			if (superClass == candidate) {
 				return true;
@@ -132,11 +133,11 @@ public abstract class AbstractNestedClassBuilder extends CSharpBuilder {
 		IBinding binding = reference.resolveBinding();
 		switch (binding.getKind()) {
 			case IBinding.METHOD: {
-				return ((IMethodBinding)binding).getDeclaringClass(); 
+				return ((IMethodBinding)binding).getDeclaringClass().getTypeDeclaration(); 
 			}
 			case IBinding.VARIABLE: {
 				IVariableBinding variable = (IVariableBinding)binding;
-				return variable.getDeclaringClass();
+				return variable.getDeclaringClass().getTypeDeclaration();
 			}
 		}
 		//throw new UnsupportedOperationException();
@@ -148,7 +149,10 @@ public abstract class AbstractNestedClassBuilder extends CSharpBuilder {
 	}
 
 	private CSTypeReference enclosingTypeReference() {
-		return new CSTypeReference(_currentType.name());
+		CSTypeReference tr = new CSTypeReference(_currentType.name());
+		for (CSTypeParameter tp : _currentType.typeParameters())
+			tr.addTypeArgument(new CSTypeReference (tp.name()));
+		return tr;
 	}
 
 	protected CSInfixExpression createFieldAssignment(String fieldName, String rvalue) {

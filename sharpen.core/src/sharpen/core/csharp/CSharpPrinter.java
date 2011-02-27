@@ -211,6 +211,7 @@ public class CSharpPrinter extends CSVisitor {
 		}
 		writeTypeParameters(node);
 		writeBaseTypes(node);
+		writeTypeParameterConstraints(node.typeParameters());
 	}
 
 	private void writeMemberHeader(CSTypeDeclaration node) {
@@ -222,6 +223,17 @@ public class CSharpPrinter extends CSVisitor {
 		final List<CSTypeParameter> parameters = node.typeParameters();
 		if (parameters.isEmpty()) return;
 		writeGenericParameters(parameters);
+	}
+
+	private void writeTypeParameterConstraints(List<CSTypeParameter> parameters) {
+		if (parameters.isEmpty()) return;
+		for (CSTypeParameter tp : parameters) {
+			if (tp.superClass() != null) {
+				write (" where ");
+				write (tp.name() + ":");
+				tp.superClass().accept(this);
+			}
+		}
 	}
 
 	private <T extends CSNode> void writeGenericParameters(Iterable<T> nodes) {
@@ -321,6 +333,8 @@ public class CSharpPrinter extends CSVisitor {
 		writeMethodName(node);
 		writeTypeParameters(node);
 		writeParameterList(node);
+		if (node.modifier() != CSMethodModifier.Override)
+			writeTypeParameterConstraints (node.typeParameters());
 		if (node.isAbstract()) {
 			writeLine(";");
 		} else {
@@ -517,7 +531,14 @@ public class CSharpPrinter extends CSVisitor {
 	
 	public void visit(CSGotoStatement node) {
 		printPrecedingComments(node);
-		writeIndentedLine("goto " + node.label() + ";");
+		if (node.target() != null) {
+			writeIndented ("goto case ");
+			node.target().accept(this);
+			write (";");
+			writeLine ();
+		}
+		else
+			writeIndentedLine("goto " + node.label() + ";");
 	}
 	
 	public void visit(CSContinueStatement node) {

@@ -2351,14 +2351,23 @@ public class CSharpBuilder extends ASTVisitor {
 		_currentContinueLabel = null;
 		CSBlock saved = _currentBlock;
 
+		ITypeBinding switchType = node.getExpression().resolveTypeBinding();
 		CSSwitchStatement mappedNode = new CSSwitchStatement(node.getStartPosition(), mapExpression(node.getExpression()));
 		addStatement(mappedNode);
 
 		CSCaseClause defaultClause = null;
 		CSCaseClause current = null;
+		CSBlock openCaseBlock = null;
+		_currentBlock = null;
 		for (ASTNode element : Types.<Iterable<ASTNode>>cast(node.statements())) {
 			if (ASTNode.SWITCH_CASE == element.getNodeType()) {
 				if (null == current) {
+					if (_currentBlock != null) {
+						List<CSStatement> stats = _currentBlock.statements();
+						CSStatement lastStmt = stats.size() > 0 ? stats.get(stats.size()-1) : null;
+						if(!(lastStmt instanceof CSThrowStatement) && !(lastStmt instanceof CSReturnStatement) && !(lastStmt instanceof CSBreakStatement) && !(lastStmt instanceof CSGotoStatement))
+							openCaseBlock = _currentBlock;
+					}
 					current = new CSCaseClause();
 					mappedNode.addCase(current);
 					_currentBlock = current.body();
@@ -2367,14 +2376,25 @@ public class CSharpBuilder extends ASTVisitor {
 				if (sc.isDefault()) {
 					defaultClause = current;
 					current.isDefault(true);
+					if (openCaseBlock != null)
+						openCaseBlock.addStatement(new CSGotoStatement (Integer.MIN_VALUE, "default"));
 				} else {
-					current.addExpression(mapExpression(sc.getExpression()));
+					ITypeBinding stype = pushExpectedType (switchType);
+					CSExpression caseExpression = mapExpression(sc.getExpression());
+					current.addExpression(caseExpression);
+					popExpectedType(stype);
+					if (openCaseBlock != null)
+						openCaseBlock.addStatement(new CSGotoStatement (Integer.MIN_VALUE, caseExpression));
 				}
+				openCaseBlock = null;
 			} else {
-				current = null;
 				element.accept(this);
+				current = null;
 			}
 		}
+		
+		if (openCaseBlock != null)
+			openCaseBlock.addStatement(new CSBreakStatement (Integer.MIN_VALUE));
 
 		if (null != defaultClause) {
 			List<CSStatement> stats = defaultClause.body().statements();

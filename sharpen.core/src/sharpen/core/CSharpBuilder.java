@@ -1106,6 +1106,9 @@ public class CSharpBuilder extends ASTVisitor {
 	private CSDocNode mapTagParam(TagElement element) {
 		
 		List fragments = element.fragments();
+		
+		if (!(fragments.get(0) instanceof SimpleName))
+			return new CSDocTagNode("?");
 		SimpleName name = (SimpleName) fragments.get(0);
 		if (null == name.resolveBinding()) {
 			warning(name, "Parameter '" + name + "' not found.");

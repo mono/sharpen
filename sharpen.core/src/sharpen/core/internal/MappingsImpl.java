@@ -88,7 +88,8 @@ public class MappingsImpl implements Mappings {
 	private String annotatedRenaming(ITypeBinding type) {
 		if (type.isTypeVariable()) return null;
 		
-		final AbstractTypeDeclaration typeDeclaration = findDeclaringNode(type);
+		final ASTNode node = findDeclaringNode(type);
+		AbstractTypeDeclaration typeDeclaration = node instanceof AbstractTypeDeclaration ? (AbstractTypeDeclaration) node: null;  
 		return (typeDeclaration != null && isAnnotatedWith(typeDeclaration, SharpenAnnotations.SHARPEN_RENAME)) 
 				? annotatedRenaming(typeDeclaration)
 				: null;

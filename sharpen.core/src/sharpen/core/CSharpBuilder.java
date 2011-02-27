@@ -912,6 +912,8 @@ public class CSharpBuilder extends ASTVisitor {
 
 	private boolean processSemanticallySignificantTagElement(CSMember member, TagElement element) {
 		if (element.getTagName().equals("@deprecated")) {
+			member.removeAttribute("System.Obsolete");
+			member.removeAttribute("System.ObsoleteAttribute");
 			member.addAttribute(obsoleteAttributeFromDeprecatedTagElement(element));
 			return true;
 		}

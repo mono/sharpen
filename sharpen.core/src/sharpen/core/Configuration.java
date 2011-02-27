@@ -88,6 +88,8 @@ public abstract class Configuration {
 	
 	private boolean _organizeUsings;
 	
+	private boolean _junitConvert;
+	
 	private List<String> _fullyQualifiedTypes = new ArrayList<String>();
 	
 	private boolean _createProblemMarkers = false;
@@ -101,6 +103,8 @@ public abstract class Configuration {
 	private final Set<String> _mappedEventAdds = new HashSet<String>();
 
 	private final Map<String, String> _mappedEvents = new HashMap<String, String>();
+	
+	private List<String> _partialTypes = new ArrayList<String>();
 	
 	/**
 	 * Maps package names to expressions used in conditional compilation. 
@@ -384,14 +388,37 @@ public abstract class Configuration {
 		return _organizeUsings;
 	}
 	
+	public void enableJUnitConversion () {
+		_junitConvert = true;
+	}
+	
+	public boolean junitConversion () {
+		return _junitConvert;
+	}
+	
 	public void addFullyQualifiedTypeName(String name) {
 		_fullyQualifiedTypes.add(name);
+	}
+	
+	public void addPartialType (String name) {
+		_partialTypes.add (name);
 	}
 	
 	public boolean shouldFullyQualifyTypeName(String name) {
 		//if a type is configured to be fully qualified,
 		//then also nested types of it need to be fully qualified
 		for( String s : _fullyQualifiedTypes ) {
+			if( name.equals(s) || name.startsWith(s + ".") ) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean shouldMakePartial(String name) {
+		//if a type is configured to be fully qualified,
+		//then also nested types of it need to be fully qualified
+		for( String s : _partialTypes) {
 			if( name.equals(s) || name.startsWith(s + ".") ) {
 				return true;
 			}

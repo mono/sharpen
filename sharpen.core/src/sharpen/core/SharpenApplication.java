@@ -117,6 +117,10 @@ public class SharpenApplication implements IApplication {
 			ods("Organize usings mode on.");
 			configuration.enableOrganizeUsings();
 		}
+		if (_args.junitConversion) {
+			ods("JUnit conversion mode on.");
+			configuration.enableJUnitConversion();
+		}
 		if (_args.headerFile != null) {
 			ods("Header file: " + _args.headerFile);
 			configuration.setHeader(IO.readFile(new File(_args.headerFile)));
@@ -133,6 +137,10 @@ public class SharpenApplication implements IApplication {
 		
 		for (String fullyQualifiedType : _args.fullyQualifiedTypes) {
 			configuration.addFullyQualifiedTypeName(fullyQualifiedType);
+		}
+		
+		for (String typeName : _args.partialTypes) {
+			configuration.addPartialType(typeName);
 		}
 		
 		for (Configuration.NameMapping mapping : _args.typeMappings) {

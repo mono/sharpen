@@ -101,6 +101,12 @@ class SharpenCommandLineParser extends CommandLineParser {
 			String from = consumeNext();
 			String to = consumeNext();
 			_cmdLine.memberMappings.put(from, new Configuration.MemberMapping(to, MemberKind.Property));
+		} else if (areEqual(arg, "-fieldMapping")) {
+			String from = consumeNext();
+			String to = consumeNext();
+			_cmdLine.memberMappings.put(from, new Configuration.MemberMapping(to, MemberKind.Field));
+		} else if (areEqual(arg, "-makePartial")){
+			_cmdLine.partialTypes.add (consumeNext());
 		} else if (areEqual(arg, "-runtimeTypeName")){
 			_cmdLine.runtimeTypeName = consumeNext();
 		} else if (areEqual(arg, "-header")){
@@ -115,6 +121,8 @@ class SharpenCommandLineParser extends CommandLineParser {
 			_cmdLine.conditionalCompilation.put(consumeNext(), consumeNext());
 		} else if (areEqual(arg, "-configurationClass")) {
 			_cmdLine.configurationClass = consumeNext();		
+		} else if (areEqual(arg, "-junitConversion")) {
+			_cmdLine.junitConversion = true;		
 		} else {
 			illegalArgument(arg);
 		}

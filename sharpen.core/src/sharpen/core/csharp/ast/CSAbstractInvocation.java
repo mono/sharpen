@@ -40,6 +40,10 @@ public abstract class CSAbstractInvocation extends CSExpression {
 		_arguments.add(argument);
 	}
 	
+	public void removeArgument(int index) {
+		_arguments.remove(index);
+	}
+	
 	public List<CSExpression> arguments() {
 		return Collections.unmodifiableList(_arguments);
 	}

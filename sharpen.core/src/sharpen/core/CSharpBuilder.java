@@ -594,11 +594,15 @@ public class CSharpBuilder extends ASTVisitor {
 		return new CSTypeParameter(identifier(item.getName()));
 	}
 
-	private CSTypeDeclaration typeDeclarationFor(TypeDeclaration node) {
-		if (node.isInterface()) {
-			return new CSInterface(processInterfaceName(node));
-		}
+	private CSTypeDeclaration typeDeclarationFor(TypeDeclaration node) {		
 		final String typeName = typeName(node);
+		if (node.isInterface()) {
+			if (isValidCSInterface(node.resolveBinding()))
+				return new CSInterface(processInterfaceName(node));
+			else
+				return new CSClass(typeName, CSClassModifier.Abstract);
+		}
+
 		if (isStruct(node)) {
 			return new CSStruct(typeName);
 		}
@@ -1487,13 +1491,24 @@ public class CSharpBuilder extends ASTVisitor {
 
 		method.startPosition(node.getStartPosition());
 		method.isVarArgs(node.isVarargs());
-		mapVisibility(node, method);
 		mapParameters(node, method);
-		mapDocumentation(node, method);
 		mapAnnotations(node, method);
+		mapDocumentation(node, method);
 		visitBodyDeclarationBlock(node, node.getBody(), method);
+		
+		IMethodBinding overriden = getOverridedMethod(node);
+		if (overriden != null) {
+			CSVisibility vis = mapVisibility (overriden.getModifiers());
+			if (vis == CSVisibility.ProtectedInternal && !overriden.getDeclaringClass().isFromSource())
+				vis = CSVisibility.Protected;
+			method.visibility(vis);
+		}
+		else if (node.resolveBinding().getDeclaringClass().isInterface())
+			method.visibility(CSVisibility.Public);
+		else
+			mapVisibility(node, method);
 	}
-
+	
 	private String mappedMethodDeclarationName(MethodDeclaration node) {
 		final String mappedName = mappedMethodName(node);
 		if (null == mappedName || 0 == mappedName.length()|| mappedName.contains(".")) {
@@ -1552,6 +1567,9 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private CSTypeReferenceExpression mappedReturnType(MethodDeclaration node) {
+		IMethodBinding overriden = getOverridedMethod(node);
+		if (overriden != null)
+			return mappedTypeReference (overriden.getReturnType());
 		return mappedTypeReference(node.getReturnType2());
 	}
 
@@ -2619,7 +2637,12 @@ public class CSharpBuilder extends ASTVisitor {
 		CSMethodInvocationExpression mie = new CSMethodInvocationExpression(target);
 		mapMethodInvocationArguments(mie, node);
 		mapTypeArguments(mie, node);
-		pushExpression(mie);
+		
+		IMethodBinding base = getOverridedMethod(method);
+		if (base != null && base.getReturnType() != method.getReturnType() && !(node.getParent() instanceof ExpressionStatement))
+			pushExpression (new CSParenthesizedExpression (new CSCastExpression (mappedTypeReference(method.getReturnType()), mie)));
+		else
+			pushExpression(mie);
     }
 
 	private String resolveTargetMethodName(MethodInvocation node) {
@@ -3312,12 +3335,38 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private boolean isOverride(MethodDeclaration method) {
-		IMethodBinding methodBinding = method.resolveBinding();
+		return null != getOverridedMethod (method);
+	}
+	
+	private IMethodBinding getOverridedMethod(MethodDeclaration method) {
+		return getOverridedMethod (method.resolveBinding());
+	}
+	private IMethodBinding getOverridedMethod(IMethodBinding methodBinding) {
 		ITypeBinding superclass = _ignoreExtends.value() ? resolveWellKnownType("java.lang.Object") : methodBinding
 		        .getDeclaringClass().getSuperclass();
-		if (null == superclass)
+		if (null != superclass) {
+			IMethodBinding result = BindingUtils.findOverriddenMethodInHierarchy(superclass, methodBinding); 
+			if (null != result)
+				return result;
+		}
+		ITypeBinding[] baseInterfaces = methodBinding.getDeclaringClass().getInterfaces();
+		if (baseInterfaces.length == 1 && !isValidCSInterface (baseInterfaces[0])) {
+			// Base interface generated as a class
+			return BindingUtils.findOverriddenMethodInType(baseInterfaces[0], methodBinding);
+		}
+		return null;
+	}
+	
+	private boolean isValidCSInterface (ITypeBinding type) {
+		if (type.getTypeDeclaration().getQualifiedName().equals("java.util.Iterator") || type.getTypeDeclaration().getQualifiedName().equals("java.lang.Iterable"))
 			return false;
-		return null != BindingUtils.findOverriddenMethodInHierarchy(superclass, methodBinding);
+		if (type.getDeclaredFields().length != 0)
+			return false;
+		for (ITypeBinding ntype : type.getDeclaredTypes()) {
+			if (!isExtractedNestedType(ntype))
+				return false;
+		}
+		return true;
 	}
 
 	CSClassModifier mapClassModifier(int modifiers) {

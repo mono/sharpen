@@ -362,6 +362,7 @@ public class CSharpBuilder extends ASTVisitor {
 		mapSuperTypes(node, type);
 
 		mapVisibility(node, type);
+		adjustVisibility (typeBinding.getSuperclass(), type);
 		mapDocumentation(node, type);
 		processConversionJavadocTags(node, type);
 		mapMembers(node, type);
@@ -1125,12 +1126,18 @@ public class CSharpBuilder extends ASTVisitor {
 			return false;
 		}
 
-		CSTypeReferenceExpression typeName = mappedTypeReference(node.getType());
+		ITypeBinding fieldType = node.getType().resolveBinding();
+		CSTypeReferenceExpression typeName = mappedTypeReference(fieldType);
 		CSVisibility visibility = mapVisibility(node);
+		if (((VariableDeclarationFragment)node.fragments().get(0)).resolveBinding().getDeclaringClass().isInterface())
+			visibility = CSVisibility.Public;
 
 		for (Object item : node.fragments()) {
 			VariableDeclarationFragment fragment = (VariableDeclarationFragment) item;
+			ITypeBinding saved = pushExpectedType(fieldType);
 			CSField field = mapFieldDeclarationFragment(node, fragment, typeName, visibility);
+			popExpectedType(saved);
+			adjustVisibility (fieldType, field);
 			_currentType.addMember(field);
 		}
 
@@ -3139,6 +3146,14 @@ public class CSharpBuilder extends ASTVisitor {
 			return CSClassModifier.Sealed;
 		}
 		return CSClassModifier.None;
+	}
+	
+	void adjustVisibility (ITypeBinding memberType, CSMember member) {
+		if (memberType == null)
+			return;
+		CSVisibility typeVisibility = mapVisibility(memberType.getModifiers());
+		if (typeVisibility == CSVisibility.Protected && member.visibility() == CSVisibility.Internal)
+			member.visibility(CSVisibility.Protected);
 	}
 
 	CSVisibility mapVisibility(BodyDeclaration node) {

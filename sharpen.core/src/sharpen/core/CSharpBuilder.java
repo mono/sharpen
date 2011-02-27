@@ -1251,6 +1251,8 @@ public class CSharpBuilder extends ASTVisitor {
 
 	private boolean isConstField(FieldDeclaration node, VariableDeclarationFragment fragment) {
 		//
+		if (fragment.resolveBinding().getDeclaringClass().isInterface())
+			return true;
 		return Modifier.isFinal(node.getModifiers()) && node.getType().isPrimitiveType() && 
 			hasConstValue(fragment) && Modifier.isStatic(node.getModifiers());
 	}

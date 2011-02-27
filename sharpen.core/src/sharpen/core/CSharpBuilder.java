@@ -3020,6 +3020,9 @@ public class CSharpBuilder extends ASTVisitor {
 		}
 
 		if (mapping.kind != MemberKind.Method) {
+			IMethodBinding originalBinding = node.resolveMethodBinding();
+			if (binding != originalBinding && originalBinding.getReturnType() != binding.getReturnType() && !(node.getParent() instanceof ExpressionStatement))
+				target = new CSParenthesizedExpression (new CSCastExpression (mappedTypeReference(originalBinding.getReturnType()), target));
 			switch (arguments.size()) {
 			case 0:
 				pushExpression(target);

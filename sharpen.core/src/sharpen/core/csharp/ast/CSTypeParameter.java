@@ -27,6 +27,7 @@ package sharpen.core.csharp.ast;
 public class CSTypeParameter extends CSNode {
 
 	private final String _name;
+	private CSTypeReferenceExpression _type;
 
 	public CSTypeParameter(String name) {
 		_name = name;
@@ -41,4 +42,12 @@ public class CSTypeParameter extends CSNode {
 		return _name;
 	}
 
+	
+	public CSTypeReferenceExpression superClass() {
+		return _type;
+	}
+	
+	public void superClass(CSTypeReferenceExpression type) {
+		_type = type;
+	}
 }

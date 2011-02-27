@@ -8,10 +8,16 @@ package sharpen.core.csharp.ast;
 public class CSGotoStatement extends CSStatement {
 
 	private String _label;
+	private CSExpression _target;
 	
 	public CSGotoStatement(int startPosition, String label) {
 		super(startPosition);
 		_label = label;
+	}
+
+	public CSGotoStatement(int startPosition, CSExpression target) {
+		super(startPosition);
+		_target = target;
 	}
 
 	public void accept(CSVisitor visitor) {
@@ -20,6 +26,10 @@ public class CSGotoStatement extends CSStatement {
 
 	public String label() {
 		return _label;
+	}
+
+	public CSExpression target() {
+		return _target;
 	}
 
 }

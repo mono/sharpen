@@ -36,5 +36,9 @@ public class CSReferenceExpression extends CSExpression {
 	public String name() {
 		return _name;
 	}
+	
+	public void name (String name) {
+		_name = name;
+	}
 
 }

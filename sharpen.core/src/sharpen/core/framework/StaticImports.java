@@ -16,8 +16,17 @@ public class StaticImports {
 		case IBinding.TYPE:
 			return imp.isOnDemand() && method.getDeclaringClass() == binding;
 		case IBinding.METHOD:
-			return binding == method.getMethodDeclaration();
+			IMethodBinding bound = (IMethodBinding) binding; 
+			return bound.getDeclaringClass() == method.getDeclaringClass() && binding.getName().equals(method.getMethodDeclaration().getName());
 		}
+		return false;
+	}
+	
+	public static boolean isStaticFieldImport(ImportDeclaration imp, IVariableBinding field) {
+		final IBinding binding = imp.resolveBinding();
+		if (binding.getKind() == IBinding.VARIABLE)
+			return binding == field;
+
 		return false;
 	}
 	
@@ -26,6 +35,16 @@ public class StaticImports {
 			return false;
 		for (Object imp : imports)
 			if (isStaticMethodImport((ImportDeclaration) imp, method))
+				return true;
+		
+		return false;
+	}
+	
+	public static boolean isStaticImport(IVariableBinding field, List imports) {
+		if (!isStatic(field))
+			return false;
+		for (Object imp : imports)
+			if (isStaticFieldImport((ImportDeclaration) imp, field))
 				return true;
 		
 		return false;

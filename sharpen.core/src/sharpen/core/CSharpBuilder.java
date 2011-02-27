@@ -2290,9 +2290,13 @@ public class CSharpBuilder extends ASTVisitor {
 	public boolean visit(final ForStatement node) {
 		consumeContinueLabel(new Function<CSBlock>() {
 			public CSBlock apply() {
-				CSForStatement stmt = new CSForStatement(node.getStartPosition(), mapExpression(node.getExpression()));
+				ArrayList<CSExpression> initializers = new ArrayList<CSExpression> ();
 				for (Object i : node.initializers()) {
-					stmt.addInitializer(mapExpression((Expression) i));
+					initializers.add(mapExpression((Expression) i));
+				}
+				CSForStatement stmt = new CSForStatement(node.getStartPosition(), mapExpression(node.getExpression()));
+				for (CSExpression i : initializers) {
+					stmt.addInitializer(i);
 				}
 				for (Object u : node.updaters()) {
 					stmt.addUpdater(mapExpression((Expression) u));

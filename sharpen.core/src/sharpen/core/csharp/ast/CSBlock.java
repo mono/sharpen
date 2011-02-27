@@ -48,6 +48,10 @@ public class CSBlock extends CSStatement {
 	public void addStatement(int index, CSExpression expression) {
 		_statements.add(index, newStatement(expression));
 	}
+	
+	public void removeStatement (CSStatement cs) {
+		_statements.remove(cs);
+	}
 
 	
 	public List<CSStatement> statements() {

@@ -591,7 +591,14 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private CSTypeParameter mapTypeParameter(TypeParameter item) {
-		return new CSTypeParameter(identifier(item.getName()));
+		CSTypeParameter tp = new CSTypeParameter(identifier(item.getName()));
+		ITypeBinding tb = item.resolveBinding ();
+		if (tb != null) {
+			ITypeBinding superc = mapTypeParameterExtendedType (tb);
+			if (superc != null)
+				tp.superClass(mappedTypeReference(superc));
+		}
+		return tp;
 	}
 
 	private CSTypeDeclaration typeDeclarationFor(TypeDeclaration node) {		
@@ -1528,7 +1535,36 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private void mapParameter(SingleVariableDeclaration parameter, CSParameterized method) {
+		if (method instanceof CSMethod) {
+			IVariableBinding vb = parameter.resolveBinding();
+			ITypeBinding[] ta = vb.getType().getTypeArguments();
+			if (ta.length > 0 && ta[0].getName().startsWith("?")) {
+				ITypeBinding extended = mapTypeParameterExtendedType (ta[0]);
+				CSMethod met = (CSMethod)method;
+				String genericArg = "_T" + met.typeParameters().size();
+				CSTypeParameter tp = new CSTypeParameter (genericArg);
+				if (extended != null)
+					tp.superClass(mappedTypeReference(extended));
+				met.addTypeParameter(tp);
+				
+				CSTypeReference tr = new CSTypeReference (mappedTypeName(vb.getType()));
+				tr.addTypeArgument(new CSTypeReference (genericArg));
+				method.addParameter(new CSVariableDeclaration (identifier (vb.getName()), tr));
+				return;
+			}
+		}
 		method.addParameter(createParameter(parameter));
+	}
+	
+	ITypeBinding mapTypeParameterExtendedType (ITypeBinding tb) {
+		ITypeBinding superc = tb.getSuperclass();
+		if (superc != null && !superc.getQualifiedName().equals("java.lang.Object") && !superc.getQualifiedName().equals("java.lang.Enum<?>")) {
+			return superc;
+		}
+		ITypeBinding[] ints = tb.getInterfaces();
+		if (ints.length > 0)
+			return ints[0];
+		return null;
 	}
 
 	private void mapMethodParameters(MethodDeclaration node, CSMethod method) {

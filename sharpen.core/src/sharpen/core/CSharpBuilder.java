@@ -2097,19 +2097,28 @@ public class CSharpBuilder extends ASTVisitor {
 	public boolean visit(NumberLiteral node) {
 
 		String token = node.getToken();
-		CSNumberLiteralExpression literal = new CSNumberLiteralExpression(token);
+		CSExpression literal = new CSNumberLiteralExpression(token);
 
-		if (token.startsWith("0x")) {
+		if (expectingType ("byte") && token.startsWith("-")) {
+			literal = uncheckedCast ("byte",literal);
+		}
+		else if (token.startsWith("0x")) {
 			if (token.endsWith("l") || token.endsWith("L")) {
 				pushExpression(uncheckedCast("long", literal));
 			} else {
 				pushExpression(uncheckedCast("int", literal));
 			}
 
-		} else {
-			pushExpression(literal);
-		}
+		} else if (token.startsWith("0") && token.indexOf('.') == -1 && Character.isDigit(token.charAt(token.length() - 1))) {
+			try {
+				int n = Integer.parseInt(token, 8);
+				if (n != 0)
+					literal = new CSNumberLiteralExpression("0x" + Integer.toHexString(n));
+			} catch (NumberFormatException ex){
+			}
+ 		}
 
+		pushExpression(literal);
 		return false;
 	}
 
@@ -2153,7 +2162,12 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(CharacterLiteral node) {
-		pushExpression(new CSCharLiteralExpression(node.getEscapedValue()));
+		CSExpression expr = new CSCharLiteralExpression(node.getEscapedValue());
+		if (expectingType("byte")) {
+			expr = new CSCastExpression(new CSTypeReference("byte"), new CSParenthesizedExpression(
+			        expr));
+		}
+		pushExpression(expr);
 		return false;
 	}
 	
@@ -2362,11 +2376,19 @@ public class CSharpBuilder extends ASTVisitor {
 
 	public boolean visit(CastExpression node) {
 		pushExpression(new CSCastExpression(mappedTypeReference(node.getType()), mapExpression(node.getExpression())));
+		// Make all byte casts unchecked
+		if (node.getType().resolveBinding().getName().equals("byte"))
+			pushExpression(new CSUncheckedExpression (popExpression()));
 		return false;
 	}
 
 	public boolean visit(PrefixExpression node) {
-		pushExpression(new CSPrefixExpression(node.getOperator().toString(), mapExpression(node.getOperand())));
+		CSExpression expr;
+		expr = new CSPrefixExpression(node.getOperator().toString(), mapExpression(node.getOperand()));
+		if (expectingType ("byte") && node.getOperator() == PrefixExpression.Operator.MINUS) {
+			expr = uncheckedCast ("byte", expr);
+		}
+		pushExpression(expr);
 		return false;
 	}
 
@@ -2379,17 +2401,26 @@ public class CSharpBuilder extends ASTVisitor {
 
 		CSExpression left = mapExpression(node.getLeftOperand());
 		CSExpression right = mapExpression(node.getRightOperand());
+		String type = node.getLeftOperand().resolveTypeBinding().getQualifiedName();
 		if (node.getOperator() == InfixExpression.Operator.RIGHT_SHIFT_UNSIGNED) {
-			String operator = ">>";
-			pushExpression(new CSInfixExpression("&", right, new CSNumberLiteralExpression("0x1f")));
-			pushExpression(new CSParenthesizedExpression(popExpression()));
-			pushExpression(new CSInfixExpression(operator, new CSParenthesizedExpression(left), popExpression()));
-		} else {
-			String operator = node.getOperator().toString();
-			pushExpression(new CSInfixExpression(operator, left, right));
-			pushExtendedOperands(operator, node);
+			if (type.equals ("byte")) {
+				pushExpression(new CSInfixExpression(">>", left, right));
+			} else {
+				CSExpression cast = new CSCastExpression (new CSTypeReference ("u" + type), left);
+				cast = new CSParenthesizedExpression (cast);
+				CSExpression shiftResult = new CSInfixExpression(">>", cast, right);
+				shiftResult = new CSParenthesizedExpression (shiftResult);
+				pushExpression(new CSCastExpression (new CSTypeReference (type), shiftResult));
+			}
+			return false;
 		}
-
+		if (type.equals("byte") && (node.getOperator() == InfixExpression.Operator.LESS || node.getOperator() == InfixExpression.Operator.LESS_EQUALS)) {
+			left = new CSCastExpression (new CSTypeReference ("sbyte"), left);
+			left = new CSParenthesizedExpression (left);
+		}
+		String operator = node.getOperator().toString();
+		pushExpression(new CSInfixExpression(operator, left, right));
+		pushExtendedOperands(operator, node);
 		return false;
 	}
 
@@ -2418,8 +2449,29 @@ public class CSharpBuilder extends ASTVisitor {
 
 	public boolean visit(Assignment node) {
 		Expression lhs = node.getLeftHandSide();
-		pushExpression(new CSInfixExpression(node.getOperator().toString(), mapExpression(lhs), mapExpression(lhs
-		        .resolveTypeBinding(), node.getRightHandSide())));
+		Expression rhs = node.getRightHandSide();
+		ITypeBinding lhsType = lhs.resolveTypeBinding();
+		ITypeBinding saved = pushExpectedType (lhsType);
+		
+		if (node.getOperator() == Assignment.Operator.RIGHT_SHIFT_UNSIGNED_ASSIGN) {
+			String type = lhsType.getQualifiedName();
+			if (type == "byte") {
+				pushExpression(new CSInfixExpression(">>", mapExpression(lhs), mapExpression(lhs
+				        .resolveTypeBinding(), rhs)));
+			} else {
+				CSExpression mappedLhs = mapExpression(lhs);
+				CSExpression cast = new CSCastExpression (new CSTypeReference ("u" + type), mappedLhs);
+				cast = new CSParenthesizedExpression (cast);
+				CSExpression shiftResult = new CSInfixExpression(">>", cast, mapExpression(rhs));
+				shiftResult = new CSParenthesizedExpression (shiftResult);
+				shiftResult = new CSCastExpression (new CSTypeReference (type), shiftResult);
+				pushExpression(new CSInfixExpression("=", mappedLhs, shiftResult));
+			}
+		} else {
+			pushExpression(new CSInfixExpression(node.getOperator().toString(), mapExpression(lhs), mapExpression(lhs
+					.resolveTypeBinding(), rhs)));
+		}
+		popExpectedType(saved);
 		return false;
 	}
 

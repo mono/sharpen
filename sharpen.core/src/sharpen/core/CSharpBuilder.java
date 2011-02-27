@@ -2755,12 +2755,15 @@ public class CSharpBuilder extends ASTVisitor {
     }
 
 	private void processOrdinaryMethodInvocation(MethodInvocation node) {
-		final CSExpression targetExpression = mapMethodTargetExpression(node);
+		IMethodBinding method = node.resolveMethodBinding();
+		CSExpression targetExpression = mapMethodTargetExpression(node);
+		if ((method.getModifiers() & Modifier.STATIC) != 0 && !(targetExpression instanceof CSTypeReferenceExpression) && node.getExpression() != null)
+			targetExpression = mappedTypeReference(node.getExpression().resolveTypeBinding());
 		
-		String name = resolveTargetMethodName(node);
+		String name = resolveTargetMethodName(targetExpression, node);
 		CSExpression target = null == targetExpression
 				? new CSReferenceExpression(name)
-		        : new CSMemberReferenceExpression(targetExpression, name);
+				: new CSMemberReferenceExpression(targetExpression, name);
 		CSMethodInvocationExpression mie = new CSMethodInvocationExpression(target);
 		mapMethodInvocationArguments(mie, node);
 		mapTypeArguments(mie, node);
@@ -2771,10 +2774,10 @@ public class CSharpBuilder extends ASTVisitor {
 		else
 			pushExpression(mie);
     }
-
-	private String resolveTargetMethodName(MethodInvocation node) {
+	
+	private String resolveTargetMethodName(CSExpression targetExpression, MethodInvocation node) {
 		final IMethodBinding method = staticImportMethodBinding(node.getName(), _ast.imports());
-		if(method != null){
+		if(method != null && targetExpression == null){
 			return mappedTypeName(method.getDeclaringClass()) + "." + mappedMethodName(node.resolveMethodBinding());
 		}
 		return mappedMethodName(node.resolveMethodBinding());

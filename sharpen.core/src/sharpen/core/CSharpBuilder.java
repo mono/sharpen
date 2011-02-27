@@ -2057,9 +2057,33 @@ public class CSharpBuilder extends ASTVisitor {
 		if (value != null && value.length() == 0) {
 			pushExpression(new CSReferenceExpression("string.Empty"));
 		} else {
-			pushExpression(new CSStringLiteralExpression(node.getEscapedValue()));
+			pushExpression(new CSStringLiteralExpression(fixEscapedNumbers (node.getEscapedValue())));
 		}
 		return false;
+	}
+	
+	String fixEscapedNumbers (String literal) {
+		StringBuffer s = new StringBuffer ();
+		for (int n=0; n<literal.length(); n++) {
+			if (literal.charAt(n) == '\\') {
+				int i = n + 1;
+				if (i < literal.length() && literal.charAt(i) == '\\') {
+					s.append("\\\\");
+					n = i;
+					continue;
+				}
+				while (i < literal.length() && Character.isDigit(literal.charAt(i)))
+					i++;
+				if (i != n + 1) {
+					int num = Integer.parseInt(literal.substring(n + 1, i));
+					s.append("\\x" + Integer.toHexString(num));
+					n = i - 1;
+					continue;
+				}
+			}
+			s.append(literal.charAt(n));
+		}
+		return s.toString();
 	}
 
 	public boolean visit(CharacterLiteral node) {

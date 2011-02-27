@@ -153,7 +153,27 @@ public class CSharpBuilder extends ASTVisitor {
 
 	public boolean visit(EnumDeclaration node) {
 		if (!SharpenAnnotations.hasIgnoreAnnotation(node)) {
-			notImplemented(node);
+			final CSEnum theEnum = new CSEnum(typeName(node));
+			mapVisibility(node, theEnum);
+			mapJavadoc(node, theEnum);
+			addType(node.resolveBinding(),theEnum);
+			
+			node.accept(new ASTVisitor() {
+				public boolean visit(EnumConstantDeclaration node) {
+					theEnum.addValue(identifier(node.getName()));
+					return false;
+				}
+
+				@Override
+				public boolean visit(MethodDeclaration node) {
+					if (node.isConstructor() && isPrivate(node)) {
+						return false;
+					}
+					unsupportedConstruct(node, "Enum can contain only fields and a private constructor.");
+					return false;
+				}
+			});
+			return false;
 		}
 		return false;
 	}

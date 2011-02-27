@@ -41,6 +41,7 @@ public class NonStaticNestedClassBuilder extends AbstractNestedClassBuilder {
 	public NonStaticNestedClassBuilder(CSharpBuilder other, TypeDeclaration nestedType) {
 		super(other);
 		_nestedType = nestedType;
+		
 		_convertedType = processTypeDeclaration(_nestedType);
 		_enclosingField = createEnclosingField();
 		patchConstructors();		
@@ -61,6 +62,13 @@ public class NonStaticNestedClassBuilder extends AbstractNestedClassBuilder {
 	private void patchConstructor(CSConstructor ctor) {
 		ctor.addParameter(0, new CSVariableDeclaration(_enclosingField.name(), _enclosingField.type()));
 		ctor.body().addStatement(0, createFieldAssignment(_enclosingField.name(), _enclosingField.name()));
+		
+		ITypeBinding superClass = nestedTypeBinding().getSuperclass();
+		if (superClass != null && isNonStaticNestedType (superClass)) {
+			CSConstructorInvocationExpression cie = new CSConstructorInvocationExpression(new CSBaseExpression());
+			cie.addArgument(new CSReferenceExpression (_enclosingField.name()));
+			ctor.chainedConstructorInvocation(cie);
+		}
 	}
 
 	private void introduceConstructor() {

@@ -31,6 +31,8 @@ public abstract class CSNode {
 
 	private Set<String> _enclosingIfDefs = new HashSet<String>();
 	
+	private CSNode _parent;
+	
 	public CSNode() {
 		this(UNKNOWN_START_POSITION);
 	}
@@ -55,5 +57,13 @@ public abstract class CSNode {
 
 	public Set<String> enclosingIfDefs() {
 		return Collections.unmodifiableSet(_enclosingIfDefs);
-	}	
+	}
+	
+	public CSNode parent () {
+		return _parent;
+	}
+	
+	public void parent (CSNode node) {
+		_parent = node;
+	}
 }

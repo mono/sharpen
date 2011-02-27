@@ -86,6 +86,12 @@ public class CSharpBuilder extends ASTVisitor {
 	private final DynamicVariable<Boolean> _ignoreExtends = new DynamicVariable<Boolean>(Boolean.FALSE);
 
 	private List<Initializer> _instanceInitializers = new ArrayList<Initializer>();
+	
+	private Stack<Set<String>> _blockVariables = new Stack<Set<String>> ();
+	private Stack<Set<String>> _localBlockVariables = new Stack<Set<String>> ();
+	private Stack<HashMap<String,String>> _renamedVariables = new Stack<HashMap<String,String>> ();
+	
+	private ITypeBinding _currentExpectedType;
 
 
 	protected NamingStrategy namingStrategy() {
@@ -1705,11 +1711,28 @@ public class CSharpBuilder extends ASTVisitor {
 
 	private CSVariableDeclaration createVariableDeclaration(VariableDeclarationFragment variable) {
 		IVariableBinding binding = variable.resolveBinding();
-		return createVariableDeclaration(binding, mapExpression(variable.getInitializer()));
+		ITypeBinding saved = pushExpectedType(binding.getType());
+		CSExpression initializer = mapExpression(variable.getInitializer());
+		popExpectedType(saved);
+		return createVariableDeclaration(binding, initializer);
 	}
 
 	private CSVariableDeclaration createVariableDeclaration(IVariableBinding binding, CSExpression initializer) {
-		return new CSVariableDeclaration(identifier(binding.getName()), mappedTypeReference(binding.getType()),
+		String name = binding.getName();
+		if (_blockVariables.size() > 0) {
+			if (_blockVariables.peek().contains(name)) {
+				int count = 1;
+				while (_blockVariables.peek().contains(name + "_" + count)) {
+					count++;
+				}
+				_renamedVariables.peek().put(name, name + "_" + count);
+				name = name + "_" + count;
+			}
+			_localBlockVariables.peek().add(name);
+			for (Set<String> s : _blockVariables)
+				s.add(name);
+		}
+		return new CSVariableDeclaration(identifier(name), mappedTypeReference(binding.getType()),
 		        initializer);
 	}
 
@@ -1844,6 +1867,9 @@ public class CSharpBuilder extends ASTVisitor {
 			CheckVariableUseVisitor check = new CheckVariableUseVisitor(_currentExceptionVariable);
 			node.getBody().accept(check);
 
+			// The exception variable is declared in a new scope
+			pushScope();
+			
 			CSCatchClause clause;
 			if (isEmptyCatch(node, check)) {
 				clause = new CSCatchClause();
@@ -1855,6 +1881,7 @@ public class CSharpBuilder extends ASTVisitor {
 			return clause;
 		} finally {
 			_currentExceptionVariable = oldExceptionVariable;
+			popScope();
 		}
 	}
 
@@ -1958,6 +1985,10 @@ public class CSharpBuilder extends ASTVisitor {
 		pushExpression(new CSCharLiteralExpression(node.getEscapedValue()));
 		return false;
 	}
+	
+	private boolean expectingType (String name) {
+		return (_currentExpectedType != null && _currentExpectedType.getName().equals(name));
+	}
 
 	public boolean visit(NullLiteral node) {
 		pushExpression(new CSNullLiteralExpression());
@@ -1980,6 +2011,7 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(ArrayCreation node) {
+		ITypeBinding saved = pushExpectedType (node.getType().getElementType().resolveBinding());
 		if (node.dimensions().size() > 1) {
 			if (null != node.getInitializer()) {
 				notImplemented(node);
@@ -1988,6 +2020,7 @@ public class CSharpBuilder extends ASTVisitor {
 		} else {
 			pushExpression(mapSingleArrayCreation(node));
 		}
+		popExpectedType(saved);
 		return false;
 	}
 
@@ -2047,7 +2080,9 @@ public class CSharpBuilder extends ASTVisitor {
 		if (isImplicitelyTypedArrayInitializer(node)) {
 			CSArrayCreationExpression ace = new CSArrayCreationExpression(mappedTypeReference(node.resolveTypeBinding()
 			        .getComponentType()));
+			ITypeBinding saved = pushExpectedType(node.resolveTypeBinding().getElementType());
 			ace.initializer(mapArrayInitializer(node));
+			popExpectedType(saved);
 			pushExpression(ace);
 			return false;
 		}
@@ -2753,6 +2788,17 @@ public class CSharpBuilder extends ASTVisitor {
 		return false;
 	}
 
+	String mapVariableName (String name) {
+		if (_renamedVariables.size() > 0) {
+			String vname = name;
+			if (vname.startsWith("@"))
+				vname = vname.substring(1);
+			String newName = _renamedVariables.peek().get(vname);
+			if (newName != null)
+				return newName;
+		}
+		return name;
+	}
 	private boolean isBoolLiteral(String name) {
 		return name.equals("true") || name.equals("false");
 	}
@@ -2899,6 +2945,16 @@ public class CSharpBuilder extends ASTVisitor {
 
 	private void unsupportedConstruct(ASTNode node, final String message, Exception cause) {
 		throw new IllegalArgumentException(sourceInformation(node) + ": " + message, cause);
+	}
+	
+	private ITypeBinding pushExpectedType (ITypeBinding type) {
+		ITypeBinding old = _currentExpectedType; 
+		_currentExpectedType = type;
+		return old;
+	}
+	
+	private void popExpectedType (ITypeBinding saved) {
+		_currentExpectedType = saved;
 	}
 
 	protected void pushExpression(CSExpression expression) {
@@ -3278,8 +3334,49 @@ public class CSharpBuilder extends ASTVisitor {
 	
 	@Override
 	public boolean visit(Block node) {
+		if (isBlockInsideBlock (node)) {
+			CSBlock parent = _currentBlock;
+			_currentBlock = new CSBlock ();
+			_currentBlock.parent(parent);
+			parent.addStatement(_currentBlock);
+		}
 		_currentContinueLabel = null;
+		pushScope ();
 		return super.visit(node);
 	}
 	
+	@Override
+	public void endVisit(Block node) {
+		if (isBlockInsideBlock (node)) {
+			_currentBlock = (CSBlock) _currentBlock.parent();
+		}
+		popScope ();
+		super.endVisit(node);
+	}
+	
+	boolean isBlockInsideBlock (Block node) {
+		return node.getParent() instanceof Block;
+	}
+	
+	void pushScope () {
+		HashSet<String> newLocalVars = new HashSet<String>();
+		if (_localBlockVariables.size() > 0)
+			newLocalVars.addAll(_localBlockVariables.peek());
+		_localBlockVariables.push(newLocalVars);
+		
+		HashSet<String> newBlockVars = new HashSet<String>();
+		newBlockVars.addAll(newLocalVars);
+		_blockVariables.push(newBlockVars);
+		
+		HashMap<String,String> newRenamed = new HashMap<String,String>();
+		if (_renamedVariables.size() > 0)
+			newRenamed.putAll(_renamedVariables.peek());
+		_renamedVariables.push(newRenamed);
+	}
+	
+	void popScope () {
+		_blockVariables.pop();
+		_localBlockVariables.pop();
+		_renamedVariables.pop();
+	}
 }

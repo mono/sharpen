@@ -356,6 +356,9 @@ public class CSharpBuilder extends ASTVisitor {
 		CSTypeDeclaration type = mapTypeDeclaration(node);
 		
 		processDisabledType(node, isMainType(node) ? _compilationUnit : type);
+		
+		if (_configuration.shouldMakePartial(node.getName().getFullyQualifiedName()))
+			type.partial(true);
 
 		addType(type);
 

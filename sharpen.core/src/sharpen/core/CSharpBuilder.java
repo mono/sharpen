@@ -374,6 +374,9 @@ public class CSharpBuilder extends ASTVisitor {
 		autoImplementCloneable(node, type);
 		
 		moveInitializersDependingOnThisReferenceToConstructor(type);
+		
+		if (_configuration.junitConversion() && hasTests (type))
+			type.addAttribute(new CSAttribute ("NUnit.Framework.TestFixture"));
 	
 		return type;
 	}
@@ -643,10 +646,41 @@ public class CSharpBuilder extends ASTVisitor {
 		final ITypeBinding superClassBinding = node.getSuperclassType().resolveBinding();
 		if (null == superClassBinding)
 			unresolvedTypeBinding(node.getSuperclassType());
-			
-		type.addBaseType(mappedTypeReference(superClassBinding));
+		
+		if (!isLegacyTestFixtureClass (superClassBinding))
+			type.addBaseType(mappedTypeReference(superClassBinding));
+		else {
+			type.addAttribute(new CSAttribute ("NUnit.Framework.TestFixture"));
+		}
 	}
-
+	
+	private boolean isLegacyTestFixtureClass (ITypeBinding type)
+	{
+		return (_configuration.junitConversion() && type.getQualifiedName().equals("junit.framework.TestCase"));
+	}
+	
+	private boolean isLegacyTestFixture (ITypeBinding type) {
+		if (!_configuration.junitConversion())
+			return false;
+		if (isLegacyTestFixtureClass (type))
+			return true;
+		ITypeBinding base = type.getSuperclass();
+		return (base != null) && isLegacyTestFixture (base);
+	}
+	
+	private boolean hasTests (CSTypeDeclaration type) {
+		for (CSMember m: type.members()) {
+			if (m instanceof CSMethod) {
+				CSMethod met = (CSMethod)m;
+				for (CSAttribute at: met.attributes()) {
+					if (at.name().equals("Test") || at.name().equals("NUnit.Framework.Test"))
+						return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	private boolean handledExtends(TypeDeclaration node, CSTypeDeclaration type) {
 		final TagElement replaceExtendsTag = javadocTagFor(node, SharpenAnnotations.SHARPEN_EXTENDS);
 		if (null == replaceExtendsTag)
@@ -1409,6 +1443,42 @@ public class CSharpBuilder extends ASTVisitor {
 		method.modifier(mapMethodModifier(node));
 		mapTypeParameters(node.typeParameters(), method);
 		mapMethodParts(node, method);
+		
+		if (_configuration.junitConversion() && isLegacyTestFixture(node.resolveBinding().getDeclaringClass())) {
+			if (method.name().startsWith("Test") && method.visibility() == CSVisibility.Public)
+				method.addAttribute(new CSAttribute ("NUnit.Framework.Test"));
+			if (isLegacyTestFixtureClass (node.resolveBinding().getDeclaringClass().getSuperclass())) {
+				if (method.name().equals("SetUp")) {
+					method.addAttribute(new CSAttribute ("NUnit.Framework.SetUp"));
+					method.modifier (CSMethodModifier.Virtual);
+					cleanBaseSetupCalls (method);
+				}
+				else if (method.name().equals("TearDown")) {
+					method.addAttribute(new CSAttribute ("NUnit.Framework.TearDown"));
+					method.modifier (CSMethodModifier.Virtual);
+					cleanBaseSetupCalls (method);
+				}
+			}
+		}
+	}
+	
+	private void cleanBaseSetupCalls (CSMethod method) {
+		ArrayList<CSStatement> toDelete = new ArrayList<CSStatement> ();
+		for (CSStatement st: method.body().statements()) {
+			if (st instanceof CSExpressionStatement) {
+				CSExpressionStatement es = (CSExpressionStatement) st;
+				if (es.expression() instanceof CSMethodInvocationExpression) {
+					CSMethodInvocationExpression mie = (CSMethodInvocationExpression) es.expression();
+					if (mie.expression() instanceof CSMemberReferenceExpression) {
+						CSMemberReferenceExpression mr = (CSMemberReferenceExpression) mie.expression();
+						if ((mr.expression() instanceof CSBaseExpression) && (mr.name().equals("SetUp") || mr.name().equals("TearDown")))
+							toDelete.add(st);
+					}
+				}
+			}
+		}
+		for (CSStatement st : toDelete)
+			method.body().removeStatement (st);
 	}
 
 	private void mapMethodParts(MethodDeclaration node, CSMethodBase method) {
@@ -2547,11 +2617,56 @@ public class CSharpBuilder extends ASTVisitor {
 			        && isClassLiteral(arg)) {
 				mie.addTypeArgument(genericRuntimeTypeIdiomType(actualTypes[i]));
 			} else {
-				addArgument(mie, arg);
+				addArgument(mie, arg, i < actualTypes.length ? actualTypes[i] : null);
+			}
+		}
+		adjustJUnitArguments (mie, node);
+	}
+	
+	private void adjustJUnitArguments (CSMethodInvocationExpression mie, MethodInvocation node) {
+		if (!_configuration.junitConversion())
+			return;
+		ITypeBinding t = node.resolveMethodBinding().getDeclaringClass();
+		if (t.getQualifiedName().equals("junit.framework.Assert") || t.getQualifiedName().equals("org.junit.Assert")) {
+			String method = node.getName().getIdentifier();
+			int np = -1;
+			
+			if (method.equals("assertTrue") || method.equals("assertFalse")
+				|| method.equals("assertNull") || method.equals("assertNotNull"))
+				np = 1;
+			else if (method.equals("fail"))
+				np = 0;
+			else if (method.startsWith("assert"))
+				np = 2;
+			
+			if (np == -1)
+				return;
+			
+			if (mie.arguments().size() == np + 1) {
+				// Move the comment argument to the end
+				mie.addArgument(mie.arguments().get(0));
+				mie.removeArgument(0);
+			}
+			
+			if (method.equals("assertSame")) {
+				boolean useEquals = false;
+				final List arguments = node.arguments();
+				for (int i = 0; i < arguments.size(); ++i) {
+					final Expression arg = (Expression) arguments.get(i);
+					ITypeBinding b = arg.resolveTypeBinding();
+					if (b.isEnum()) {
+						useEquals = true;
+						break;
+					}
+				}
+				if (useEquals) {
+					CSReferenceExpression mref = (CSReferenceExpression) mie.expression();
+					mref.name("NUnit.Framework.Assert.AreEqual");
+				}
 			}
 		}
 	}
-
+	
 	private boolean isClassLiteral(Expression arg) {
 		return arg.getNodeType() == ASTNode.TYPE_LITERAL;
 	}
@@ -2719,6 +2834,7 @@ public class CSharpBuilder extends ASTVisitor {
 			}
 		}
 		mapArguments(mie, arguments);
+		adjustJUnitArguments(mie, node);
 		pushExpression(mie);
 	}
 
@@ -2781,12 +2897,12 @@ public class CSharpBuilder extends ASTVisitor {
 
 	protected void mapArguments(CSMethodInvocationExpression mie, List arguments) {
 		for (Object arg : arguments) {
-			addArgument(mie, (Expression) arg);
+			addArgument(mie, (Expression) arg, null);
 		}
 	}
 
-	private void addArgument(CSMethodInvocationExpression mie, Expression arg) {
-		mie.addArgument(mapExpression(arg));
+	private void addArgument(CSMethodInvocationExpression mie, Expression arg, ITypeBinding expectedType) {
+		mie.addArgument(mapExpression(expectedType, arg));
 	}
 
 	public boolean visit(FieldAccess node) {

@@ -3155,8 +3155,26 @@ public class CSharpBuilder extends ASTVisitor {
 	public boolean visit(SimpleName node) {
 		if (isTypeReference(node)) {
 			pushTypeReference(node.resolveTypeBinding());
-		} else {
-			pushExpression(new CSReferenceExpression(identifier(node)));
+		} else if (_currentExpression == null){
+			String ident = mapVariableName (identifier (node));
+			IBinding b = node.resolveBinding();
+			IVariableBinding vb = b instanceof IVariableBinding ? (IVariableBinding) b : null;
+			if (vb != null) {
+				ITypeBinding cls = vb.getDeclaringClass();
+				if (cls != null) {
+					if (isStaticImport(vb, _ast.imports())) {
+						if (cls != null) {
+							pushExpression(new CSMemberReferenceExpression(mappedTypeReference(cls), ident));
+							return false;
+						}
+					}
+					else if (cls.isEnum() && ident.indexOf('.') == -1){
+						pushExpression(new CSMemberReferenceExpression(mappedTypeReference(cls), ident));
+						return false;
+					}
+				}
+			}
+			pushExpression(new CSReferenceExpression(ident));
 		}
 		return false;
 	}

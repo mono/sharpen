@@ -2512,16 +2512,38 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private CSExpression mapExpression(ITypeBinding expectedType, Expression expression) {
-		return castIfNeeded(expectedType, expression.resolveTypeBinding(), mapExpression(expression));
+		if (expectedType != null)
+			return castIfNeeded(expectedType, expression.resolveTypeBinding(), mapExpression(expression));
+		else
+			return mapExpression (expression);
 	}
 
 	private CSExpression castIfNeeded(ITypeBinding expectedType, ITypeBinding actualType, CSExpression expression) {
+		if (!_configuration.mapIteratorToEnumerator() && expectedType.getName().startsWith("Iterable<") && isGenericCollection (actualType)) {
+			return new CSMethodInvocationExpression (new CSMemberReferenceExpression (expression, "AsIterable"));
+		}
+		if (expectedType != actualType && isSubclassOf (expectedType, actualType))
+			return new CSCastExpression(mappedTypeReference(expectedType), expression);
+
 		ITypeBinding charType = resolveWellKnownType("char");
 		if (expectedType != charType)
 			return expression;
 		if (actualType == expectedType)
 			return expression;
 		return new CSCastExpression(mappedTypeReference(expectedType), expression);
+	}
+	
+	private boolean isGenericCollection (ITypeBinding t) {
+		return t.getName().startsWith("List<") || t.getName().startsWith("Set<");
+	}
+	
+	private boolean isSubclassOf (ITypeBinding t, ITypeBinding tbase) {
+		while (t != null) {
+			if (t.isEqualTo(tbase))
+				return true;
+			t = t.getSuperclass();
+		}
+		return false;
 	}
 
 	public boolean visit(ClassInstanceCreation node) {

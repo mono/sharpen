@@ -92,10 +92,12 @@ public class DefaultConfiguration extends Configuration {
 	    mapType("java.util.Collection", "System.Collections.ICollection");
 	    mapType("java.util.Collection<>", "System.Collections.Generic.ICollection");
 	    mapType("java.util.Set<>", "System.Collections.Generic.ICollection");
-	    mapType("java.util.Iterator", "System.Collections.IEnumerator");
-	    mapType("java.util.Iterator<>", "System.Collections.Collection.IEnumerator");
-	    mapType("java.lang.Iterable", "System.Collections.IEnumerable");
-	    mapType("java.lang.Iterable<>", "System.Collections.Generic.IEnumerable");
+	    if (mapIteratorToEnumerator()) {
+	    	mapType("java.util.Iterator", "System.Collections.IEnumerator");
+	    	mapType("java.util.Iterator<>", "System.Collections.Generic.IEnumerator");
+	    	mapType("java.lang.Iterable", "System.Collections.IEnumerable");
+	    	mapType("java.lang.Iterable<>", "System.Collections.Generic.IEnumerable");
+	    }
 	    mapType("java.util.Map", "System.Collections.IDictionary");
 	    mapType("java.util.Map<,>", "System.Collections.Generic.IDictionary");
 	    mapType("java.util.Map.Entry", "System.Collections.DictionaryEntry");
@@ -126,12 +128,14 @@ public class DefaultConfiguration extends Configuration {
 	    mapMethod("java.util.Collection.addAll", collectionRuntimeMethod("AddAll"));
 	    mapMethod("java.util.Collection.toArray", collectionRuntimeMethod("ToArray"));
 	    
-	    mapMethod("java.lang.Iterable.iterator", "GetEnumerator");
-	    mapMethod("java.util.Collection.iterator", "GetEnumerator");
-	    mapMethod("java.util.List.iterator", "GetEnumerator");
-	    mapMethod("java.util.Set.iterator", "GetEnumerator");
-	    mapMethod("java.util.Iterator.hasNext", "MoveNext");
-	    mapProperty("java.util.Iterator.next", "Current");
+	    if (mapIteratorToEnumerator()) {
+	    	mapMethod("java.lang.Iterable.iterator", "GetEnumerator");
+	    	mapMethod("java.util.Collection.iterator", "GetEnumerator");
+	    	mapMethod("java.util.List.iterator", "GetEnumerator");
+	    	mapMethod("java.util.Set.iterator", "GetEnumerator");
+	    	mapMethod("java.util.Iterator.hasNext", "MoveNext");
+	    	mapProperty("java.util.Iterator.next", "Current");
+	    }
 	    mapIndexer("java.util.Map.put");
 	    mapMethod("java.util.Map.remove", collectionRuntimeMethod("Remove"));
 	    mapMethod("java.util.Map.entrySet", "");

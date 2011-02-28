@@ -525,6 +525,10 @@ public abstract class Configuration {
 		return true;
 	}
 
+	public boolean mapIteratorToEnumerator() {
+		return true;
+	}
+
 	public abstract boolean mapByteToSbyte();
 
 }

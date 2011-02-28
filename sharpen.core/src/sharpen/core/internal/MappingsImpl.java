@@ -205,7 +205,7 @@ public class MappingsImpl implements Mappings {
 		ITypeBinding declaringClassBinding = binding.getDeclaringClass();
 		if (declaringClassBinding.isAnonymous()) return false;
 		
-		TypeDeclaration declaringClass = findDeclaringNode(declaringClassBinding);
+		AbstractTypeDeclaration declaringClass = findDeclaringNode(declaringClassBinding);
 		return declaringClass == null 
 					? false 
 					: isAnnotatedWith(declaringClass, SharpenAnnotations.SHARPEN_IGNORE_EXTENDS);

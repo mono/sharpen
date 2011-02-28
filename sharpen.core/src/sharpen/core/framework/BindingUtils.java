@@ -53,6 +53,8 @@ public class BindingUtils {
 	 * @return the method binding representing the method oevrriding the specified <code>method<code>
 	 */
 	public static IMethodBinding findOverriddenMethodInType(ITypeBinding type, IMethodBinding method) {
+		if (type.getName().equals("Object") && method.getName().equals("clone"))
+			return null;
 		for (Object o : type.getDeclaredMethods()) {
 			IMethodBinding existing = (IMethodBinding)o;
 			

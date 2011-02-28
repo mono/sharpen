@@ -2119,9 +2119,9 @@ public class CSharpBuilder extends ASTVisitor {
 		}
 		else if (token.startsWith("0x")) {
 			if (token.endsWith("l") || token.endsWith("L")) {
-				pushExpression(uncheckedCast("long", literal));
+				literal = uncheckedCast("long", literal);
 			} else {
-				pushExpression(uncheckedCast("int", literal));
+				literal = uncheckedCast("int", literal);
 			}
 
 		} else if (token.startsWith("0") && token.indexOf('.') == -1 && Character.isDigit(token.charAt(token.length() - 1))) {

@@ -746,7 +746,7 @@ public class CSharpBuilder extends ASTVisitor {
 		member.visibility(mapVisibility(node));
 	}
 
-	private boolean isNonStaticNestedType(ITypeBinding binding) {
+	protected boolean isNonStaticNestedType(ITypeBinding binding) {
 		if (binding.isInterface())
 			return false;
 		if (!binding.isNested())

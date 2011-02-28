@@ -160,7 +160,10 @@ public abstract class Configuration {
 	    mapMethod("java.lang.String.getBytes", runtimeMethod("getBytesForString"));
 	    mapMethod("java.lang.String.equalsIgnoreCase", runtimeMethod("equalsIgnoreCase"));
 	    mapMethod("java.lang.String.valueOf", runtimeMethod("getStringValueOf"));
+	    mapMethod("java.lang.String.String(byte[])", runtimeMethod("getStringForBytes"));
 	    mapMethod("java.lang.String.String(byte[],int,int)", runtimeMethod("getStringForBytes"));
+	    mapMethod("java.lang.String.String(byte[],int,int,java.lang.String)", runtimeMethod("getStringForBytes"));
+	    mapMethod("java.lang.String.String(byte[],java.lang.String)", runtimeMethod("getStringForBytes"));
 	    mapProperty("java.lang.String.length", "Length");
 	    mapProperty("java.lang.CharSequence.length", "Length");
 	}
@@ -519,7 +522,7 @@ public abstract class Configuration {
 	public abstract boolean isIgnoredExceptionType(String exceptionType);
 	
 	public boolean mapProtectedToProtectedInternal() {
-		return false;
+		return true;
 	}
 
 	public abstract boolean mapByteToSbyte();

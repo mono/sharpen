@@ -54,7 +54,6 @@ public class DefaultConfiguration extends Configuration {
 	    mapMethod("java.lang.Throwable.printStackTrace", runtimeMethod("printStackTrace"));
 	    
 	    mapMethod("java.lang.System.arraycopy", "System.Array.Copy");
-	    mapMethod("java.lang.Object.clone", "MemberwiseClone");
 	    mapMethod("java.lang.Object.wait", runtimeMethod("wait"));
 	    mapMethod("java.lang.Object.notify", runtimeMethod("notify"));
 	    mapMethod("java.lang.Object.notifyAll", runtimeMethod("notifyAll"));
@@ -74,6 +73,7 @@ public class DefaultConfiguration extends Configuration {
 		mapPrimitive("long");
 		mapPrimitive("float");
 		mapPrimitive("double");
+		mapType("ubyte", "byte");
 		
 		mapType("java.lang.Object", "object");
 		mapType("java.lang.String", "string");
@@ -103,7 +103,8 @@ public class DefaultConfiguration extends Configuration {
 	    mapType("java.util.HashMap", "System.Collections.Hashtable");
 	    mapType("java.util.HashMap<,>", "System.Collections.Generic.Dictionary");
 	    mapType("java.util.TreeMap", "System.Collections.SortedList");
-	    mapType("java.util.TreeMap<,>", "System.Collections.Generic.SortedList");	    
+	    mapType("java.util.TreeMap<,>", "System.Collections.Generic.SortedDictionary");	    
+	    mapType("java.util.SortedMap<,>", "System.Collections.Generic.SortedDictionary");	    
 	    mapType("java.util.List", "System.Collections.IList");
 	    mapType("java.util.List<>", "System.Collections.Generic.IList");
 	    mapType("java.util.ArrayList", "System.Collections.ArrayList");
@@ -111,6 +112,8 @@ public class DefaultConfiguration extends Configuration {
 	    mapType("java.util.LinkedList", "System.Collections.ArrayList");
 	    mapType("java.util.LinkedList<>", "System.Collections.Generic.LinkedList");
 	    mapType("java.util.Stack", "System.Collections.Stack");	    
+	    
+	    mapProperty("java.util.LinkedList<>.getFirst", "First");
 	    
 	    mapType("java.util.Comparator", "System.Collections.IComparer");
 	    mapMethod("java.util.Collections.sort", "Sort");
@@ -150,12 +153,37 @@ public class DefaultConfiguration extends Configuration {
 	    mapIndexer("java.util.Vector.elementAt");
 	    mapMethod("java.util.Vector.elements", "GetEnumerator");
 	    mapMethod("java.util.Vector.copyInto", "CopyTo");
+	    mapMethod("java.util.Vector.removeAllElements", "Clear");
 	    mapMethod("java.util.Enumeration.hasMoreElements", "MoveNext");
 	    mapProperty("java.util.Enumeration.nextElement", "Current");
 	    
 	    mapType("java.util.Hashtable", "System.Collections.Hashtable");
 	    mapIndexer("java.util.Dictionary.put");
 	    mapProperty("java.util.Dictionary.size", "Count");
+	    
+		// JUnit
+		mapNamespace("junit.framework", "NUnit.Framework");
+		mapMethod("junit.framework.Assert.assertEquals", "NUnit.Framework.Assert.AreEqual");
+		mapMethod("junit.framework.Assert.assertTrue", "NUnit.Framework.Assert.IsTrue");
+		mapMethod("junit.framework.Assert.assertFalse", "NUnit.Framework.Assert.IsFalse");
+		mapMethod("junit.framework.Assert.assertNotNull", "NUnit.Framework.Assert.IsNotNull");
+		mapMethod("junit.framework.Assert.assertNull", "NUnit.Framework.Assert.IsNull");
+		mapMethod("junit.framework.Assert.assertSame", "NUnit.Framework.Assert.AreSame");
+		mapMethod("junit.framework.Assert.assertNotSame", "NUnit.Framework.Assert.AreNotSame");
+	    
+		// JUnit 4
+		mapNamespace("org.junit", "NUnit.Framework");
+		mapMethod("org.junit.Assert.assertEquals", "NUnit.Framework.Assert.AreEqual");
+		mapMethod("org.junit.Assert.assertTrue", "NUnit.Framework.Assert.IsTrue");
+		mapMethod("org.junit.Assert.assertFalse", "NUnit.Framework.Assert.IsFalse");
+		mapMethod("org.junit.Assert.assertNotNull", "NUnit.Framework.Assert.IsNotNull");
+		mapMethod("org.junit.Assert.assertNull", "NUnit.Framework.Assert.IsNull");
+		mapMethod("org.junit.Assert.assertSame", "NUnit.Framework.Assert.AreSame");
+		mapMethod("org.junit.Assert.assertNotSame", "NUnit.Framework.Assert.AreNotSame");
+		mapMethod("org.junit.Assert.fail", "NUnit.Framework.Assert.Fail");
+		mapType("org.junit.Assert", "NUnit.Framework.Assert");
+		mapType("org.junit.Before", "NUnit.Framework.SetUp");
+		mapType("org.junit.After", "NUnit.Framework.TearDown");
 	}
 	
 	private void setUpExceptionMappings() {

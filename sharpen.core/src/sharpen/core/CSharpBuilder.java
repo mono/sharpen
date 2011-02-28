@@ -3435,7 +3435,7 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	CSMethodModifier mapMethodModifier(MethodDeclaration method) {
-		if (_currentType.isInterface()) {
+		if (_currentType.isInterface() || method.resolveBinding().getDeclaringClass().isInterface()) {
 			return CSMethodModifier.Abstract;
 		}
 		int modifiers = method.getModifiers();

@@ -136,15 +136,11 @@ public class DefaultConfiguration extends Configuration {
 	    	mapMethod("java.util.Iterator.hasNext", "MoveNext");
 	    	mapProperty("java.util.Iterator.next", "Current");
 	    }
-	    mapIndexer("java.util.Map.put");
 	    mapMethod("java.util.Map.remove", collectionRuntimeMethod("Remove"));
-	    mapMethod("java.util.Map.entrySet", "");
 	    mapProperty("java.util.Map.Entry.getKey", "Key");
 	    mapProperty("java.util.Map.Entry.getValue", "Value");
-	    mapMethod("java.util.Map.containsKey", "Contains");
 	    mapProperty("java.util.Map.values", "Values");
 	    mapProperty("java.util.Map.keySet", "Keys");
-	    mapIndexer("java.util.Map.get");
 	    mapIndexer("java.util.Dictionary.get");
 	    
 	    //  jdk 1.0 collection framework
@@ -162,7 +158,7 @@ public class DefaultConfiguration extends Configuration {
 	    mapProperty("java.util.Enumeration.nextElement", "Current");
 	    
 	    mapType("java.util.Hashtable", "System.Collections.Hashtable");
-	    mapIndexer("java.util.Dictionary.put");
+	    mapProperty("java.util.Dictionary.keys", "Keys");
 	    mapProperty("java.util.Dictionary.size", "Count");
 	    
 		// JUnit
@@ -247,7 +243,7 @@ public class DefaultConfiguration extends Configuration {
 		mapMethod("java.lang.Long.toString", "System.Convert.ToString");
 		mapMethod("java.lang.Long.parseLong", "long.Parse");
 		mapMethod("java.lang.Integer.valueOf", "int.Parse");
-		mapMethod("java.lang.Integer.parseInt", "int.Parse");
+		mapMethod("java.lang.Integer.parseInt", "System.Convert.ToInt32");
 		mapMethod("java.lang.Number.shortValue", "");
 		mapMethod("java.lang.Number.intValue", "");
 		mapMethod("java.lang.Number.longValue", "");

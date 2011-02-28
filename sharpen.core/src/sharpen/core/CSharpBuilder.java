@@ -107,6 +107,7 @@ public class CSharpBuilder extends ASTVisitor {
 		_ast = my(CompilationUnit.class);
 		_resolver = my(ASTResolver.class);
 		_compilationUnit = my(CSCompilationUnit.class);
+		_compilationUnit.addUsing(new CSUsing ("Sharpen"));
 	}
 
 	protected CSharpBuilder(CSharpBuilder other) {

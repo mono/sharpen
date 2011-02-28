@@ -3166,7 +3166,7 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private void pushTypeReference(ITypeBinding typeBinding) {
-		pushExpression(createTypeReference(typeBinding));
+		pushExpression(mappedTypeReference(typeBinding));
 	}
 
 	protected CSReferenceExpression createTypeReference(ITypeBinding typeBinding) {

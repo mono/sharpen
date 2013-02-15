@@ -638,7 +638,14 @@ public class CSharpBuilder extends ASTVisitor {
 
 	private CSTypeDeclaration checkForMainType(TypeDeclaration node, CSTypeDeclaration type) {
 		if (isMainType(node)) {
-			setCompilationUnitElementName(type.name());
+			String name = type.name();
+			if (_configuration.paramCountFileNames()) {
+				if (type.typeParameters().size() > 0) {
+					name += "`" + Integer.toString(type.typeParameters().size());
+				}
+			}
+
+			setCompilationUnitElementName(name);
 		}
 		return type;
 	}

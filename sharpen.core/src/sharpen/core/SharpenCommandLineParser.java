@@ -81,6 +81,8 @@ class SharpenCommandLineParser extends CommandLineParser {
 			_cmdLine.classpath.add(consumeNext());
 		} else if (areEqual(arg, "-srcFolder")) {
 			_cmdLine.sourceFolders.add(consumeNext());
+		} else if (areEqual(arg, "-paramCountFileNames")) {
+			_cmdLine.paramCountFileNames = true;
 		} else if (areEqual(arg, "-nativeTypeSystem")) {
 			_cmdLine.nativeTypeSystem = true;
 		} else if (areEqual(arg, "-nativeInterfaces")) {

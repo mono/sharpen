@@ -224,7 +224,12 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(SuperFieldAccess node) {
-		notImplemented(node);
+		String name = mappedFieldName(node);
+		if (null == node.getQualifier()) {
+			pushExpression(new CSMemberReferenceExpression(new CSBaseExpression(), name));
+		} else {
+			notImplemented(node);
+		}
 		return false;
 	}
 
@@ -3297,6 +3302,18 @@ public class CSharpBuilder extends ASTVisitor {
 			return (IVariableBinding) node.resolveBinding();
 		}
 		return null;
+	}
+
+	private String mappedFieldName(SuperFieldAccess node) {
+		if (node.getQualifier() != null) {
+			notImplemented(node);
+		}
+
+		String name = mappedFieldName(node.getName());
+		if (null != name)
+			return name;
+
+		return identifier(node.getName());
 	}
 
 	private String mappedFieldName(Name node) {

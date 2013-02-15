@@ -2483,6 +2483,19 @@ public class CSharpBuilder extends ASTVisitor {
 		return false;
 	}
 
+	@Override
+	public boolean visit(AssertStatement node) {
+		List<CSExpression> args = new ArrayList<CSExpression>();
+		args.add(mapExpression(node.getExpression()));
+		if (node.getMessage() != null) {
+			args.add(mapExpression(node.getMessage()));
+		}
+
+		CSExpression assertMethod = new CSMemberReferenceExpression(new CSTypeReference("System.Diagnostics.Debug"), "Assert");
+		addStatement(new CSExpressionStatement(node.getStartPosition(), new CSMethodInvocationExpression(assertMethod, args.toArray(new CSExpression[args.size()]))));
+		return false;
+	}
+
 	public boolean visit(Assignment node) {
 		Expression lhs = node.getLeftHandSide();
 		Expression rhs = node.getRightHandSide();

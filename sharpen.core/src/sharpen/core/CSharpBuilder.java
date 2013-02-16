@@ -158,30 +158,37 @@ public class CSharpBuilder extends ASTVisitor {
 		return false;
 	}
 
-	public boolean visit(EnumDeclaration node) {
-		if (!SharpenAnnotations.hasIgnoreAnnotation(node)) {
-			final CSEnum theEnum = new CSEnum(typeName(node));
-			mapVisibility(node, theEnum);
-			mapJavadoc(node, theEnum);
-			addType(node.resolveBinding(),theEnum);
-			
-			node.accept(new ASTVisitor() {
-				public boolean visit(EnumConstantDeclaration node) {
-					theEnum.addValue(identifier(node.getName()));
-					return false;
-				}
-
-				@Override
-				public boolean visit(MethodDeclaration node) {
-					if (node.isConstructor() && isPrivate(node)) {
-						return false;
-					}
-					unsupportedConstruct(node, "Enum can contain only fields and a private constructor.");
-					return false;
-				}
-			});
+	public boolean visit(final EnumDeclaration node) {
+		if (processIgnoredType(node)) {
 			return false;
 		}
+
+		if (processEnumType(node)) {
+			return false;
+		}
+
+		try {
+			my(NameScope.class).enterTypeDeclaration(node);
+			_ignoreExtends.using(ignoreExtends(node), new Runnable() {
+				public void run() {
+					final ITypeBinding binding = node.resolveBinding();
+					if (!binding.isNested()) {
+						processTypeDeclaration(node);
+						return;
+					}
+
+					if (isNonStaticNestedType(binding)) {
+						processNonStaticNestedTypeDeclaration(node);
+						return;
+					}
+
+					new CSharpBuilder(CSharpBuilder.this).processTypeDeclaration(node);
+				}
+			});
+		} finally {
+			my(NameScope.class).leaveTypeDeclaration(node);
+		}
+
 		return false;
 	}
 
@@ -309,26 +316,59 @@ public class CSharpBuilder extends ASTVisitor {
 		if (!isEnum(node)) {
 			return false;
 		}
-		final CSEnum theEnum = new CSEnum(typeName(node));
-		mapVisibility(node, theEnum);
-		mapJavadoc(node, theEnum);
-		addType(node.resolveBinding(), theEnum);
 
-		node.accept(new ASTVisitor() {
+		return buildEnumType(node);
+	}
+
+	private boolean processEnumType(EnumDeclaration node) {
+		try {
+			return buildEnumType(node);
+		} catch (IllegalArgumentException ex) {
+			if (isEnum(node)) {
+				// the user explicitly used the @sharpen.enum annotation 
+				throw ex;
+			}
+
+			return false;
+		}
+	}
+
+	private boolean buildEnumType(final AbstractTypeDeclaration typeNode) {
+		final CSEnum theEnum = new CSEnum(typeName(typeNode));
+		typeNode.accept(new ASTVisitor() {
+			public boolean visit(EnumConstantDeclaration node) {
+				if (!(typeNode instanceof EnumDeclaration)) {
+					unsupportedConstruct(node, "Only enum types can contain enum constants.");
+					return false;
+				}
+
+				theEnum.addValue(identifier(node.getName()));
+				return false;
+			}
+
 			public boolean visit(VariableDeclarationFragment node) {
+				if (typeNode instanceof EnumDeclaration) {
+					unsupportedConstruct(node, "Enum types cannot contain variable declarations.");
+					return false;
+				}
+
 				theEnum.addValue(identifier(node.getName()));
 				return false;
 			}
 
 			@Override
 			public boolean visit(MethodDeclaration node) {
-				if (node.isConstructor() && isPrivate(node)) {
+				if (node.isConstructor() && isPrivate(node) && node.parameters().isEmpty()) {
 					return false;
 				}
 				unsupportedConstruct(node, "Enum can contain only fields and a private constructor.");
 				return false;
 			}
 		});
+
+		mapVisibility(typeNode, theEnum);
+		mapJavadoc(typeNode, theEnum);
+		addType(typeNode.resolveBinding(), theEnum);
 		return true;
 	}
 
@@ -336,11 +376,11 @@ public class CSharpBuilder extends ASTVisitor {
 		return Modifier.isPrivate(node.getModifiers());
 	}
 
-	private boolean isEnum(TypeDeclaration node) {
+	private boolean isEnum(AbstractTypeDeclaration node) {
 		return containsJavadoc(node, SharpenAnnotations.SHARPEN_ENUM);
 	}
 
-	private boolean processIgnoredType(TypeDeclaration node) {
+	private boolean processIgnoredType(AbstractTypeDeclaration node) {
 		if (!hasIgnoreOrRemoveAnnotation(node)) {
 			return false;
 		}
@@ -350,15 +390,19 @@ public class CSharpBuilder extends ASTVisitor {
 		return true;
 	}
 
-	private boolean hasIgnoreOrRemoveAnnotation(TypeDeclaration node) {
+	private boolean hasIgnoreOrRemoveAnnotation(AbstractTypeDeclaration node) {
 	    return SharpenAnnotations.hasIgnoreAnnotation(node) || hasRemoveAnnotation(node);
     }
 
-	private void processNonStaticNestedTypeDeclaration(TypeDeclaration node) {
-		new NonStaticNestedClassBuilder(this, node);
+	private void processNonStaticNestedTypeDeclaration(AbstractTypeDeclaration node) {
+		if (!(node instanceof TypeDeclaration)) {
+			unsupportedConstruct(node, "Declarations of type " + node.getClass().getName() + " cannot be non-static nested classes.");
+		}
+
+		new NonStaticNestedClassBuilder(this, (TypeDeclaration)node);
 	}
 
-	protected CSTypeDeclaration processTypeDeclaration(TypeDeclaration node) {
+	protected CSTypeDeclaration processTypeDeclaration(AbstractTypeDeclaration node) {
 		CSTypeDeclaration type = mapTypeDeclaration(node);
 		
 		processDisabledType(node, isMainType(node) ? _compilationUnit : type);
@@ -387,7 +431,7 @@ public class CSharpBuilder extends ASTVisitor {
 		return type;
 	}
 
-	private void processDisabledType(TypeDeclaration node, CSNode type) {
+	private void processDisabledType(AbstractTypeDeclaration node, CSNode type) {
 		final String expression = _configuration.conditionalCompilationExpressionFor(packageNameFor(node));
 		if (null != expression) {
 			compilationUnit().addEnclosingIfDef(expression);
@@ -396,7 +440,7 @@ public class CSharpBuilder extends ASTVisitor {
 		processDisableTags(node, type);
 	}
 
-	private String packageNameFor(TypeDeclaration node) {
+	private String packageNameFor(AbstractTypeDeclaration node) {
 		ITypeBinding type = node.resolveBinding();
 		return type.getPackage().getName();
 	}
@@ -537,7 +581,7 @@ public class CSharpBuilder extends ASTVisitor {
 		return ctor;
     }
 
-	private void autoImplementCloneable(TypeDeclaration node, CSTypeDeclaration type) {
+	private void autoImplementCloneable(AbstractTypeDeclaration node, CSTypeDeclaration type) {
 
 		if (!implementsCloneable(type)) {
 			return;
@@ -561,7 +605,7 @@ public class CSharpBuilder extends ASTVisitor {
 		return false;
 	}
 
-	private void mapSuperTypes(TypeDeclaration node, CSTypeDeclaration type) {
+	private void mapSuperTypes(AbstractTypeDeclaration node, CSTypeDeclaration type) {
 		if (!_ignoreExtends.value()) {
 			mapSuperClass(node, type);
 		}
@@ -570,23 +614,29 @@ public class CSharpBuilder extends ASTVisitor {
 		}
 	}
 
-	private boolean ignoreImplements(TypeDeclaration node) {
+	private boolean ignoreImplements(AbstractTypeDeclaration node) {
 		return containsJavadoc(node, SharpenAnnotations.SHARPEN_IGNORE_IMPLEMENTS);
 	}
 
-	private boolean ignoreExtends(TypeDeclaration node) {
+	private boolean ignoreExtends(AbstractTypeDeclaration node) {
 		return containsJavadoc(node, SharpenAnnotations.SHARPEN_IGNORE_EXTENDS);
 	}
 
-	private void processConversionJavadocTags(TypeDeclaration node, CSTypeDeclaration type) {
+	private void processConversionJavadocTags(AbstractTypeDeclaration node, CSTypeDeclaration type) {
 		processPartialTagElement(node, type);
 	}
 
-	private CSTypeDeclaration mapTypeDeclaration(TypeDeclaration node) {
+	private CSTypeDeclaration mapTypeDeclaration(AbstractTypeDeclaration node) {
+		if (!(node instanceof TypeDeclaration) && !(node instanceof EnumDeclaration)) {
+			unsupportedConstruct(node, "Cannot map type declaration for node.");
+		}
+
 		CSTypeDeclaration type = typeDeclarationFor(node);
 		type.startPosition(node.getStartPosition());
 		type.sourceLength(node.getLength());
-		mapTypeParameters(node.typeParameters(), type);
+		if (node instanceof TypeDeclaration) {
+			mapTypeParameters(((TypeDeclaration)node).typeParameters(), type);
+		}
 		return checkForMainType(node, type);
 	}
 
@@ -607,9 +657,9 @@ public class CSharpBuilder extends ASTVisitor {
 		return tp;
 	}
 
-	private CSTypeDeclaration typeDeclarationFor(TypeDeclaration node) {		
+	private CSTypeDeclaration typeDeclarationFor(AbstractTypeDeclaration node) {
 		final String typeName = typeName(node);
-		if (node.isInterface()) {
+		if (node instanceof TypeDeclaration && ((TypeDeclaration)node).isInterface()) {
 			if (isValidCSInterface(node.resolveBinding())) {
 				boolean overriddenName = !typeName.equals(node.getName().toString());
 				if (overriddenName) {
@@ -626,7 +676,18 @@ public class CSharpBuilder extends ASTVisitor {
 		if (isStruct(node)) {
 			return new CSStruct(typeName);
 		}
-		return new CSClass(typeName, mapClassModifier(node.getModifiers()));
+
+		CSClassModifier modifier;
+		if (node instanceof TypeDeclaration) {
+			modifier = mapClassModifier(node.getModifiers());
+		} else if (node instanceof EnumDeclaration) {
+			modifier = CSClassModifier.Sealed;
+		} else {
+			unsupportedConstruct(node, "cannot determine modifiers for type node");
+			throw new UnsupportedOperationException("shouldn't be reachable");
+		}
+
+		return new CSClass(typeName, modifier);
 	}
 
 	private String typeName(AbstractTypeDeclaration node) {
@@ -644,11 +705,11 @@ public class CSharpBuilder extends ASTVisitor {
 		return node.getName().toString();
 	}
 
-	private boolean isStruct(TypeDeclaration node) {
+	private boolean isStruct(AbstractTypeDeclaration node) {
 		return containsJavadoc(node, SharpenAnnotations.SHARPEN_STRUCT);
 	}
 
-	private CSTypeDeclaration checkForMainType(TypeDeclaration node, CSTypeDeclaration type) {
+	private CSTypeDeclaration checkForMainType(AbstractTypeDeclaration node, CSTypeDeclaration type) {
 		if (isMainType(node)) {
 			String name = type.name();
 			if (_configuration.paramCountFileNames()) {
@@ -666,25 +727,32 @@ public class CSharpBuilder extends ASTVisitor {
 		_compilationUnit.elementName(name + ".cs");
 	}
 
-	private String processInterfaceName(TypeDeclaration node) {
+	private String processInterfaceName(AbstractTypeDeclaration node) {
+
 		String name = node.getName().getFullyQualifiedName();
 		return interfaceName(name);
 	}
 
-	private boolean isMainType(TypeDeclaration node) {
+	private boolean isMainType(AbstractTypeDeclaration node) {
 		return node.isPackageMemberTypeDeclaration() && Modifier.isPublic(node.getModifiers());
 	}
 
-	private void mapSuperClass(TypeDeclaration node, CSTypeDeclaration type) {
+	private void mapSuperClass(AbstractTypeDeclaration node, CSTypeDeclaration type) {
 		if (handledExtends(node, type))
 			return;
-		
-		if (null == node.getSuperclassType())
+
+		if (!(node instanceof TypeDeclaration)) {
 			return;
+		}
 		
-		final ITypeBinding superClassBinding = node.getSuperclassType().resolveBinding();
+		Type superclassType = ((TypeDeclaration)node).getSuperclassType();
+		if (superclassType == null) {
+			return;
+		}
+		
+		final ITypeBinding superClassBinding = superclassType.resolveBinding();
 		if (null == superClassBinding)
-			unresolvedTypeBinding(node.getSuperclassType());
+			unresolvedTypeBinding(superclassType);
 		
 		if (!isLegacyTestFixtureClass (superClassBinding))
 			type.addBaseType(mappedTypeReference(superClassBinding));
@@ -720,7 +788,11 @@ public class CSharpBuilder extends ASTVisitor {
 		return false;
 	}
 	
-	private boolean handledExtends(TypeDeclaration node, CSTypeDeclaration type) {
+	private boolean handledExtends(AbstractTypeDeclaration node, CSTypeDeclaration type) {
+		if (!(node instanceof TypeDeclaration) && !(node instanceof EnumDeclaration)) {
+			unsupportedConstruct(node, "Cannot handle extends for type node.");
+		}
+
 		final TagElement replaceExtendsTag = javadocTagFor(node, SharpenAnnotations.SHARPEN_EXTENDS);
 		if (null == replaceExtendsTag)
 			return false;
@@ -730,9 +802,19 @@ public class CSharpBuilder extends ASTVisitor {
 		return true;
 	}
 
-	private void mapSuperInterfaces(TypeDeclaration node, CSTypeDeclaration type) {
+	private void mapSuperInterfaces(AbstractTypeDeclaration node, CSTypeDeclaration type) {
+		List superInterfaceTypes;
+		if (node instanceof TypeDeclaration) {
+			superInterfaceTypes = ((TypeDeclaration)node).superInterfaceTypes();
+		} else if (node instanceof EnumDeclaration) {
+			superInterfaceTypes = ((EnumDeclaration)node).superInterfaceTypes();
+		} else {
+			unsupportedConstruct(node, "cannot map super interfaces for type node");
+			throw new UnsupportedOperationException("shouldn't be reachable");
+		}
+
 		final ITypeBinding serializable = resolveWellKnownType("java.io.Serializable");
-		for (Object itf : node.superInterfaceTypes()) {
+		for (Object itf : superInterfaceTypes) {
 			Type iface = (Type) itf;
 			if (iface.resolveBinding() == serializable) {
 				continue;
@@ -749,10 +831,17 @@ public class CSharpBuilder extends ASTVisitor {
 		return _ast.getAST().resolveWellKnownType(typeName);
 	}
 
-	private void mapMembers(TypeDeclaration node, CSTypeDeclaration type) {
+	private void mapMembers(AbstractTypeDeclaration node, CSTypeDeclaration type) {
+		if (!(node instanceof TypeDeclaration) && !(node instanceof EnumDeclaration)) {
+			unsupportedConstruct(node, "Cannot map members for node.");
+		}
+
 		CSTypeDeclaration saved = _currentType;
 		_currentType = type;
 		try {
+			if (node instanceof EnumDeclaration) {
+				visit(((EnumDeclaration)node).enumConstants());
+			}
 			visit(node.bodyDeclarations());
 			createInheritedAbstractMemberStubs(node);
 			flushInstanceInitializers(type, 0);
@@ -989,7 +1078,7 @@ public class CSharpBuilder extends ASTVisitor {
 		return tagName.startsWith("@sharpen.");
 	}
 
-	private void processPartialTagElement(TypeDeclaration node, CSTypeDeclaration member) {
+	private void processPartialTagElement(AbstractTypeDeclaration node, CSTypeDeclaration member) {
 		TagElement element = javadocTagFor(node, SharpenAnnotations.SHARPEN_PARTIAL);
 		if (null == element)
 			return;
@@ -1265,6 +1354,10 @@ public class CSharpBuilder extends ASTVisitor {
 
 	protected String fieldName(VariableDeclarationFragment fragment) {
 		return identifier(fragment.getName());
+	}
+
+	protected String fieldName(EnumConstantDeclaration enumConstant) {
+		return identifier(enumConstant.getName());
 	}
 
 	protected CSExpression mapFieldInitializer(VariableDeclarationFragment fragment) {
@@ -2528,6 +2621,48 @@ public class CSharpBuilder extends ASTVisitor {
 		return false;
 	}
 
+	@Override
+	public boolean visit(EnumConstantDeclaration node) {
+		if (SharpenAnnotations.hasIgnoreAnnotation(node)) {
+			return false;
+		}
+
+		ITypeBinding fieldType = ((EnumDeclaration)node.getParent()).resolveBinding();
+		CSTypeReferenceExpression typeName = mappedTypeReference(fieldType);
+		CSVisibility visibility = mapVisibility(node);
+
+		ITypeBinding saved = pushExpectedType(fieldType);
+
+		CSMethodInvocationExpression initializer;
+		Configuration.MemberMapping mappedConstructor = effectiveMappingFor(node.resolveConstructorBinding());
+		if (null == mappedConstructor) {
+			initializer = new CSConstructorInvocationExpression(mappedTypeReference(fieldType));
+		} else {
+			final String mappedName = mappedConstructor.name;
+			if (mappedName.length() == 0) {
+				throw new UnsupportedOperationException();
+			} else if (mappedName.startsWith("System.Convert.To")) {
+				throw new UnsupportedOperationException();
+			} else {
+				initializer = new CSMethodInvocationExpression(new CSReferenceExpression(methodName(mappedName)));
+			}
+		}
+
+		mapArguments(initializer, node.arguments());
+
+		CSField field = new CSField(fieldName(node), typeName, visibility, initializer);
+		field.addModifier(CSFieldModifier.Static);
+		field.addModifier(CSFieldModifier.Readonly);
+		mapDocumentation(node, field);
+		mapAnnotations(node, field);
+
+		popExpectedType(saved);
+		adjustVisibility(fieldType, field);
+		_currentType.addMember(field);
+
+		return false;
+	}
+
 	public boolean visit(Assignment node) {
 		Expression lhs = node.getLeftHandSide();
 		Expression rhs = node.getRightHandSide();
@@ -3422,8 +3557,8 @@ public class CSharpBuilder extends ASTVisitor {
 		}
 	}
 
-	private void createInheritedAbstractMemberStubs(TypeDeclaration node) {
-		if (node.isInterface())
+	private void createInheritedAbstractMemberStubs(AbstractTypeDeclaration node) {
+		if (node instanceof TypeDeclaration && ((TypeDeclaration)node).isInterface())
 			return;
 
 		ITypeBinding binding = node.resolveBinding();

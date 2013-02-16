@@ -78,6 +78,8 @@ public abstract class Configuration {
 	
 	private NamingStrategy _namingStrategy = NamingStrategy.DEFAULT;
 
+	private String _indentString;
+
 	private boolean _nativeTypeSystem = false;
 	
 	private boolean _ignoreErrors = false;
@@ -215,6 +217,14 @@ public abstract class Configuration {
 		return _docOverlay;
 	}
 	
+	public String getIndentString() {
+		return _indentString;
+	}
+
+	public void setIndentString(String indentString) {
+		this._indentString = indentString;
+	}
+
 	public void enableNativeTypeSystem() {
 		_nativeTypeSystem = true;
 		

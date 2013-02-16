@@ -63,6 +63,8 @@ public class SharpenCommandLine {
 	public String runtimeTypeName = ConfigurationFactory.DEFAULT_RUNTIME_TYPE_NAME;
 	public boolean nativeTypeSystem;
 	public PascalCaseOptions pascalCase = PascalCaseOptions.None;
+	public boolean indentWithSpaces;
+	public int indentSize = 4;
 	public String project;
 	final public List<String> classpath = new ArrayList<String>();
 	final public List<String> sourceFolders = new ArrayList<String>();

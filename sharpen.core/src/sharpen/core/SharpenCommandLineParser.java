@@ -87,6 +87,8 @@ class SharpenCommandLineParser extends CommandLineParser {
 			_cmdLine.nativeInterfaces = true;
 		} else if (areEqual(arg, "-organizeUsings")) {
 			_cmdLine.organizeUsings = true;
+		} else if (areEqual(arg, "-continueOnError")) {
+			_cmdLine.continueOnError = true;
 		} else if (areEqual(arg, "-fullyQualify")) {
 			_cmdLine.fullyQualifiedTypes.add(consumeNext());
 		} else if (areEqual(arg, "-namespaceMapping")) {

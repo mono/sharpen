@@ -605,10 +605,16 @@ public class CSharpBuilder extends ASTVisitor {
 	private CSTypeDeclaration typeDeclarationFor(TypeDeclaration node) {		
 		final String typeName = typeName(node);
 		if (node.isInterface()) {
-			if (isValidCSInterface(node.resolveBinding()))
-				return new CSInterface(processInterfaceName(node));
-			else
+			if (isValidCSInterface(node.resolveBinding())) {
+				boolean overriddenName = !typeName.equals(node.getName().toString());
+				if (overriddenName) {
+					return new CSInterface(typeName);
+				} else {
+					return new CSInterface(processInterfaceName(node));
+				}
+			} else {
 				return new CSClass(typeName, CSClassModifier.Abstract);
+			}
 		}
 
 		if (isStruct(node)) {

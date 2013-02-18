@@ -72,6 +72,7 @@ public class SharpenCommandLine {
 	final public Map<String, Configuration.MemberMapping> memberMappings = new HashMap<String, Configuration.MemberMapping>();
 	public boolean nativeInterfaces;
 	public boolean organizeUsings;
+	public boolean paramCountFileNames;
 	final public List<String> fullyQualifiedTypes = new ArrayList<String>();
 	final public List<String> partialTypes = new ArrayList<String>();
 	public String headerFile;

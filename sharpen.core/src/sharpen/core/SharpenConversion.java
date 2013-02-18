@@ -95,7 +95,7 @@ public class SharpenConversion {
 
 	private void printTree(CSCompilationUnit unit) {
 		CSharpPrinter printer = getPrinter();
-		printer.setWriter(_writer);
+		printer.setWriter(_writer, _configuration.getIndentString());
 		printer.print(unit);
 	}
 

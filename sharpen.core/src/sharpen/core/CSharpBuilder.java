@@ -1456,19 +1456,19 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 	
 	private String propertyName(IMethodBinding binding) {
-		return propertyName(declaringNode(binding));
+		return propertyName((MethodDeclaration)declaringNode(binding));
 	}
 	
-	private boolean isProperty(MethodDeclaration node) {
+	private boolean isProperty(BodyDeclaration node) {
 		return isTaggedAsProperty(node)
 			|| isMappedToProperty(node);
 	}
 
-	private boolean isTaggedAsProperty(MethodDeclaration node) {
+	private boolean isTaggedAsProperty(BodyDeclaration node) {
 	    return isTaggedDeclaration(node, SharpenAnnotations.SHARPEN_PROPERTY);
     }
 
-	private boolean isTaggedDeclaration(MethodDeclaration node, final String tag) {
+	private boolean isTaggedDeclaration(BodyDeclaration node, final String tag) {
 		return effectiveAnnotationFor(node, tag) != null;
 	}
 
@@ -1775,7 +1775,7 @@ public class CSharpBuilder extends ASTVisitor {
 		return effectiveAnnotationFor(node, SharpenAnnotations.SHARPEN_EVENT);
 	}
 
-	private TagElement effectiveAnnotationFor(MethodDeclaration node, final String annotation) {
+	private TagElement effectiveAnnotationFor(BodyDeclaration node, final String annotation) {
 	    return my(Annotations.class).effectiveAnnotationFor(node, annotation);
 	}
 
@@ -2719,7 +2719,7 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private boolean isTaggedMethod(final IMethodBinding binding, final String tag) {
-	    final MethodDeclaration declaration = declaringNode(binding);
+	    final BodyDeclaration declaration = declaringNode(binding);
 		if (null == declaration) {
 			return false;
 		}
@@ -2778,7 +2778,7 @@ public class CSharpBuilder extends ASTVisitor {
     }
 
 	private void processMacroInvocation(MethodInvocation node) {
-		final MethodDeclaration declaration = declaringNode(node.resolveMethodBinding());
+		final MethodDeclaration declaration = (MethodDeclaration)declaringNode(node.resolveMethodBinding());
 		final TagElement macro = effectiveAnnotationFor(declaration, SharpenAnnotations.SHARPEN_MACRO);
 		final CSMacro code = new CSMacro(JavadocUtility.singleTextFragmentFrom(macro));
 		
@@ -2938,12 +2938,12 @@ public class CSharpBuilder extends ASTVisitor {
 
 	private void processEventSubscription(MethodInvocation node) {
 
-		final MethodDeclaration addListener = declaringNode(node.resolveMethodBinding());
+		final MethodDeclaration addListener = (MethodDeclaration)declaringNode(node.resolveMethodBinding());
 		assertValidEventAddListener(node, addListener);
 
 		final MethodInvocation eventInvocation = (MethodInvocation) node.getExpression();
 
-		final MethodDeclaration eventDeclaration = declaringNode(eventInvocation.resolveMethodBinding());
+		final MethodDeclaration eventDeclaration = (MethodDeclaration)declaringNode(eventInvocation.resolveMethodBinding());
 		mapEventSubscription(node, getEventArgsType(eventDeclaration), getEventHandlerTypeName(eventDeclaration));
 	}
 
@@ -3029,7 +3029,7 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private boolean isTaggedMethodInvocation(final IMethodBinding binding, final String tag) {
-		final MethodDeclaration method = declaringNode(originalMethodBinding(binding));
+		final BodyDeclaration method = declaringNode(originalMethodBinding(binding));
 		if (null == method) {
 			return false;
 		}
@@ -3462,16 +3462,16 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private boolean isIgnored(IMethodBinding binding) {
-		final MethodDeclaration dec = declaringNode(binding);
+		final BodyDeclaration dec = declaringNode(binding);
 		return dec != null && SharpenAnnotations.hasIgnoreAnnotation(dec);
 	}
 
 	private boolean stubIsProperty(IMethodBinding method) {
-		final MethodDeclaration dec = declaringNode(method);
+		final BodyDeclaration dec = declaringNode(method);
 		return dec != null && isProperty(dec);
 	}
 
-	private MethodDeclaration declaringNode(IMethodBinding method) {
+	private BodyDeclaration declaringNode(IMethodBinding method) {
 		return findDeclaringNode(method);
 	}
 
@@ -3512,7 +3512,7 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private void safeProcessDisableTags(IMethodBinding method, CSMember member) {
-		final MethodDeclaration node = declaringNode(method);
+		final BodyDeclaration node = declaringNode(method);
 		if (node == null) return;
 		
 		processDisableTags(node, member);
@@ -3743,8 +3743,17 @@ public class CSharpBuilder extends ASTVisitor {
 		return eventTagFor(declaring) != null;
 	}
 
-	private boolean isMappedToProperty(MethodDeclaration original) {
-		final MemberMapping mapping = effectiveMappingFor(original.resolveBinding());
+	private boolean isMappedToProperty(BodyDeclaration original) {
+		IMethodBinding binding;
+		if (original instanceof MethodDeclaration) {
+			binding = ((MethodDeclaration)original).resolveBinding();
+		} else if (original instanceof AnnotationTypeMemberDeclaration) {
+			binding = ((AnnotationTypeMemberDeclaration)original).resolveBinding();
+		} else {
+			throw new UnsupportedOperationException();
+		}
+
+		final MemberMapping mapping = effectiveMappingFor(binding);
 		if (null == mapping)
 			return false;
 		return mapping.kind == MemberKind.Property;

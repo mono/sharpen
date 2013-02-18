@@ -5,7 +5,7 @@ import org.eclipse.jdt.core.dom.*;
 
 public interface Annotations {
 
-	TagElement effectiveAnnotationFor(MethodDeclaration node, String annotation);
+	TagElement effectiveAnnotationFor(BodyDeclaration node, String annotation);
 
 	String annotatedPropertyName(MethodDeclaration node);
 

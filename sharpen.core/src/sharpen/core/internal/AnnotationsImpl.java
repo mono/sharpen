@@ -4,7 +4,6 @@ package sharpen.core.internal;
 import org.eclipse.jdt.core.dom.*;
 
 import sharpen.core.*;
-import sharpen.core.Bindings;
 import sharpen.core.framework.*;
 import static sharpen.core.framework.Environments.*;
 
@@ -13,32 +12,49 @@ public class AnnotationsImpl implements Annotations {
 	private final CompilationUnit _ast = my(CompilationUnit.class);
 	private final Bindings _bindings = my(Bindings.class);
 
-	public TagElement effectiveAnnotationFor(MethodDeclaration node, String annotation) {
+	public TagElement effectiveAnnotationFor(BodyDeclaration node, String annotation) {
 		TagElement eventTag = javadocTagFor(node, annotation);
 		if (null != eventTag)
 			return eventTag;
 
-		MethodDeclaration originalMethod = findOriginalMethodDeclaration(node);
-		if (null == originalMethod)
-			return null;
+		if (node instanceof MethodDeclaration) {
+			MethodDeclaration originalMethod = findOriginalMethodDeclaration((MethodDeclaration)node);
+			if (null == originalMethod)
+				return null;
 
-		return javadocTagFor(originalMethod, annotation);
+			return javadocTagFor(originalMethod, annotation);
+		}
+		else if (node instanceof AnnotationTypeMemberDeclaration) {
+			AnnotationTypeMemberDeclaration originalMember = findOriginalMemberDeclaration((AnnotationTypeMemberDeclaration)node);
+			if (null == originalMember) {
+				return null;
+			}
+
+			return javadocTagFor(originalMember, annotation);
+		}
+		else {
+			throw new UnsupportedOperationException();
+		}
 	}
 	
-	private TagElement javadocTagFor(MethodDeclaration method, String annotation) {
+	private TagElement javadocTagFor(BodyDeclaration method, String annotation) {
 		return JavadocUtility.getJavadocTag(method, annotation);
 	}
 
 	private MethodDeclaration findOriginalMethodDeclaration(MethodDeclaration node) {
-		return findOriginalMethodDeclaration(node.resolveBinding());
+		return (MethodDeclaration)findOriginalMethodDeclaration(node.resolveBinding());
 	}
 
-	private MethodDeclaration findOriginalMethodDeclaration(IMethodBinding binding) {
+	private BodyDeclaration findOriginalMethodDeclaration(IMethodBinding binding) {
 		IMethodBinding definition = BindingUtils.findMethodDefininition(binding, _ast.getAST());
 		if (null == definition)
 			return null;
 		
 		return _bindings.findDeclaringNode(definition);
+	}
+
+	private AnnotationTypeMemberDeclaration findOriginalMemberDeclaration(AnnotationTypeMemberDeclaration node) {
+		return (AnnotationTypeMemberDeclaration)findOriginalMethodDeclaration(node.resolveBinding());
 	}
 
 	public String annotatedPropertyName(MethodDeclaration node) {

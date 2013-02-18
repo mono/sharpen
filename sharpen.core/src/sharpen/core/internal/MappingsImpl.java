@@ -177,28 +177,57 @@ public class MappingsImpl implements Mappings {
 		
 		//TODO: Always check method in current class first (irrespective to sharpen.ignore.implements/extends)?
 		//TODO: Check ignore implements also 
-		
-		MethodDeclaration method = (MethodDeclaration) (declaringClassIgnoresExtends  
-										? findDeclaringNode(binding) 
-										: findDeclaringNode(originalMethodBinding(binding))) ;
-		if (method == null)
+
+		BodyDeclaration declaration;
+		if (declaringClassIgnoresExtends) {
+			declaration = findDeclaringNode(binding);
+		} else {
+			declaration = findDeclaringNode(originalMethodBinding(binding));
+		}
+
+		if (declaration == null) {
 			return null;
-		
-		if (isAnnotatedWith(method, SharpenAnnotations.SHARPEN_INDEXER))
-			return new MemberMapping(null, MemberKind.Indexer);
-		
-		if (isAnnotatedWith(method, SharpenAnnotations.SHARPEN_EVENT))
-			return new MemberMapping(binding.getName(), MemberKind.Property);
-		
-		if (isAnnotatedWith(method, SharpenAnnotations.SHARPEN_PROPERTY))
-			return new MemberMapping(annotatedPropertyName(method), MemberKind.Property);
-		
-		if (isAnnotatedWith(method, SharpenAnnotations.SHARPEN_RENAME))
-			return new MemberMapping(annotatedRenaming(method), MemberKind.Method);
-		
-		//TODO: Check originalMethodBinding if declaringClassIgnoresExtends == true
-		//      and we reach this point?
-		return null;
+		}
+
+		if (declaration instanceof MethodDeclaration) {
+			MethodDeclaration method = (MethodDeclaration)declaration;
+			if (isAnnotatedWith(method, SharpenAnnotations.SHARPEN_INDEXER))
+				return new MemberMapping(null, MemberKind.Indexer);
+
+			if (isAnnotatedWith(method, SharpenAnnotations.SHARPEN_EVENT))
+				return new MemberMapping(binding.getName(), MemberKind.Property);
+
+			if (isAnnotatedWith(method, SharpenAnnotations.SHARPEN_PROPERTY))
+				return new MemberMapping(annotatedPropertyName(method), MemberKind.Property);
+
+			if (isAnnotatedWith(method, SharpenAnnotations.SHARPEN_RENAME))
+				return new MemberMapping(annotatedRenaming(method), MemberKind.Method);
+
+			//TODO: Check originalMethodBinding if declaringClassIgnoresExtends == true
+			//      and we reach this point?
+			return null;
+		}
+		else if (declaration instanceof AnnotationTypeMemberDeclaration) {
+			AnnotationTypeMemberDeclaration member = (AnnotationTypeMemberDeclaration)declaration;
+			if (isAnnotatedWith(member, SharpenAnnotations.SHARPEN_INDEXER))
+				return new MemberMapping(null, MemberKind.Indexer);
+
+			if (isAnnotatedWith(member, SharpenAnnotations.SHARPEN_EVENT))
+				return new MemberMapping(binding.getName(), MemberKind.Property);
+
+			if (isAnnotatedWith(member, SharpenAnnotations.SHARPEN_PROPERTY))
+				throw new UnsupportedOperationException();
+
+			if (isAnnotatedWith(member, SharpenAnnotations.SHARPEN_RENAME))
+				return new MemberMapping(annotatedRenaming(member), MemberKind.Method);
+
+			//TODO: Check originalMethodBinding if declaringClassIgnoresExtends == true
+			//      and we reach this point?
+			return null;
+		}
+		else {
+			throw new UnsupportedOperationException();
+		}
 	}
 
 	private boolean isDeclaringClassIgnoringExtends(final IMethodBinding binding) {

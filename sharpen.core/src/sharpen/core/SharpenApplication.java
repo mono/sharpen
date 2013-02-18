@@ -118,6 +118,10 @@ public class SharpenApplication implements IApplication {
 			ods("Organize usings mode on.");
 			configuration.enableOrganizeUsings();
 		}
+		if (_args.paramCountFileNames) {
+			ods("Generic parameter count appended to file names.");
+			configuration.enableParamCountFileNames();
+		}
 		if (_args.junitConversion) {
 			ods("JUnit conversion mode on.");
 			configuration.enableJUnitConversion();

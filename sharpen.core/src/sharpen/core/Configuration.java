@@ -88,6 +88,8 @@ public abstract class Configuration {
 	
 	private boolean _organizeUsings;
 	
+	private boolean _paramCountFileNames;
+
 	private boolean _junitConvert;
 	
 	private List<String> _fullyQualifiedTypes = new ArrayList<String>();
@@ -389,6 +391,14 @@ public abstract class Configuration {
 	
 	public boolean organizeUsings() {
 		return _organizeUsings;
+	}
+
+	public void enableParamCountFileNames() {
+		_paramCountFileNames = true;
+	}
+
+	public boolean paramCountFileNames() {
+		return _paramCountFileNames;
 	}
 	
 	public void enableJUnitConversion () {

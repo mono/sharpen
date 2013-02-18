@@ -106,6 +106,15 @@ public class SharpenApplication implements IApplication {
 		
 		ods("Pascal case mode: " + _args.pascalCase);
 		configuration.setNamingStrategy(_args.pascalCase.getNamingStrategy());
+		if (_args.indentWithSpaces) {
+			ods("Using spaces for indentation.");
+			StringBuilder indent = new StringBuilder(_args.indentSize);
+			for (int i = 0; i < _args.indentSize; i++) {
+				indent.append(' ');
+			}
+
+			configuration.setIndentString(indent.toString());
+		}
 		if (_args.nativeTypeSystem) {
 			ods("Native type system mode on.");
 			configuration.enableNativeTypeSystem();

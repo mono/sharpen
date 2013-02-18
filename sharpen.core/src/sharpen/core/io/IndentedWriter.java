@@ -46,6 +46,14 @@ public class IndentedWriter {
 		_delegate = writer;
 	}
 
+	public String getIndentString() {
+		return _indentString;
+	}
+
+	public void setIndentString(String indentString) {
+		this._indentString = indentString;
+	}
+
 	public void indent() {
 		++_indentLevel;
 	}

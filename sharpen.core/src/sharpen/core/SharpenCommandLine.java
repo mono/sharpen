@@ -61,6 +61,7 @@ public class SharpenCommandLine {
 	 * call hierarchy. 
 	 */
 	public String runtimeTypeName = ConfigurationFactory.DEFAULT_RUNTIME_TYPE_NAME;
+	public boolean continueOnError;
 	public boolean nativeTypeSystem;
 	public PascalCaseOptions pascalCase = PascalCaseOptions.None;
 	public String project;

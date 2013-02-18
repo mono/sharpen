@@ -14,11 +14,19 @@ public abstract class ConversionBatch {
 	private IProgressMonitor _progressMonitor = new NullProgressMonitor();
 
 	private final ASTParser _parser;
+	private boolean _continueOnError;
 
 	public ConversionBatch() {
 		_parser = ASTParser.newParser(AST.JLS3);
 		_parser.setKind(ASTParser.K_COMPILATION_UNIT);
+	}
 
+	public boolean isContinueOnError() {
+		return _continueOnError;
+	}
+
+	public void setContinueOnError(boolean continueOnError) {
+		this._continueOnError = continueOnError;
 	}
 
 	/**
@@ -68,7 +76,23 @@ public abstract class ConversionBatch {
 		_progressMonitor.beginTask("converting", pairs.size());
 		for (final CompilationUnitPair pair : pairs) {
 			if (_progressMonitor.isCanceled()) return;
-			convertPair(resolver, pair);
+
+			try {
+				convertPair(resolver, pair);
+			} catch (RuntimeException ex) {
+				if (!isContinueOnError()) {
+					throw ex;
+				}
+
+				if (ex instanceof IllegalArgumentException
+					|| ex instanceof ClassCastException) {
+					// we still want to notify the user about the problem
+					ex.printStackTrace(System.err);
+				} else {
+					// not a recoverable exception
+					throw ex;
+				}
+			}
 		}
 	}
 

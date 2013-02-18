@@ -61,6 +61,8 @@ public class CSharpBuilder extends ASTVisitor {
 
 	protected CSTypeDeclaration _currentType;
 
+	protected CSTypeDeclaration _currentAuxillaryType;
+
 	private CSBlock _currentBlock;
 
 	private CSExpression _currentExpression;
@@ -404,6 +406,7 @@ public class CSharpBuilder extends ASTVisitor {
 
 	protected CSTypeDeclaration processTypeDeclaration(AbstractTypeDeclaration node) {
 		CSTypeDeclaration type = mapTypeDeclaration(node);
+		CSTypeDeclaration auxillaryType = mapAuxillaryTypeDeclaration(node);
 		
 		processDisabledType(node, isMainType(node) ? _compilationUnit : type);
 		
@@ -412,15 +415,23 @@ public class CSharpBuilder extends ASTVisitor {
 
 		ITypeBinding typeBinding = node.resolveBinding();
 		addType(typeBinding, type);
+		if (auxillaryType != null) {
+			addType(typeBinding, auxillaryType);
+		}
 
 		mapSuperTypes(node, type);
 
 		mapVisibility(node, type);
 		adjustVisibility (typeBinding.getSuperclass(), type);
+		if (auxillaryType != null) {
+			mapVisibility(node, auxillaryType);
+			adjustVisibility(typeBinding.getSuperclass(), auxillaryType);
+		}
+
 		mapDocumentation(node, type);
 		processConversionJavadocTags(node, type);
-		mapMembers(node, type);
 
+		mapMembers(node, type, auxillaryType);
 		autoImplementCloneable(node, type);
 		
 		moveInitializersDependingOnThisReferenceToConstructor(type);
@@ -640,6 +651,21 @@ public class CSharpBuilder extends ASTVisitor {
 		return checkForMainType(node, type);
 	}
 
+	private CSTypeDeclaration mapAuxillaryTypeDeclaration(AbstractTypeDeclaration node) {
+		if (!(node instanceof TypeDeclaration) && !(node instanceof EnumDeclaration)) {
+			unsupportedConstruct(node, "Cannot map auxillary type declaration for node.");
+		}
+
+		CSTypeDeclaration type = auxillaryTypeDeclarationFor(node);
+		if (type == null) {
+			return null;
+		}
+
+		type.startPosition(node.getStartPosition());
+		type.sourceLength(node.getLength());
+		return type;
+	}
+
 	private void mapTypeParameters(final List typeParameters, CSTypeParameterProvider type) {
 		for (Object item : typeParameters) {
 			type.addTypeParameter(mapTypeParameter((TypeParameter) item));
@@ -658,19 +684,36 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private CSTypeDeclaration typeDeclarationFor(AbstractTypeDeclaration node) {
+		return typeDeclarationFor(node, false);
+	}
+
+	private CSTypeDeclaration auxillaryTypeDeclarationFor(AbstractTypeDeclaration node) {
+		return typeDeclarationFor(node, true);
+	}
+
+	private CSTypeDeclaration typeDeclarationFor(AbstractTypeDeclaration node, boolean auxillary) {
 		final String typeName = typeName(node);
 		if (node instanceof TypeDeclaration && ((TypeDeclaration)node).isInterface()) {
-			if (isValidCSInterface(node.resolveBinding())) {
+			boolean valid = isValidCSInterface(node.resolveBinding());
+			if (valid && auxillary) {
+				return null;
+			} else if (valid || (!auxillary && _configuration.separateInterfaceConstants())) {
 				boolean overriddenName = !typeName.equals(node.getName().toString());
 				if (overriddenName) {
 					return new CSInterface(typeName);
 				} else {
 					return new CSInterface(processInterfaceName(node));
 				}
+			} else if (!valid && auxillary) {
+				return new CSClass(processInterfaceConstantsName(node), CSClassModifier.Static);
 			} else {
 				warningHandler().warning(node, "Java interface converted to C# class.");
 				return new CSClass(typeName, CSClassModifier.Abstract);
 			}
+		}
+
+		if (auxillary) {
+			return null;
 		}
 
 		if (isStruct(node)) {
@@ -731,6 +774,11 @@ public class CSharpBuilder extends ASTVisitor {
 
 		String name = node.getName().getFullyQualifiedName();
 		return interfaceName(name);
+	}
+
+	private String processInterfaceConstantsName(AbstractTypeDeclaration node) {
+		String name = node.getName().getFullyQualifiedName();
+		return name + "Constants";
 	}
 
 	private boolean isMainType(AbstractTypeDeclaration node) {
@@ -831,13 +879,15 @@ public class CSharpBuilder extends ASTVisitor {
 		return _ast.getAST().resolveWellKnownType(typeName);
 	}
 
-	private void mapMembers(AbstractTypeDeclaration node, CSTypeDeclaration type) {
+	private void mapMembers(AbstractTypeDeclaration node, CSTypeDeclaration type, CSTypeDeclaration auxillaryType) {
 		if (!(node instanceof TypeDeclaration) && !(node instanceof EnumDeclaration)) {
 			unsupportedConstruct(node, "Cannot map members for node.");
 		}
 
 		CSTypeDeclaration saved = _currentType;
+		CSTypeDeclaration savedAuxillary = _currentAuxillaryType;
 		_currentType = type;
+		_currentAuxillaryType = auxillaryType;
 		try {
 			if (node instanceof EnumDeclaration) {
 				visit(((EnumDeclaration)node).enumConstants());
@@ -847,6 +897,7 @@ public class CSharpBuilder extends ASTVisitor {
 			flushInstanceInitializers(type, 0);
 		} finally {
 			_currentType = saved;
+			_currentAuxillaryType = savedAuxillary;
 		}
 	}
 
@@ -1309,7 +1360,13 @@ public class CSharpBuilder extends ASTVisitor {
 
 			popExpectedType(saved);
 			adjustVisibility (fieldType, field);
-			_currentType.addMember(field);
+
+			CSTypeDeclaration enclosing = _currentType;
+			if (_currentType.isInterface() && _currentAuxillaryType != null) {
+				enclosing = _currentAuxillaryType;
+			}
+
+			enclosing.addMember(field);
 		}
 
 		return false;
@@ -3384,6 +3441,10 @@ public class CSharpBuilder extends ASTVisitor {
 						pushExpression(new CSMemberReferenceExpression(mappedTypeReference(cls), ident));
 						return false;
 					}
+					else if (_configuration.separateInterfaceConstants() && cls.isInterface() && ident.indexOf('.') == -1) {
+						pushExpression(new CSMemberReferenceExpression(mappedAuxillaryTypeReference(cls), ident));
+						return false;
+					}
 				}
 			}
 			pushExpression(new CSReferenceExpression(ident));
@@ -3479,6 +3540,17 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private void pushMemberReferenceExpression(Name qualifier, String name) {
+		if (_configuration.separateInterfaceConstants()) {
+			IBinding binding = qualifier.resolveBinding();
+			if (binding instanceof ITypeBinding) {
+				ITypeBinding typeBinding = (ITypeBinding)binding;
+				if (typeBinding.isInterface()) {
+					pushExpression(new CSMemberReferenceExpression(mappedAuxillaryTypeReference(typeBinding), name));
+					return;
+				}
+			}
+		}
+
 		pushExpression(new CSMemberReferenceExpression(mapExpression(qualifier), name));
 	}
 
@@ -3725,11 +3797,15 @@ public class CSharpBuilder extends ASTVisitor {
 			if (null != result)
 				return result;
 		}
-		ITypeBinding[] baseInterfaces = methodBinding.getDeclaringClass().getInterfaces();
-		if (baseInterfaces.length == 1 && !isValidCSInterface (baseInterfaces[0])) {
-			// Base interface generated as a class
-			return BindingUtils.findOverriddenMethodInType(baseInterfaces[0], methodBinding);
+
+		if (!_configuration.separateInterfaceConstants()) {
+			ITypeBinding[] baseInterfaces = methodBinding.getDeclaringClass().getInterfaces();
+			if (baseInterfaces.length == 1 && !isValidCSInterface(baseInterfaces[0])) {
+				// Base interface generated as a class
+				return BindingUtils.findOverriddenMethodInType(baseInterfaces[0], methodBinding);
+			}
 		}
+
 		return null;
 	}
 	
@@ -3834,6 +3910,18 @@ public class CSharpBuilder extends ASTVisitor {
     }
 
 	protected CSTypeReferenceExpression mappedTypeReference(ITypeBinding type) {
+		return mappedTypeReference(type, false);
+	}
+
+	protected CSTypeReferenceExpression mappedAuxillaryTypeReference(ITypeBinding type) {
+		return mappedTypeReference(type, true);
+	}
+
+	protected CSTypeReferenceExpression mappedTypeReference(ITypeBinding type, boolean auxillary) {
+		if (auxillary && !type.isInterface()) {
+			throw new IllegalArgumentException("Auxillary types are only available for interfaces.");
+		}
+
 		final ASTNode declaration = findDeclaringNode(type);
 		if (isMacroType(declaration)) {
 			return mappedMacroTypeReference(type, (TypeDeclaration) declaration);
@@ -3845,10 +3933,16 @@ public class CSharpBuilder extends ASTVisitor {
 		if (type.isWildcardType()) {
 			return mappedWildcardTypeReference(type);
 		}
+
+		if (type.isInterface() && auxillary) {
+			return new CSTypeReference(type.getName() + "Constants");
+		}
+
 		final CSTypeReference typeRef = new CSTypeReference(mappedTypeName(type));
 		if (isJavaLangClass(type)) {
 			return typeRef;
 		}
+
 		for (ITypeBinding arg : type.getTypeArguments()) {
 			typeRef.addTypeArgument(mappedTypeReference(arg));
 		}

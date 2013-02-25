@@ -1538,7 +1538,7 @@ public class CSharpBuilder extends ASTVisitor {
 		visitBodyDeclarationBlock(node, node.getBody(), method);
 		
 		IMethodBinding overriden = getOverridedMethod(node);
-		if (overriden != null) {
+		if (!node.isConstructor() && overriden != null) {
 			CSVisibility vis = mapVisibility (overriden.getModifiers());
 			if (vis == CSVisibility.ProtectedInternal && !overriden.getDeclaringClass().isFromSource())
 				vis = CSVisibility.Protected;

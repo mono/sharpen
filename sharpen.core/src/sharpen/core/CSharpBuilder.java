@@ -3773,6 +3773,8 @@ public class CSharpBuilder extends ASTVisitor {
 		CSVisibility defaultVisibility = CSVisibility.Internal;
 		if (node.getParent() instanceof TypeDeclaration && ((TypeDeclaration)node.getParent()).isInterface()) {
 			defaultVisibility = CSVisibility.Public;
+		} else if (node instanceof EnumConstantDeclaration) {
+			defaultVisibility = CSVisibility.Public;
 		}
 
 		return mapVisibility(node.getModifiers(), defaultVisibility);

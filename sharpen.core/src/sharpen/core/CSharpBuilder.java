@@ -2366,6 +2366,14 @@ public class CSharpBuilder extends ASTVisitor {
 		}
 	}
 
+	private boolean isSwitchCaseClosingStatement(CSStatement stmt) {
+		return stmt instanceof CSThrowStatement
+			|| stmt instanceof CSReturnStatement
+			|| stmt instanceof CSBreakStatement
+			|| stmt instanceof CSGotoStatement
+			|| stmt instanceof CSContinueStatement;
+	}
+
 	public boolean visit(SwitchStatement node) {
 		_currentContinueLabel = null;
 		CSBlock saved = _currentBlock;
@@ -2384,7 +2392,7 @@ public class CSharpBuilder extends ASTVisitor {
 					if (_currentBlock != null) {
 						List<CSStatement> stats = _currentBlock.statements();
 						CSStatement lastStmt = stats.size() > 0 ? stats.get(stats.size()-1) : null;
-						if(!(lastStmt instanceof CSThrowStatement) && !(lastStmt instanceof CSReturnStatement) && !(lastStmt instanceof CSBreakStatement) && !(lastStmt instanceof CSGotoStatement))
+						if (!isSwitchCaseClosingStatement(lastStmt))
 							openCaseBlock = _currentBlock;
 					}
 					current = new CSCaseClause();
@@ -2419,7 +2427,7 @@ public class CSharpBuilder extends ASTVisitor {
 			List<CSStatement> stats = defaultClause.body().statements();
 			
 			CSStatement lastStmt = stats.size() > 0 ? stats.get(stats.size()-1) : null;
-			if( ! ( lastStmt instanceof CSThrowStatement) ) {
+			if (!isSwitchCaseClosingStatement(lastStmt)) {
 				defaultClause.body().addStatement(new CSBreakStatement(Integer.MIN_VALUE));
 			}
 		}

@@ -1274,8 +1274,13 @@ public class CSharpBuilder extends ASTVisitor {
 		//
 		if (fragment.resolveBinding().getDeclaringClass().isInterface())
 			return true;
-		return Modifier.isFinal(node.getModifiers()) && node.getType().isPrimitiveType() && 
+		return Modifier.isFinal(node.getModifiers()) && isSupportedConstantType(node.getType()) &&
 			hasConstValue(fragment) && Modifier.isStatic(node.getModifiers());
+	}
+
+	private boolean isSupportedConstantType(Type type) {
+		return type.isPrimitiveType()
+			|| type.resolveBinding().getQualifiedName().equals(String.class.getCanonicalName());
 	}
 
 	private boolean hasConstValue(VariableDeclarationFragment fragment) {

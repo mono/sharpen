@@ -618,6 +618,7 @@ public class CSharpBuilder extends ASTVisitor {
 					return new CSInterface(processInterfaceName(node));
 				}
 			} else {
+				warningHandler().warning(node, "Java interface converted to C# class.");
 				return new CSClass(typeName, CSClassModifier.Abstract);
 			}
 		}

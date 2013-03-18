@@ -3634,10 +3634,19 @@ public class CSharpBuilder extends ASTVisitor {
 			return CSVisibility.Public;
 		}
 
-		return mapVisibility(node.getModifiers());
+		CSVisibility defaultVisibility = CSVisibility.Internal;
+		if (node.getParent() instanceof TypeDeclaration && ((TypeDeclaration)node.getParent()).isInterface()) {
+			defaultVisibility = CSVisibility.Public;
+		}
+
+		return mapVisibility(node.getModifiers(), defaultVisibility);
 	}
 
 	CSVisibility mapVisibility(int modifiers) {
+		return mapVisibility(modifiers, CSVisibility.Internal);
+	}
+
+	CSVisibility mapVisibility(int modifiers, CSVisibility defaultVisibility) {
 		if (Modifier.isPublic(modifiers)) {
 			return CSVisibility.Public;
 		}
@@ -3649,7 +3658,7 @@ public class CSharpBuilder extends ASTVisitor {
 		if (Modifier.isPrivate(modifiers)) {
 			return CSVisibility.Private;
 		}
-		return CSVisibility.Internal;
+		return defaultVisibility;
 	}
 
 	protected CSTypeReferenceExpression mappedTypeReference(Type type) {

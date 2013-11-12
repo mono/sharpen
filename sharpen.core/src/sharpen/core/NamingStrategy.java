@@ -30,9 +30,14 @@ public class NamingStrategy {
 	static Map<String, String> _identifierMappings = new HashMap<String, String>();
 	
 	static {
-		keywords("readonly", "params", "override", "event", "operator",
-				"internal", "base", "ref", "out", "as", "is", "in",
-				"object", "string", "bool", "using", "checked", "unchecked");
+		keywords("as", "base", "bool", "checked", "decimal", 
+				"event", "explicit", "extern", "false", "fixed", 
+				"foreach", "implicit", "in", "internal", "is", 
+				"namespace", "null", "object", "operator", "out", 
+				"override", "params", "readonly", "ref", "sbyte", 
+				"sealed", "sizeof", "stackalloc", "string", "struct", 
+				"true", "typeof", "uint", "ulong", "unchecked", 
+				"unsafe", "ushort", "using", "virtual");
 		mapIdentifier("lock", "Lock");
 		mapIdentifier("delegate", "delegate_");
 	}

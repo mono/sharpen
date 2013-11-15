@@ -136,7 +136,17 @@ public class CSharpPrinter extends CSVisitor {
 	public void visit(CSUsing node) {
 		writeLine("using " + node.namespace() + ";");
 	}
-	
+
+	@Override
+	public void visit(CSUsingStatement node) {
+		printPrecedingComments(node);
+
+		writeIndented("using (");
+		node.expression().accept(this);
+		writeLine(")");
+		node.body().accept(this);
+	}
+
 	public void visit(CSClass node) {
 		writeType(node);
 	}

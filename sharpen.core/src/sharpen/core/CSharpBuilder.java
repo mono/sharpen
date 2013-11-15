@@ -2117,7 +2117,15 @@ public class CSharpBuilder extends ASTVisitor {
 
 	public boolean visit(TryStatement node) {
 		CSTryStatement stmt = new CSTryStatement(node.getStartPosition());
-		visitBlock(stmt.body(), node.getBody());
+		CSBlock body = stmt.body();
+		for (Object resource : node.resources()) {
+			VariableDeclarationExpression expression = (VariableDeclarationExpression) resource;
+			expression.accept(this);
+			CSUsingStatement using = new CSUsingStatement(expression.getStartPosition(), popExpression());
+			body.addStatement(using);
+			body = using.body();
+		}
+		visitBlock(body, node.getBody());
 		for (Object o : node.catchClauses()) {
 			CatchClause clause = (CatchClause) o;
 			if (!_configuration.isIgnoredExceptionType(qualifiedName(clause.getException().getType().resolveBinding()))) {
@@ -2131,10 +2139,8 @@ public class CSharpBuilder extends ASTVisitor {
 		}
 
 		if (null != stmt.finallyBlock() || !stmt.catchClauses().isEmpty()) {
-
 			addStatement(stmt);
 		} else {
-
 			_currentBlock.addAll(stmt.body());
 		}
 		return false;

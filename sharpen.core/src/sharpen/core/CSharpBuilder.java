@@ -1492,6 +1492,11 @@ public class CSharpBuilder extends ASTVisitor {
 		CSMethod method = new CSMethod(mappedMethodDeclarationName(node));
 		method.returnType(mappedReturnType(node));
 		method.modifier(mapMethodModifier(node));
+		if (Modifier.isSynchronized(node.getModifiers())){
+			CSAttribute attribute = new CSAttribute("System.Runtime.CompilerServices.MethodImpl");
+			attribute.addArgument(new CSReferenceExpression("System.Runtime.CompilerServices.MethodImplOptions.Synchronized"));
+			method.addAttribute(attribute);
+		}
 		mapTypeParameters(node.typeParameters(), method);
 		mapMethodParts(node, method);
 		

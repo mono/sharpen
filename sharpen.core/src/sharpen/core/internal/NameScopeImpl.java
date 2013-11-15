@@ -15,11 +15,11 @@ public class NameScopeImpl implements NameScope {
 		return _mappedMethodDeclarations.contains(name);
 	}
 
-	public void enterTypeDeclaration(TypeDeclaration node) {
+	public void enterTypeDeclaration(AbstractTypeDeclaration node) {
 		_currentType.push(node);
-		
+
 		_mappedMethodDeclarations.clear();
-		for (MethodDeclaration meth : node.getMethods()) {
+		for (MethodDeclaration meth : getMethods(node)) {
 			if (SharpenAnnotations.hasIgnoreAnnotation(meth))
 				continue;
 			
@@ -27,14 +27,31 @@ public class NameScopeImpl implements NameScope {
 		}
 	}
 
-	public void leaveTypeDeclaration(TypeDeclaration node) {
+	public void leaveTypeDeclaration(AbstractTypeDeclaration node) {
 		_currentType.pop();
 	}
 	
-	public TypeDeclaration currentType() {
+	public AbstractTypeDeclaration currentType() {
 		return _currentType.peek();
 	}
 	
-	private Stack<TypeDeclaration> _currentType = new Stack();
+	private static MethodDeclaration[] getMethods(AbstractTypeDeclaration node) {
+		if (node instanceof TypeDeclaration) {
+			return ((TypeDeclaration)node).getMethods();
+		} else if (node instanceof EnumDeclaration) {
+			List<MethodDeclaration> methodsList = new ArrayList<MethodDeclaration>();
+			for (Object declaration : node.bodyDeclarations()) {
+				if (declaration instanceof MethodDeclaration) {
+					methodsList.add((MethodDeclaration)declaration);
+				}
+			}
+
+			return methodsList.toArray(new MethodDeclaration[methodsList.size()]);
+		} else {
+			throw new UnsupportedOperationException("not implemented");
+		}
+	}
+
+	private Stack<AbstractTypeDeclaration> _currentType = new Stack();
 	private List<String> _mappedMethodDeclarations = new ArrayList<String>();
 }

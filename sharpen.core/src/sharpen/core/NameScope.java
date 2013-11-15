@@ -5,11 +5,11 @@ import org.eclipse.jdt.core.dom.*;
 
 public interface NameScope {
 
-	void enterTypeDeclaration(TypeDeclaration node);
+	void enterTypeDeclaration(AbstractTypeDeclaration node);
 
-	void leaveTypeDeclaration(TypeDeclaration node);
+	void leaveTypeDeclaration(AbstractTypeDeclaration node);
 	
-	TypeDeclaration currentType();
+	AbstractTypeDeclaration currentType();
 
 	boolean contains(String name);
 

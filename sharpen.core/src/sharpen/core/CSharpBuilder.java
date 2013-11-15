@@ -2426,6 +2426,13 @@ public class CSharpBuilder extends ASTVisitor {
 			}
 		}
 		
+		if (_currentBlock != null) {
+			List<CSStatement> stats = _currentBlock.statements();
+			CSStatement lastStmt = stats.size() > 0 ? stats.get(stats.size()-1) : null;
+			if (lastStmt == null || !isSwitchCaseClosingStatement(lastStmt)) 
+				openCaseBlock = _currentBlock;
+		}
+
 		if (openCaseBlock != null)
 			openCaseBlock.addStatement(new CSBreakStatement (Integer.MIN_VALUE));
 

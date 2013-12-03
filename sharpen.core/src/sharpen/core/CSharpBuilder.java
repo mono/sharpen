@@ -1292,7 +1292,6 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(FieldDeclaration node) {
-
 		if (SharpenAnnotations.hasIgnoreAnnotation(node)) {
 			return false;
 		}
@@ -1307,6 +1306,7 @@ public class CSharpBuilder extends ASTVisitor {
 			VariableDeclarationFragment fragment = (VariableDeclarationFragment) item;
 			ITypeBinding saved = pushExpectedType(fieldType);
 			CSField field = mapFieldDeclarationFragment(node, fragment, typeName, visibility);
+
 			popExpectedType(saved);
 			adjustVisibility (fieldType, field);
 			_currentType.addMember(field);
@@ -1317,6 +1317,9 @@ public class CSharpBuilder extends ASTVisitor {
 
 	private CSField mapFieldDeclarationFragment(FieldDeclaration node, VariableDeclarationFragment fragment,
 	        CSTypeReferenceExpression fieldType, CSVisibility fieldVisibility) {
+		if (fragment.getExtraDimensions() > 0) {
+			fieldType = new CSArrayTypeReference(fieldType, fragment.getExtraDimensions());
+		}
 		CSField field = new CSField(fieldName(fragment), fieldType, fieldVisibility, mapFieldInitializer(fragment));
 		if (isConstField(node, fragment)) {
 			field.addModifier(CSFieldModifier.Const);

@@ -311,8 +311,11 @@ public class CSharpPrinter extends CSVisitor {
 		write(_currentType.name());
 		writeParameterList(node);
 		if (null != node.chainedConstructorInvocation()) {
-			write(" : ");
+			writeLine();
+			indent();
+			writeIndented(": ");
 			writeMethodInvocation(node.chainedConstructorInvocation());
+			outdent();
 		}
 		writeLine();
 		node.body().accept(this);

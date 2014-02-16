@@ -232,9 +232,12 @@ public class CSharpPrinter extends CSVisitor {
 		if (parameters.isEmpty()) return;
 		for (CSTypeParameter tp : parameters) {
 			if (tp.superClass() != null) {
-				write (" where ");
-				write (tp.name() + ":");
+				writeLine();
+				indent();
+				writeIndented("where ");
+				write (tp.name() + " : ");
 				tp.superClass().accept(this);
+				outdent();
 			}
 		}
 	}

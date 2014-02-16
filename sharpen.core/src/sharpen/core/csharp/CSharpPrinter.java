@@ -38,8 +38,8 @@ public class CSharpPrinter extends CSVisitor {
 	public CSharpPrinter() {
 	}
 	
-	public void setWriter(Writer writer, String indentString) {
-		_writer = new IndentedWriter(writer);
+	public void setWriter(Writer writer, String indentString, int maxColumns) {
+		_writer = new IndentedWriter(writer, maxColumns);
 		if (indentString != null) {
 			_writer.setIndentString(indentString);
 		}

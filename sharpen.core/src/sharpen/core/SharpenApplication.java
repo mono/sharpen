@@ -115,6 +115,9 @@ public class SharpenApplication implements IApplication {
 
 			configuration.setIndentString(indent.toString());
 		}
+		if (_args.maxColumns != 0) {
+			configuration.setMaxColumns(_args.maxColumns);
+		}
 		if (_args.nativeTypeSystem) {
 			ods("Native type system mode on.");
 			configuration.enableNativeTypeSystem();

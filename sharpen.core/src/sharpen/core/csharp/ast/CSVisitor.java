@@ -242,4 +242,7 @@ public class CSVisitor {
 
 	public void visit(CSGotoStatement node) {
 	}
+
+	public void visit(CSUsingStatement node) {
+	}
 }

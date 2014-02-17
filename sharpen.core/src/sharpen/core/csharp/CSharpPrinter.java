@@ -232,9 +232,12 @@ public class CSharpPrinter extends CSVisitor {
 		if (parameters.isEmpty()) return;
 		for (CSTypeParameter tp : parameters) {
 			if (tp.superClass() != null) {
-				write (" where ");
-				write (tp.name() + ":");
+				writeLine();
+				indent();
+				writeIndented("where ");
+				write (tp.name() + " : ");
 				tp.superClass().accept(this);
+				outdent();
 			}
 		}
 	}
@@ -311,8 +314,11 @@ public class CSharpPrinter extends CSVisitor {
 		write(_currentType.name());
 		writeParameterList(node);
 		if (null != node.chainedConstructorInvocation()) {
-			write(" : ");
+			writeLine();
+			indent();
+			writeIndented(": ");
 			writeMethodInvocation(node.chainedConstructorInvocation());
+			outdent();
 		}
 		writeLine();
 		node.body().accept(this);

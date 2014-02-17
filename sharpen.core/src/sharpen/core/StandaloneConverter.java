@@ -33,7 +33,7 @@ public class StandaloneConverter extends SharpenConversion {
 	
 	public StandaloneConverter(Configuration configuration) {
 		super(configuration);
-		_parser = ASTParser.newParser(AST.JLS3);
+		_parser = ASTParser.newParser(AST.JLS4);
 	}
 	
 	public CSCompilationUnit run() {

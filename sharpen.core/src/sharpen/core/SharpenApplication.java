@@ -123,6 +123,10 @@ public class SharpenApplication implements IApplication {
 			ods("Native interfaces mode on.");
 			configuration.enableNativeInterfaces();
 		}
+		if (_args.separateInterfaceConstants) {
+			ods("Separating interface constants to their own classes.");
+			configuration.enableSeparateInterfaceConstants();
+		}
 		if (_args.organizeUsings) {
 			ods("Organize usings mode on.");
 			configuration.enableOrganizeUsings();

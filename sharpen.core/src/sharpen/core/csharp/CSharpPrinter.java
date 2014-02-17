@@ -1011,6 +1011,7 @@ public class CSharpPrinter extends CSVisitor {
 		switch (modifier) {
 		case Abstract: return "abstract ";
 		case Sealed: return "sealed ";
+		case Static: return "static ";
 		}
 		return "";
 	}

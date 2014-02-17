@@ -28,5 +28,6 @@ package sharpen.core.csharp.ast;
 public enum CSClassModifier {
 	Abstract,
 	Sealed,
+	Static,
 	None
 }

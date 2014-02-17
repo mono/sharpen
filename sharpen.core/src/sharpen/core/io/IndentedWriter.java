@@ -28,7 +28,7 @@ import java.io.Writer;
 
 public class IndentedWriter {
 
-	private static final int MAX_COLUMNS = 80;
+	private final int _maxColumns;
 
 	String _lineSeparator = System.getProperty("line.separator");
 
@@ -42,8 +42,9 @@ public class IndentedWriter {
 
 	private String _prefix;
 
-	public IndentedWriter(Writer writer) {
+	public IndentedWriter(Writer writer, int maxColumns) {
 		_delegate = writer;
+		_maxColumns = maxColumns;
 	}
 
 	public String getIndentString() {
@@ -74,7 +75,7 @@ public class IndentedWriter {
 	}
 
 	public void write(String s) {
-		if (_column > MAX_COLUMNS) {
+		if (_column > _maxColumns) {
 			writeLine();
 			writeIndented(_indentString);
 		}

@@ -927,6 +927,9 @@ public class CSharpPrinter extends CSVisitor {
 				write("\"");
 			}
 		}
+		if (fragments.isEmpty()) {
+			write("/");
+		}
 		write(">");
 		
 		if (fragments.size() > 1) {
@@ -937,10 +940,8 @@ public class CSharpPrinter extends CSVisitor {
 				writeLine();
 			}
 			writeIndented("</" + tagName + ">");
-		} else {
-			if (!fragments.isEmpty()) {
-				fragments.get(0).accept(this);
-			}
+		} else if (!fragments.isEmpty()) {
+			fragments.get(0).accept(this);
 			write("</" + tagName + ">");
 		}
 	}

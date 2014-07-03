@@ -142,6 +142,10 @@ public class SharpenApplication implements IApplication {
 			ods("JUnit conversion mode on.");
 			configuration.enableJUnitConversion();
 		}
+		if (_args.sharpenNamespace != null) {
+			ods("Sharpen namespace: " + _args.sharpenNamespace);
+			configuration.setSharpenNamespace(_args.sharpenNamespace);
+		}
 		if (_args.headerFile != null) {
 			ods("Header file: " + _args.headerFile);
 			configuration.setHeader(IO.readFile(new File(_args.headerFile)));

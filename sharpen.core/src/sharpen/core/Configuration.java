@@ -98,6 +98,8 @@ public abstract class Configuration {
 
 	private boolean _junitConvert;
 	
+	private String _sharpenNamespace = "Sharpen";
+
 	private List<String> _fullyQualifiedTypes = new ArrayList<String>();
 	
 	private boolean _createProblemMarkers = false;
@@ -437,6 +439,15 @@ public abstract class Configuration {
 	
 	public boolean junitConversion () {
 		return _junitConvert;
+	}
+
+	public void setSharpenNamespace(String sharpenNamespace) {
+		if (null == sharpenNamespace) throw new IllegalArgumentException("sharpenNamespace");
+		_sharpenNamespace = sharpenNamespace;
+	}
+
+	public String sharpenNamespace() {
+		return _sharpenNamespace;
 	}
 	
 	public void addFullyQualifiedTypeName(String name) {

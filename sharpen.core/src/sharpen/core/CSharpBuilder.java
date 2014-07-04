@@ -1224,9 +1224,6 @@ public class CSharpBuilder extends ASTVisitor {
 			} else {
 				collectFragments(node, fragments, 1);
 			}
-		} else {
-			//TODO: Move the XML encoding to the right place (CSharpPrinter)
-			node.addTextFragment(cref.replace("{", "&lt;").replace("}", "&gt;"));
 		}
 		return node;
 	}

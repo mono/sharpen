@@ -138,6 +138,8 @@ class SharpenCommandLineParser extends CommandLineParser {
 			_cmdLine.configurationClass = consumeNext();		
 		} else if (areEqual(arg, "-junitConversion")) {
 			_cmdLine.junitConversion = true;		
+		} else if (areEqual(arg, "-sharpenNamespace")) {
+			_cmdLine.sharpenNamespace = consumeNext();		
 		} else {
 			illegalArgument(arg);
 		}

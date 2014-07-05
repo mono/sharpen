@@ -1152,9 +1152,9 @@ public class CSharpBuilder extends ASTVisitor {
 				summaryNode.addFragment(new CSDocTextNode(fragment));
 			}
 			member.addDoc(summaryNode);
-			member.addDoc(createTagNode(member, "remarks", element));
+			member.addDoc(createTagNode(member, "remarks", element, false));
 		} else {
-			member.addDoc(createTagNode(member, "summary", element));
+			member.addDoc(createTagNode(member, "summary", element, false));
 		}
 	}
 
@@ -1188,7 +1188,7 @@ public class CSharpBuilder extends ASTVisitor {
 		if (TagElement.TAG_PARAM.equals(tagName)) {
 			return mapTagParam(member, element);
 		} else if (TagElement.TAG_RETURN.equals(tagName)) {
-			return createTagNode(member, "returns", element);
+			return createTagNode(member, "returns", element, false);
 		} else if (TagElement.TAG_LINK.equals(tagName)) {
 			return mapTagLink(member, element);
 		} else if (TagElement.TAG_THROWS.equals(tagName)) {
@@ -1202,9 +1202,9 @@ public class CSharpBuilder extends ASTVisitor {
 				}
 			}
 
-			return createTagNode(member, "c", element);
+			return createTagNode(member, "c", element, true);
 		}
-		return createTagNode(member, tagName.substring(1), element);
+		return createTagNode(member, tagName.substring(1), element, false);
 	}
 
 	// Used for emitting <see langword="true"/>, etc.
@@ -1247,7 +1247,7 @@ public class CSharpBuilder extends ASTVisitor {
 			}
 		}
 
-		return createTagNode(member, "c", element);
+		return createTagNode(member, "c", element, true);
 	}
 
 	private CSDocNode mapTagThrows(CSMember member, TagElement element) {
@@ -1289,7 +1289,7 @@ public class CSharpBuilder extends ASTVisitor {
 	
 	private CSDocNode invalidTagWithCRef(CSMember member, final ASTNode linkTarget, String tagName, TagElement element) {
 		warning(linkTarget, "Tag '" + element.getTagName() + "' demands a valid cref target.");
-		CSDocNode newTag = createTagNode(member, tagName, element);
+		CSDocNode newTag = createTagNode(member, tagName, element, false);
 		return newTag;
 	}
 
@@ -1359,32 +1359,34 @@ public class CSharpBuilder extends ASTVisitor {
 
 	private void collectFragments(CSMember member, CSDocTagNode node, List fragments, int index) {
 		for (int i = index; i < fragments.size(); ++i) {
-			node.addFragment(mapTagElementFragment(member, (ASTNode) fragments.get(i)));
+			node.addFragment(mapTagElementFragment(member, (ASTNode) fragments.get(i), false));
 		}
 	}
 
-	private CSDocNode mapTextElement(TextElement element) {
-		final String text = element.getText();
-		if (HTML_ANCHOR_PATTERN.matcher(text).find()) {
+	private CSDocNode mapTextElement(TextElement element, boolean escapeText) {
+		String text = element.getText();
+		if (escapeText) {
+			text = text.replace("<", "&lt;").replace(">", "&gt;");
+		} else if (HTML_ANCHOR_PATTERN.matcher(text).find()) {
 			warning(element, "Caution: HTML anchors can result in broken links. Consider using @link instead.");
 		}
 		return new CSDocTextNode(text);
 	}
 
-	private CSDocNode createTagNode(CSMember member, String tagName, TagElement element) {
+	private CSDocNode createTagNode(CSMember member, String tagName, TagElement element, boolean escapeText) {
 		CSDocTagNode summary = new CSDocTagNode(tagName);
 		for (Object f : element.fragments()) {
-			summary.addFragment(mapTagElementFragment(member, (ASTNode) f));
+			summary.addFragment(mapTagElementFragment(member, (ASTNode) f, escapeText));
 		}
 		return summary;
 	}
 
-	private CSDocNode mapTagElementFragment(CSMember member, ASTNode node) {
+	private CSDocNode mapTagElementFragment(CSMember member, ASTNode node, boolean escapeText) {
 		switch (node.getNodeType()) {
 		case ASTNode.TAG_ELEMENT:
 			return mapTagElement(member, (TagElement) node);
 		case ASTNode.TEXT_ELEMENT:
-			return mapTextElement((TextElement) node);
+			return mapTextElement((TextElement) node, escapeText);
 		}
 		warning(node, "Documentation node not supported: " + node.getClass() + ": " + node);
 		return new CSDocTextNode(node.toString());

@@ -1205,9 +1205,27 @@ public class CSharpBuilder extends ASTVisitor {
 		return createTagNode(member, tagName.substring(1), element);
 	}
 
+	// Used for emitting <see langword="true"/>, etc.
+	// http://www.ewoodruff.us/xmlcommentsguide/html/983fed56-321c-4daf-af16-e3169b28ffcd.htm
+	private static final Set<String> LANGUAGE_KEYWORDS = new HashSet<String>();
+	static {
+		LANGUAGE_KEYWORDS.add("true");
+		LANGUAGE_KEYWORDS.add("false");
+		LANGUAGE_KEYWORDS.add("null");
+		LANGUAGE_KEYWORDS.add("static");
+		LANGUAGE_KEYWORDS.add("abstract");
+	}
+
 	private CSDocNode mapSingleTextElementCodeTagNode(CSMember member, TagElement element) {
 		TextElement fragment = (TextElement)element.fragments().get(0);
 		String word = fragment.getText().trim();
+
+		// {@code true} --> <see langword="true"/>
+		if (LANGUAGE_KEYWORDS.contains(word)) {
+			CSDocTagNode node = new CSDocTagNode("see");
+			node.addAttribute("langword", word);
+			return node;
+		}
 
 		// {@code foo} --> <paramref name="foo"/>
 		if (member instanceof CSMethodBase) {

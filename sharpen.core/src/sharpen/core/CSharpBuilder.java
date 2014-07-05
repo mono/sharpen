@@ -1201,6 +1201,8 @@ public class CSharpBuilder extends ASTVisitor {
 					return mapSingleTextElementCodeTagNode(member, element);
 				}
 			}
+
+			return createTagNode(member, "c", element);
 		}
 		return createTagNode(member, tagName.substring(1), element);
 	}
@@ -1245,7 +1247,7 @@ public class CSharpBuilder extends ASTVisitor {
 			}
 		}
 
-		return createTagNode(member, element.getTagName().substring(1), element);
+		return createTagNode(member, "c", element);
 	}
 
 	private CSDocNode mapTagThrows(CSMember member, TagElement element) {

@@ -1046,7 +1046,7 @@ public class CSharpBuilder extends ASTVisitor {
 			return;
 		}
 		if (!isConversionTag(element.getTagName())) {
-			member.addDoc(mapTagElement(element));
+			member.addDoc(mapTagElement(member, element));
 		}
 		else if (isAttributeAnnotation(element)){
 			processAttribute(member, element);
@@ -1152,9 +1152,9 @@ public class CSharpBuilder extends ASTVisitor {
 				summaryNode.addFragment(new CSDocTextNode(fragment));
 			}
 			member.addDoc(summaryNode);
-			member.addDoc(createTagNode("remarks", element));
+			member.addDoc(createTagNode(member, "remarks", element));
 		} else {
-			member.addDoc(createTagNode("summary", element));
+			member.addDoc(createTagNode(member, "summary", element));
 		}
 	}
 
@@ -1183,46 +1183,77 @@ public class CSharpBuilder extends ASTVisitor {
 		return matcher.find() ? matcher.start() : -1;
 	}
 
-	private CSDocNode mapTagElement(TagElement element) {
+	private CSDocNode mapTagElement(CSMember member, TagElement element) {
 		String tagName = element.getTagName();
 		if (TagElement.TAG_PARAM.equals(tagName)) {
-			return mapTagParam(element);
+			return mapTagParam(member, element);
 		} else if (TagElement.TAG_RETURN.equals(tagName)) {
-			return createTagNode("returns", element);
+			return createTagNode(member, "returns", element);
 		} else if (TagElement.TAG_LINK.equals(tagName)) {
-			return mapTagLink(element);
+			return mapTagLink(member, element);
 		} else if (TagElement.TAG_THROWS.equals(tagName)) {
-			return mapTagThrows(element);
+			return mapTagThrows(member, element);
 		} else if (TagElement.TAG_SEE.equals(tagName)) {
-			return mapTagWithCRef("seealso", element);
+			return mapTagWithCRef(member, "seealso", element);
+		} else if (TagElement.TAG_CODE.equals(tagName)) {
+			if (element.fragments().size() == 1) {
+				if (element.fragments().get(0) instanceof TextElement) {
+					return mapSingleTextElementCodeTagNode(member, element);
+				}
+			}
 		}
-		return createTagNode(tagName.substring(1), element);
+		return createTagNode(member, tagName.substring(1), element);
 	}
 
-	private CSDocNode mapTagThrows(TagElement element) {
-		return mapTagWithCRef("exception", element);
+	private CSDocNode mapSingleTextElementCodeTagNode(CSMember member, TagElement element) {
+		TextElement fragment = (TextElement)element.fragments().get(0);
+		String word = fragment.getText().trim();
+
+		// {@code foo} --> <paramref name="foo"/>
+		if (member instanceof CSMethodBase) {
+			CSMethodBase method = (CSMethodBase)member;
+			boolean isParameterName = false;
+			for (CSVariableDeclaration parameter : method.parameters()) {
+				if (parameter.name().equals(word)) {
+					isParameterName = true;
+					break;
+				}
+			}
+
+			if (isParameterName) {
+				CSDocTagNode node = new CSDocTagNode("paramref");
+				node.addAttribute("name", word);
+				return node;
+			}
+		}
+
+		return createTagNode(member, element.getTagName().substring(1), element);
 	}
 
-	private CSDocNode mapTagLink(TagElement element) {
-		return mapTagWithCRef("see", element);
+	private CSDocNode mapTagThrows(CSMember member, TagElement element) {
+		return mapTagWithCRef(member, "exception", element);
 	}
 
-	private CSDocNode mapTagWithCRef(String tagName, TagElement element) {
+	private CSDocNode mapTagLink(CSMember member, TagElement element) {
+		return mapTagWithCRef(member, "see", element);
+	}
+
+	private CSDocNode mapTagWithCRef(CSMember member, String tagName, TagElement element) {
 		final List fragments = element.fragments();
 		if (fragments.isEmpty()) {
-			return invalidTagWithCRef(element, tagName, element);
+			return invalidTagWithCRef(member, element, tagName, element);
 		}
 		final ASTNode linkTarget = (ASTNode) fragments.get(0);
 		String cref = mapCRefTarget(linkTarget);
 		if (null == cref) {
-			return invalidTagWithCRef(linkTarget, tagName, element);
+			return invalidTagWithCRef(member, linkTarget, tagName, element);
 		}
 		CSDocTagNode node = newTagWithCRef(tagName, cref);
 		if (fragments.size() > 1) {
 			if (isLinkWithSimpleLabel(fragments, linkTarget)) {
 				node.addTextFragment(unqualifiedName(cref));
 			} else {
-				collectFragments(node, fragments, 1);
+				collectFragments(member, node, fragments, 1);
 			}
 		}
 		return node;
@@ -1236,9 +1267,9 @@ public class CSharpBuilder extends ASTVisitor {
 		return attachedToNode;
 	}
 	
-	private CSDocNode invalidTagWithCRef(final ASTNode linkTarget, String tagName, TagElement element) {
+	private CSDocNode invalidTagWithCRef(CSMember member, final ASTNode linkTarget, String tagName, TagElement element) {
 		warning(linkTarget, "Tag '" + element.getTagName() + "' demands a valid cref target.");
-		CSDocNode newTag = createTagNode(tagName, element);
+		CSDocNode newTag = createTagNode(member, tagName, element);
 		return newTag;
 	}
 
@@ -1262,7 +1293,7 @@ public class CSharpBuilder extends ASTVisitor {
 		return new CRefBuilder(crefTarget).build();		
 	}
 
-	private CSDocNode mapTagParam(TagElement element) {
+	private CSDocNode mapTagParam(CSMember member, TagElement element) {
 		
 		List fragments = element.fragments();
 		
@@ -1277,7 +1308,7 @@ public class CSharpBuilder extends ASTVisitor {
 									? new CSDocTagNode("value") 
 									: newCSDocTag(fixIdentifierNameFor(identifier(name), element));
 		
-		collectFragments(param, fragments, 1);
+		collectFragments(member, param, fragments, 1);
 		return param;
 	}
 
@@ -1306,9 +1337,9 @@ public class CSharpBuilder extends ASTVisitor {
 						: identifier;
 	}
 
-	private void collectFragments(CSDocTagNode node, List fragments, int index) {
+	private void collectFragments(CSMember member, CSDocTagNode node, List fragments, int index) {
 		for (int i = index; i < fragments.size(); ++i) {
-			node.addFragment(mapTagElementFragment((ASTNode) fragments.get(i)));
+			node.addFragment(mapTagElementFragment(member, (ASTNode) fragments.get(i)));
 		}
 	}
 
@@ -1320,18 +1351,18 @@ public class CSharpBuilder extends ASTVisitor {
 		return new CSDocTextNode(text);
 	}
 
-	private CSDocNode createTagNode(String tagName, TagElement element) {
+	private CSDocNode createTagNode(CSMember member, String tagName, TagElement element) {
 		CSDocTagNode summary = new CSDocTagNode(tagName);
 		for (Object f : element.fragments()) {
-			summary.addFragment(mapTagElementFragment((ASTNode) f));
+			summary.addFragment(mapTagElementFragment(member, (ASTNode) f));
 		}
 		return summary;
 	}
 
-	private CSDocNode mapTagElementFragment(ASTNode node) {
+	private CSDocNode mapTagElementFragment(CSMember member, ASTNode node) {
 		switch (node.getNodeType()) {
 		case ASTNode.TAG_ELEMENT:
-			return mapTagElement((TagElement) node);
+			return mapTagElement(member, (TagElement) node);
 		case ASTNode.TEXT_ELEMENT:
 			return mapTextElement((TextElement) node);
 		}

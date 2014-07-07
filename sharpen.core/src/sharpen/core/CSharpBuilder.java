@@ -1074,6 +1074,8 @@ public class CSharpBuilder extends ASTVisitor {
 		if (element.getTagName().equals("@deprecated")) {
 			member.removeAttribute("System.Obsolete");
 			member.removeAttribute("System.ObsoleteAttribute");
+			member.removeAttribute("Obsolete");
+			member.removeAttribute("ObsoleteAttribute");
 			member.addAttribute(obsoleteAttributeFromDeprecatedTagElement(element));
 			return true;
 		}
@@ -1380,8 +1382,8 @@ public class CSharpBuilder extends ASTVisitor {
 		} else {
 			processFieldModifiers(field, node.getModifiers());
 		}
-		mapDocumentation(node, field);
 		mapAnnotations(node, field);
+		mapDocumentation(node, field);
 		return field;
 	}
 
@@ -2723,8 +2725,8 @@ public class CSharpBuilder extends ASTVisitor {
 		CSField field = new CSField(fieldName(node), typeName, visibility, initializer);
 		field.addModifier(CSFieldModifier.Static);
 		field.addModifier(CSFieldModifier.Readonly);
-		mapDocumentation(node, field);
 		mapAnnotations(node, field);
+		mapDocumentation(node, field);
 
 		popExpectedType(saved);
 		adjustVisibility(fieldType, field);

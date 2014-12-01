@@ -68,6 +68,7 @@ public class SharpenCommandLine {
 	public int indentSize = 4;
 	public int maxColumns = 80;
 	public String project;
+	public String projectPath;
 	final public List<String> classpath = new ArrayList<String>();
 	final public List<String> sourceFolders = new ArrayList<String>();
 	final public List<Configuration.NameMapping> namespaceMappings = new ArrayList<Configuration.NameMapping>();

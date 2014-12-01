@@ -56,15 +56,22 @@ class SharpenCommandLineParser extends CommandLineParser {
 
 	@Override
 	protected void processArgument(String arg) {
+		//Making compatible both for Unix & Window based directory structure
+		arg = arg.replace("\\", "/");
 		if (_cmdLine.project != null) {
 			illegalArgument(arg);
 		}
 		
 		if (arg.indexOf('/') > -1) {
-			String projectName = arg.split("/")[0];
-			String srcFolder = arg.substring(projectName.length() + 1);
+			//String projectName = arg.split("/")[0];
+			//String srcFolder = arg.substring(projectName.length() + 1);
+			
+			String srcFolder = arg.substring(arg.lastIndexOf("/")+1);
+			String projectPath =arg.substring(0,arg.lastIndexOf("/"));
+			String projectName = projectPath.substring(projectPath.lastIndexOf("/")+1);
 			
 			_cmdLine.project = projectName;
+			_cmdLine.projectPath = projectPath;
 			_cmdLine.sourceFolders.add(srcFolder);
 		} else {
 			_cmdLine.project = arg;

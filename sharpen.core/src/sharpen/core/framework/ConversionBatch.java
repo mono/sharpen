@@ -9,7 +9,9 @@ import org.eclipse.jdt.core.dom.*;
 
 public abstract class ConversionBatch {
 
-	private ICompilationUnit[] _source;
+	private String[] _sourceFiles;
+	private String[] _sourcePathEntries;
+	private String[] _classPathEntries;
 
 	private IProgressMonitor _progressMonitor = new NullProgressMonitor();
 
@@ -19,6 +21,14 @@ public abstract class ConversionBatch {
 	public ConversionBatch() {
 		_parser = ASTParser.newParser(AST.JLS4);
 		_parser.setKind(ASTParser.K_COMPILATION_UNIT);
+		
+		@SuppressWarnings("unchecked")
+		Map<String, String> options = JavaCore.getOptions();
+		options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_7);
+		options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM,
+				JavaCore.VERSION_1_7);
+		options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_7);
+		_parser.setCompilerOptions(options);
 	}
 
 	public boolean isContinueOnError() {
@@ -33,20 +43,58 @@ public abstract class ConversionBatch {
 	 * Defines the set of java source files to be converted.
 	 * 
 	 * @param source
-	 *            iterator of ICompilationUnit instances
+	 *            iterator of sourceFiles instances
 	 */
-	public void setSource(ICompilationUnit... source) {
-		if (null == source || 0 == source.length) {
-			throw new IllegalArgumentException("source");
+	public void setsourceFiles(String... sourceFiles) {
+		if (null == sourceFiles || 0 == sourceFiles.length) {
+			throw new IllegalArgumentException("sourceFiles");
 		}
-		_source = source;
+		_sourceFiles = sourceFiles;
 	}
 
-	public void setSource(List<ICompilationUnit> source) {
-		if (null == source || source.isEmpty()) {
-			throw new IllegalArgumentException("source");
+	public void setsourceFiles(List<String> sourceFiles) {
+		if (null == sourceFiles || sourceFiles.isEmpty()) {
+			throw new IllegalArgumentException("sourceFiles");
 		}
-		_source = source.toArray(new ICompilationUnit[source.size()]);
+		_sourceFiles = sourceFiles.toArray(new String[sourceFiles.size()]);
+	}
+	
+	/**
+	 * Defines the set of java source files path to be converted.
+	 * 
+	 * @param source
+	 *            iterator of sourcePathEntries instances
+	 */
+	public void setsourcePathEntries(String... sourcePathEntries) {
+		if (null == sourcePathEntries || 0 == sourcePathEntries.length) {
+			throw new IllegalArgumentException("sourcePathEntries");
+		}
+		_sourcePathEntries = sourcePathEntries;
+	}
+
+	public void setsourcePathEntries(List<String> sourcePathEntries) {
+		if (null == sourcePathEntries || sourcePathEntries.isEmpty()) {
+			throw new IllegalArgumentException("sourcePathEntries");
+		}
+		_sourcePathEntries= sourcePathEntries.toArray(new String[sourcePathEntries.size()]);
+	}
+	/**
+	 * Defines the set of java executable files path to be converted.
+	 * 
+	 * @param source
+	 *            iterator of classPathEntries instances
+	 */
+	public void setclassPathEntries(String... classPathEntries) {
+		if (null == classPathEntries || 0 == classPathEntries.length) {
+			throw new IllegalArgumentException("classPathEntries");
+		}
+		_classPathEntries = classPathEntries;
+	}
+
+	public void setclassPathEntries(List<String> classPathEntries) {
+		if (null != classPathEntries || classPathEntries.isEmpty() ==false) {
+			_classPathEntries= classPathEntries.toArray(new String[classPathEntries.size()]);
+		}
 	}
 	
 	public void setProgressMonitor(IProgressMonitor monitor) {
@@ -66,7 +114,7 @@ public abstract class ConversionBatch {
 	 */
 	public void run() throws CoreException, IOException {
 	
-		if (null == _source) {
+		if (null == _sourceFiles) {
 			throw new IllegalStateException("source was not set");
 		}
 		
@@ -99,27 +147,27 @@ public abstract class ConversionBatch {
 	private void convertPair(final ASTResolver resolver, final CompilationUnitPair pair) throws CoreException,
 			IOException {
 		try {
-			_progressMonitor.subTask(pair.source.getElementName());
-			convertCompilationUnit(resolver, pair.source, pair.ast);
+			_progressMonitor.subTask(pair.source.replace("\\", "/"));
+			convertCompilationUnit(resolver, pair.source.replace("\\", "/"), pair.ast);
 		} finally {
 			_progressMonitor.worked(1);
 		}
 	}
 	
-	protected abstract void convertCompilationUnit(ASTResolver resolver, ICompilationUnit source,
+	protected abstract void convertCompilationUnit(ASTResolver resolver, String sourceFiles,
 			CompilationUnit ast) throws CoreException, IOException;
 
 	private ArrayList<CompilationUnitPair> parseCompilationUnits() {
-		final ArrayList<CompilationUnitPair> pairs = new ArrayList<CompilationUnitPair>(_source.length);
-		ASTRequestor requestor = new ASTRequestor() {
+		final ArrayList<CompilationUnitPair> pairs = new ArrayList<CompilationUnitPair>(_sourceFiles.length);
+		FileASTRequestor  requestor = new FileASTRequestor () {
 			@Override
-			public void acceptAST(ICompilationUnit source, CompilationUnit ast) {
+			public void acceptAST(String  source, CompilationUnit ast) {
 				pairs.add(new CompilationUnitPair(source, ast));
 			}
 		};
-		_parser.setProject(_source[0].getJavaProject());
+		_parser.setEnvironment(_classPathEntries, _sourcePathEntries, null, true);
 		_parser.setResolveBindings(true);
-		_parser.createASTs(_source, new String[0], requestor, _progressMonitor);
+		_parser.createASTs(_sourceFiles, null, new String[0], requestor, _progressMonitor);
 		return pairs;
 	}
 

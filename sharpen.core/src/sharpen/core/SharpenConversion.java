@@ -23,24 +23,15 @@ package sharpen.core;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashMap;
-import java.util.Map;
-
 import sharpen.core.csharp.CSharpPrinter;
 import sharpen.core.csharp.ast.CSCompilationUnit;
 import sharpen.core.framework.*;
-
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.*;
 
 public class SharpenConversion {
 
 	private CSharpPrinter _printer;
-	protected ICompilationUnit _source;
+	protected String _source;
 	protected Writer _writer;
 	protected final Configuration _configuration;
 	private ASTResolver _resolver = new ASTResolver() {
@@ -53,7 +44,7 @@ public class SharpenConversion {
 		_configuration = configuration;
 	}
 
-	public void setSource(ICompilationUnit source) {
+	public void setSource(String source) {
 		_source = source;
 	}
 
@@ -141,11 +132,11 @@ public class SharpenConversion {
 
 	private void deleteProblemMarkers() {
 		if (createProblemMarkers()) {
-			try {
+			/*try {
 				_source.getCorrespondingResource().deleteMarkers(Sharpen.PROBLEM_MARKER, false, IResource.DEPTH_ONE);
 			} catch (CoreException e) {
 				e.printStackTrace();
-			}
+			}*/
 		}
 	}
 
@@ -153,7 +144,7 @@ public class SharpenConversion {
 		if (!createProblemMarkers()) {
 			return;
 		}			
-		try {
+/*		try {
 			IMarker marker = _source.getCorrespondingResource().createMarker(Sharpen.PROBLEM_MARKER);			
 			Map<String, Object> attributes = new HashMap<String, Object>();
 			attributes.put(IMarker.MESSAGE, message);
@@ -165,7 +156,7 @@ public class SharpenConversion {
 			marker.setAttributes(attributes);			
 		} catch (CoreException e) {			
 			e.printStackTrace();
-		}
+		}*/
 	}
 
 	private boolean createProblemMarkers() {
@@ -173,12 +164,8 @@ public class SharpenConversion {
 	}
 
 	private String getSourcePath() {
-		try {
-			return _source.getCorrespondingResource().getFullPath().toString();
-		} catch (JavaModelException e) {			
-			e.printStackTrace();
-			return "";
-		}
+
+		return _source.substring(0, _source.lastIndexOf("/")-1);
 	}
 	
 	public ASTResolver getASTResolver() {

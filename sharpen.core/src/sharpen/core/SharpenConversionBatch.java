@@ -25,9 +25,7 @@ import java.io.*;
 
 import sharpen.core.csharp.ast.CSCompilationUnit;
 import sharpen.core.framework.*;
-import sharpen.core.framework.resources.WorkspaceUtilities;
 
-import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.dom.*;
@@ -42,7 +40,7 @@ import org.eclipse.jdt.core.dom.*;
  */
 public class SharpenConversionBatch extends ConversionBatch { 
 	
-	private IProject _targetProject;
+	private String _targetProjectPath;
 
 	private final Configuration _configuration;	
 
@@ -57,12 +55,17 @@ public class SharpenConversionBatch extends ConversionBatch {
 		_configuration = configuration;
 	}
 	
-	public void setTargetProject(IProject project) {
-		_targetProject = project;
+	public void setTargetProject(String projectPath) {
+		File fprojectPath = new File(projectPath);
+		if (fprojectPath.isDirectory() && !fprojectPath.exists())
+		{
+			fprojectPath.mkdir();
+		}
+		_targetProjectPath = projectPath;
 	}
 
-	@Override
-	protected void convertCompilationUnit(ASTResolver resolver, ICompilationUnit source, CompilationUnit ast)
+	//@Override
+	protected void convertCompilationUnit(ASTResolver resolver, String source, CompilationUnit ast)
 			throws CoreException, IOException {
 		SharpenConversion converter = new SharpenConversion(_configuration);
 		final StringWriter writer = new StringWriter();
@@ -78,39 +81,41 @@ public class SharpenConversionBatch extends ConversionBatch {
 	 * @param cu
 	 * @throws JavaModelException
 	 * @throws CoreException
-	 * @throws UnsupportedEncodingException
+	 * @throws IOException 
 	 */
-	private void saveConvertedFile(ICompilationUnit cu, CSCompilationUnit csModule, StringWriter convertedContents) throws JavaModelException, CoreException, UnsupportedEncodingException {
+	private void saveConvertedFile(String cu, CSCompilationUnit csModule, StringWriter convertedContents) throws  IOException, CoreException {
 		String newName = csModule.elementName();
 		if (newName == null) {
-			newName = getNameWithoutExtension(cu.getElementName()) + ".cs";
+			newName = getNameWithoutExtension(cu) + ".cs";
 		}
-
-		IFolder folder = targetFolderForCompilationUnit(cu, csModule.namespace());
+		String folder = targetFolderForCompilationUnit(cu, csModule.namespace());
 		ensureFolder(folder);
-		WorkspaceUtilities.writeText(folder.getFile(newName), convertedContents.getBuffer().toString());
+		newName = folder + "/" + newName;
+		File fnewName = new File(newName);
+		fnewName.createNewFile();
+        FileWriter fw = new FileWriter(fnewName);
+        fw.write(convertedContents.getBuffer().toString());
+        fw.close();
 	}
 
-	private void ensureFolder(IFolder folder) throws CoreException {
-	    WorkspaceUtilities.initializeTree(folder, null);
+	private void ensureFolder(String folder) {
+		File ffolder = new File(folder);
+		ffolder.mkdirs();
     }
 
-	IFolder targetFolderForCompilationUnit(ICompilationUnit cu, String generatedNamespace)
+	String targetFolderForCompilationUnit(String cu, String generatedNamespace)
 			throws CoreException {
 
-		if (null == _targetProject) {
-			// no target folder specified
-			// converted files go in the same folder as their corresponding
-			// java source files
-			return (IFolder) cu.getCorrespondingResource().getParent();
+		if (null == _targetProjectPath) {
+			throw new IllegalArgumentException("_targetProjectPath");
 		}
 		
-		final IPath basePath = cu.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT).getResource().getProjectRelativePath();
-		final IFolder targetFolder = _targetProject.getFolder(basePath);
-
 		// compute target folder based on packageName
+		String targetFolder = _targetProjectPath;
+		
+		String cuParent = new File(cu).getParent().replace("\\", "/");
 		String packageName = generatedNamespace == null
-			? cu.getParent().getElementName()
+			? cuParent.substring(cuParent.lastIndexOf("/"))
 			: cleanupNamespace(generatedNamespace);
 		if (packageName.length() > 0) {
 			return getTargetPackageFolder(targetFolder, packageName);
@@ -123,13 +128,15 @@ public class SharpenConversionBatch extends ConversionBatch {
 		return generatedNamespace.replace("@", "");
 	}
 
-	private IFolder getTargetPackageFolder(IFolder targetFolder, String packageName)
-			throws CoreException {
-		return targetFolder.getFolder(packageName.replace('.', '/'));
+	private String getTargetPackageFolder(String targetFolder, String packageName) {
+		 targetFolder = targetFolder  +"/"  + packageName.replace('.', '/').toLowerCase();
+		 return targetFolder;
 	}
 	
 	private String getNameWithoutExtension(String name) {
-		return name.split("\\.")[0];
+		File f = new File(name);
+		String filename = f.getName();
+		return filename.substring(0,filename.lastIndexOf("."));
 	}
 
 	public Configuration getConfiguration() {

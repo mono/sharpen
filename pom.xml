@@ -1,0 +1,153 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>sharpen</groupId>
+  <artifactId>sharpencore</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>sharpencore</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	 <finalName>${project.artifactId}-${project.version}</finalName>
+  </properties>
+
+  <dependencies>
+  
+	<dependency>
+		<groupId>org.eclipse.jdt</groupId>
+		<artifactId>org.eclipse.jdt.core</artifactId>
+		<version>3.7.1</version>
+	</dependency>
+	
+		
+	<dependency>
+		<groupId>org.eclipse.core</groupId>
+		<artifactId>runtime</artifactId>
+		<version>3.10.0-v20140318-2214</version>
+	</dependency>
+	
+	
+	<dependency>
+		<groupId>org.eclipse.equinox</groupId>
+		<artifactId>common</artifactId>
+		<version>3.6.200-v20130402-1505</version>
+	</dependency>
+    <!-- 
+	<dependency>
+		<groupId>org.eclipse.equinox</groupId>
+		<artifactId>org.eclipse.equinox.preferences</artifactId>
+		<version>3.4.1</version>
+	</dependency>
+    -->
+	<!--
+	<dependency>
+	<groupId>org.eclipse.core</groupId>
+	<artifactId>org.eclipse.core.resources</artifactId>
+	<version>3.6.0.v20100526-0737</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.eclipse.core</groupId>
+		<artifactId>org.eclipse.core.jobs</artifactId>
+		<version>3.5.100</version>
+	</dependency>
+    -->
+	
+	<dependency>
+		<groupId>org.eclipse.osgi</groupId>
+		<artifactId>org.eclipse.osgi</artifactId>
+		<version>3.6.0.v20100517</version>
+	</dependency>
+
+    <!-- 
+	<dependency>
+		<groupId>org.eclipse.osgi</groupId>
+		<artifactId>org.eclipse.osgi.services</artifactId>
+		<version>3.2.100.v20100503</version>
+	</dependency>
+
+	<dependency>
+	<groupId>org.eclipse.osgi</groupId>
+	<artifactId>org.eclipse.osgi.util</artifactId>
+	<version>3.2.100.v20100503</version>
+	</dependency>
+    -->
+    <!-- 
+	<dependency>
+	<groupId>org.eclipse.core</groupId>
+	<artifactId>contenttype</artifactId>
+	<version>3.4.200-v20140207-1251</version>
+	</dependency>
+    -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.4</version>
+      <scope>test</scope>
+    </dependency>
+    
+	</dependencies>
+  
+  <build>
+   <directory>sharpen.core/target</directory>
+    <outputDirectory>sharpen.core/target/classes</outputDirectory>
+    <finalName>${finalName}</finalName>
+    <testOutputDirectory>sharpen.core/target/testcases</testOutputDirectory>
+    <sourceDirectory>sharpen.core/src</sourceDirectory>
+    <scriptSourceDirectory>sharpen.core/src</scriptSourceDirectory>
+    <testSourceDirectory>sharpen.ui.tests/src</testSourceDirectory>
+    <resources>
+      <resource>
+        <directory>sharpen.core/src/resources</directory>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>sharpen.ui.tests/testcases</directory>
+      </testResource>
+    </testResources>
+	
+  <plugins>
+ 
+	<!-- 
+	<plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.17</version>
+        <configuration>
+          <skipTests>true</skipTests>
+        </configuration>
+    </plugin> 
+	-->
+		
+	<plugin>
+    <artifactId>maven-assembly-plugin</artifactId>
+      <configuration>
+        <archive>
+          <manifest>
+            <mainClass>sharpen.core.SharpenCmd</mainClass>
+          </manifest>
+        </archive>
+        <descriptorRefs>
+          <descriptorRef>jar-with-dependencies</descriptorRef>
+        </descriptorRefs>
+      </configuration>
+	  
+	<executions>
+		<execution>
+		  <id>make-assembly</id> <!-- this is used for inheritance merges -->
+		  <phase>package</phase> <!-- bind to the packaging phase -->
+		  <goals>
+			<goal>single</goal>
+		  </goals>
+		</execution>
+    </executions>
+      </plugin>	
+  </plugins>
+ 
+</build>
+</project>

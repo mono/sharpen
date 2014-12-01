@@ -21,25 +21,30 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.ui.tests;
 
-import junit.framework.*;
+import static org.junit.Assert.*;
 import sharpen.core.*;
 
-public class ConfigurationTestCase extends TestCase {
+import org.junit.Test;
+
+public class ConfigurationTestCase {
 	private Configuration _configuration;
 	
 	public void setUp() {
 		_configuration = ConfigurationFactory.defaultConfiguration();
 	}
 	
+	@Test
 	public void testIgnoredAnnotationsByDefault() {
 		
 		assertTrue(_configuration.isIgnoredAnnotation("java.lang.Override"));
 	}
 	
+	@Test
 	public void testDefaultMappings() {
 		assertMappedTypeName("javanese.Foo", "javanese.Foo");
 	}
 
+	@Test
 	public void testMapNamespace() {		
 		_configuration.mapNamespace("^foo\\.bar", "System.IO");		
 		assertMappedTypeName("foo.bar.Writer", "System.IO.Writer");
@@ -47,6 +52,7 @@ public class ConfigurationTestCase extends TestCase {
 		assertEquals("System.IO", _configuration.mappedNamespace("foo.bar"));
 	}
 	
+	@Test
 	public void testPascalCaseNamespaces() {
 		_configuration.setNamingStrategy(PascalCaseNamingStrategy.DEFAULT);
 		

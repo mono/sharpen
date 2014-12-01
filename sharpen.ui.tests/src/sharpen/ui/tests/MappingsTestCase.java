@@ -1,9 +1,11 @@
 package sharpen.ui.tests;
 
 import sharpen.core.*;
+import org.junit.Test;
 
 public class MappingsTestCase extends AbstractConversionTestCase {
 	
+	@Test
 	public void testRemovedConstructor() throws Throwable {
 		runResourceTestCase("mappings/RemovedConstructor");
 	}

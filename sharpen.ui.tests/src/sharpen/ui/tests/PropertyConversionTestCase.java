@@ -21,29 +21,33 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.ui.tests;
 
-import org.junit.*;
+import org.junit.Test;
 
 import sharpen.core.*;
 
 public class PropertyConversionTestCase extends AbstractConversionTestCase {
 	
-	@Ignore
+	@Test
 	public void testMappedProperties() throws Throwable {
 		runResourceTestCase("properties/MappedProperties");
 	}
 	
+	@Test
 	public void testGetterSetterWithDifferentNames() throws Throwable {
 		runResourceTestCase("properties/GetterSetterWithDifferentNames");
 	}
 	
+	@Test
 	public void testStaticGetter() throws Throwable {
 		runResourceTestCase("properties/StaticGetter");
 	}
 
+	@Test
 	public void testSimpleGetter() throws Throwable {
 		runResourceTestCase("properties/SimpleGetter");
 	}
 	
+	@Test
 	public void testGetterSetterProperties() throws Throwable {
 		runBatchConverterTestCase(
 				getConfiguration(),
@@ -51,18 +55,22 @@ public class PropertyConversionTestCase extends AbstractConversionTestCase {
 				"properties/GetterSetterProperties");		
 	}
 	
+	@Test
 	public void testSimpleSetter() throws Throwable {
 		runResourceTestCase("properties/SimpleSetter");
 	}
 	
+	@Test
 	public void testInterfaceGetter() throws Throwable {
 		runResourceTestCase("properties/InterfaceGetter");
 	}
 	
+	@Test
 	public void testTestIndexerGeneric() throws Throwable {
 		runResourceTestCase("properties/TestIndexerGeneric");
 	}
 	
+	@Test
 	public void testIndexer() throws Throwable {
 		runBatchConverterTestCase(
 				getConfiguration(),
@@ -70,6 +78,7 @@ public class PropertyConversionTestCase extends AbstractConversionTestCase {
 				"properties/TestIndexerClient");		
 	}
 	
+	@Test
 	public void testPropertyInterfaceAndClassInDifferentCompilationUnits() throws Throwable {
 		runBatchConverterTestCase(
 				getConfiguration(),
@@ -77,6 +86,7 @@ public class PropertyConversionTestCase extends AbstractConversionTestCase {
 				"properties/InterfaceGetterImpl");
 	}
 	
+	@Test
 	public void testAbstractGetter() throws Throwable {
 		runBatchConverterTestCase(
 				getConfiguration(),
@@ -85,6 +95,7 @@ public class PropertyConversionTestCase extends AbstractConversionTestCase {
 				"properties/BaseInterfaceGetterImpl");
 	}
 	
+	@Test
 	public void testOverrideGetter() throws Throwable {
 		runBatchConverterTestCase(
 				getConfiguration(),
@@ -94,6 +105,7 @@ public class PropertyConversionTestCase extends AbstractConversionTestCase {
 				"properties/OverrideGetterConsumer");
 	}
 	
+	@Test
 	public void testNonStaticNestedUsingSuperProperty() throws Throwable {
 		runBatchConverterTestCase(
 				getConfiguration(),

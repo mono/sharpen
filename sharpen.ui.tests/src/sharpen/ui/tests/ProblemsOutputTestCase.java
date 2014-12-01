@@ -23,10 +23,15 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.ui.tests;
 
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
 import java.io.*;
 
 public class ProblemsOutputTestCase extends AbstractConversionTestCase {
 	
+	@Test
 	public void testProblemsGoToStderr() throws Throwable {		
 		final ByteArrayOutputStream stderr = new ByteArrayOutputStream();
 		

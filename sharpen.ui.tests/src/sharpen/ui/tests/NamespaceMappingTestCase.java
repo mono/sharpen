@@ -24,12 +24,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 package sharpen.ui.tests;
 
 import sharpen.core.*;
+import org.junit.Test;
 
 /**
  * @exclude
  */
 public class NamespaceMappingTestCase extends AbstractConversionTestCase {
 	
+	@Test
 	public void testPascalCaseNamespaces() throws Throwable {
 		runBatchConverterTestCase(
 				newPascalCaseConfiguration(),
@@ -37,6 +39,7 @@ public class NamespaceMappingTestCase extends AbstractConversionTestCase {
 				"namespaceMapping/foo/bar/Gazonk");
 	}
 	
+	@Test
 	public void testKeywordsInNamespace() throws Throwable {
 		runResourceTestCase("namespaceMapping/out/event/Foo");
 	}

@@ -2,8 +2,10 @@
 
 package sharpen.ui.tests;
 
-import junit.framework.*;
 import sharpen.core.*;
+
+import org.junit.Assert;
+import org.junit.Test;
 
 public class CustomConfigurationTestCase extends AbstractConversionTestCase {
 	
@@ -29,6 +31,7 @@ public class CustomConfigurationTestCase extends AbstractConversionTestCase {
 		}
 	}
 	
+	@Test
 	public void test() {
 		Assert.assertSame(CustomConfiguration.class, Sharpen.getDefault().configuration().getClass());
 	}

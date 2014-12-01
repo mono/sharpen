@@ -1,19 +1,25 @@
 package sharpen.ui.tests;
 
+import java.io.IOException;
+
+import org.junit.Test;
 import sharpen.core.*;
+
 
 public class AnnotationsTestCase extends AbstractConversionTestCase {
 
-	public void testSimpleAnnotation() throws Throwable {
+	@Test
+	public void testSimpleAnnotation() throws IOException  {
 		runResourceTestCase("SimpleAnnotation");
 	}
 	
-	public void testCompilerAnnotations() throws Throwable {
+	@Test
+	public void testCompilerAnnotations() throws IOException  {
 		runResourceTestCase("CompilerAnnotations");
 	}
 	
 	@Override
-	protected void runResourceTestCase(String resourceName) throws Throwable {
+	protected void runResourceTestCase(String resourceName) throws IOException  {
 		super.runResourceTestCase("annotations/" + resourceName);
 	}
 	

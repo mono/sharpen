@@ -23,49 +23,63 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.ui.tests;
 
+import java.io.IOException;
+
 import sharpen.core.*;
+
+import org.junit.Test;
 
 
 public class GenericsTestCase extends AbstractConversionTestCase {
 	
+	@Test
 	public void testGenericRuntimeTypeParameters() throws Throwable {
 		Configuration config = newPascalCasePlusConfiguration();
 		config.enableNativeTypeSystem();
 		runResourceTestCase(config, "generics/GenericRuntimeTypeParameters");
 	}
 	
+	@Test
 	public void testCollectionMappings() throws Throwable {
 		runResourceTestCase("CollectionMappings");
 	}
 
+	@Test
 	public void testGenericMethodImpl() throws Throwable {
 		runResourceTestCase("GenericMethodImpl");
 	}
 	
+	@Test
 	public void testWildcardTypes() throws Throwable {
 		runResourceTestCase("WildcardTypes");
 	}
 
+	@Test
 	public void testSimpleInterface() throws Throwable {
 		runResourceTestCase("GenericInterface");
 	}
 	
+	@Test
 	public void testSimpleClass() throws Throwable {
 		runResourceTestCase("GenericClass");
 	}
 	
+	@Test
 	public void testGenericImplements() throws Throwable {
 		runResourceTestCase("GenericImplements");
 	}
 	
+	@Test
 	public void testGenericExtends() throws Throwable {
 		runResourceTestCase("GenericExtends");
 	}
 	
+	@Test
 	public void testGenericReturnTypes() throws Throwable {
 		runResourceTestCase("GenericReturnTypes");
 	}
 	
+	@Test
 	public void testGenericMethodParameters() throws Throwable {
 		runResourceTestCase("GenericMethodParameters");
 	}
@@ -74,12 +88,13 @@ public class GenericsTestCase extends AbstractConversionTestCase {
 		runResourceTestCase("GenericObjectConstruction");
 	}
 	
+	@Test
 	public void testGenericMethods() throws Throwable {
 		runResourceTestCase("GenericMethods");
 	}
 	
 	@Override
-	protected void runResourceTestCase(String resourceName) throws Throwable {
+	protected void runResourceTestCase(String resourceName) throws IOException {
 		super.runResourceTestCase("generics/" + resourceName);
 	}
 }

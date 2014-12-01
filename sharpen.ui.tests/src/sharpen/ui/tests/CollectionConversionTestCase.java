@@ -20,47 +20,59 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
 package sharpen.ui.tests;
+import java.io.IOException;
+
+import org.junit.Test;
 
 public class CollectionConversionTestCase extends AbstractConversionTestCase {
 	
+	@Test
 	public void testComparatorSort() throws Throwable {
 		runResourceTestCase(newPascalCasePlusConfiguration(), resourcePath("ComparatorSort"));
 	}
 	
+	@Test
 	public void testSet() throws Throwable {
 		runResourceTestCase("Set");
 	}
 	
+	@Test
 	public void testMap1() throws Throwable {
 		runResourceTestCase("Map1");
 	}
 	
+	@Test
 	public void testList1() throws Throwable {
 		runResourceTestCase("List1");
 	}
 	
+	@Test
 	public void testEntrySet() throws Throwable {
 		runResourceTestCase("EntrySet1");
 	}
 	
+	@Test
 	public void testIterator() throws Throwable {
 		runResourceTestCase("Iterator1");
 	}
 	
+	@Test
 	public void testVector() throws Throwable {
 		runResourceTestCase("Vector1");
 	}
 	
+	@Test
 	public void testHashtable() throws Throwable {
 		runResourceTestCase("Hashtable1");
 	}
 	
+	@Test
 	public void testCollectionToArray() throws Throwable {
 		runResourceTestCase("CollectionToArray");
 	}
 	
 	@Override
-	protected void runResourceTestCase(String resourceName) throws Throwable {
+	protected void runResourceTestCase(String resourceName) throws IOException {
 		super.runResourceTestCase(resourcePath(resourceName));
 	}
 

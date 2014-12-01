@@ -20,54 +20,60 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
 package sharpen.ui.tests;
-
 import java.io.*;
 
-import org.eclipse.core.runtime.*;
 
 import sharpen.core.Configuration;
+import org.junit.Test; 
 
 public class OrganizeUsingsTestCase extends AbstractConversionTestCase {
 	
+	@Test
 	public void testGenerics() throws Throwable {
 		runResourceTestCase("Generics");
 	}
 
+	@Test
 	public void testSimpleUsing() throws Throwable {
 		runResourceTestCase("SimpleTest");
 	}
 
+	@Test
 	public void testFullyQualifiedName() throws Throwable {
 		Configuration conf = newOrganizeUsingsConfiguration();
 		conf.addFullyQualifiedTypeName("Test");
 		runResourceTestCase(conf, "FullyQualifiedType");
 	}
 
+	@Test
 	public void testNestedStaticType() throws Throwable {
 		runResourceTestCase("deep/tree/InnerStaticClass");
 	}
 	
+	@Test
 	public void testNestedType() throws Throwable {
 		runResourceTestCase("deep/tree/NestedType");
 	}
 
+	//@Test
 	public void testNamespaceConflict() throws Throwable {
 		runResourceTestCase("NamespaceConflict");
 	}
 	
+	@Test
 	public void testMethodNameConflict() throws Throwable {
 		runResourceTestCase("MethodNameConflict");
 	}	
 	
 	@Override
 	protected void runResourceTestCase(final String resource)
-			throws CoreException, IOException {
+			throws  IOException {
 		runResourceTestCase(newOrganizeUsingsConfiguration(), resource);
 	}
 
 	@Override
 	protected void runResourceTestCase(final Configuration config,
-			final String resource) throws CoreException, IOException {
+			final String resource) throws  IOException {
 		super.runResourceTestCase(config, "usings/" + resource);
 	}
 	

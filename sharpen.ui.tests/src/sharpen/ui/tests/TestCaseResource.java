@@ -23,12 +23,9 @@ package sharpen.ui.tests;
 
 import java.io.*;
 
-import junit.framework.Assert;
-
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
 
 import sharpen.util.*;
+import org.junit.Assert;
 
 
 /**
@@ -74,6 +71,10 @@ public class TestCaseResource {
 	public String actualStringContents() throws IOException {
 		return ResourceUtility.getStringContents(_originalPath + actualPathSuffix(), getClass());
 	}
+	
+	public String actualStringContents(String pathofTestResource) throws IOException {
+		return ResourceUtility.getStringContents(pathofTestResource + "/" + _originalPath + actualPathSuffix(), getClass());
+	}
 
 	protected String actualPathSuffix() {
 		return ".java.txt";
@@ -106,22 +107,23 @@ public class TestCaseResource {
 	 * @return
 	 */
 	public String packageName() {
-		return _packageName;
+		return _packageName.toLowerCase();
 	}
 
-	public void assertFile(IFile actualFile) throws IOException, CoreException {
+	public void assertFile(String actualFile) throws IOException {
+		File actualF = new File(actualFile);
 		if (expectedStringContents().length() == 0) {
-			Assert.assertFalse("No content in expected file: "  + actualFile, actualFile.exists());
+			Assert.assertFalse("No content in expected file: "  + actualFile, actualF.exists());
 			return;
 		}
-		Assert.assertTrue("Expected file: " + actualFile, actualFile.exists());
+		Assert.assertTrue("Expected file: " + actualFile, actualF.exists());
 		StringAssert.assertEqualLines(expectedStringContents(), fileContents(actualFile));
 	}
 	
-	private static String fileContents(IFile file) throws CoreException, IOException {
-		InputStream stream = file.getContents();
+	private static String fileContents(String file) throws IOException {
+		InputStream stream = new FileInputStream(file);
 		try {
-			return InputStreamUtility.readString(stream, file.getCharset());
+			return InputStreamUtility.readString(stream);
 		} finally {
 			stream.close();
 		}

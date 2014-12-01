@@ -148,7 +148,11 @@ public class CSharpBuilder extends ASTVisitor {
 
 	private String getText(int startPosition, int length) {
 		try {
-			return ((ICompilationUnit) _ast.getJavaElement()).getBuffer().getText(startPosition, length);
+			ICompilationUnit cu = (ICompilationUnit) _ast.getJavaElement();
+			if(cu != null){
+				return cu.getBuffer().getText(startPosition, length);
+			}
+			return ""; 
 		} catch (JavaModelException e) {
 			throw new RuntimeException(e);
 		}

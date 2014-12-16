@@ -120,47 +120,12 @@ public class SharpenConversion {
 	}
 
 	private void prepareForConversion(final CompilationUnit ast) {
-		deleteProblemMarkers();
 		WarningHandler warningHandler = new WarningHandler() {
 			public void warning(ASTNode node, String message) {
-				createProblemMarker(ast, node, message);
 				System.err.println(getSourcePath() + "(" + ASTUtility.lineNumber(ast, node) + "): " + message);
 			}
 		};
 		_configuration.setWarningHandler(warningHandler);
-	}
-
-	private void deleteProblemMarkers() {
-		if (createProblemMarkers()) {
-			/*try {
-				_source.getCorrespondingResource().deleteMarkers(Sharpen.PROBLEM_MARKER, false, IResource.DEPTH_ONE);
-			} catch (CoreException e) {
-				e.printStackTrace();
-			}*/
-		}
-	}
-
-	private void createProblemMarker(CompilationUnit ast, ASTNode node, String message) {
-		if (!createProblemMarkers()) {
-			return;
-		}			
-/*		try {
-			IMarker marker = _source.getCorrespondingResource().createMarker(Sharpen.PROBLEM_MARKER);			
-			Map<String, Object> attributes = new HashMap<String, Object>();
-			attributes.put(IMarker.MESSAGE, message);
-			attributes.put(IMarker.CHAR_START, new Integer(node.getStartPosition()));
-			attributes.put(IMarker.CHAR_END, new Integer(node.getStartPosition() + node.getLength()));
-			attributes.put(IMarker.TRANSIENT, Boolean.TRUE);
-			attributes.put(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
-			attributes.put(IMarker.LINE_NUMBER, ASTUtility.lineNumber(ast, node));			
-			marker.setAttributes(attributes);			
-		} catch (CoreException e) {			
-			e.printStackTrace();
-		}*/
-	}
-
-	private boolean createProblemMarkers() {
-		return _configuration.createProblemMarkers();
 	}
 
 	private String getSourcePath() {

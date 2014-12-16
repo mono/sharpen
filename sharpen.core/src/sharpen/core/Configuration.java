@@ -102,8 +102,6 @@ public abstract class Configuration {
 
 	private List<String> _fullyQualifiedTypes = new ArrayList<String>();
 	
-	private boolean _createProblemMarkers = false;
-
 	private String _header = "";
 	
 	private DocumentationOverlay _docOverlay = NullDocumentationOverlay.DEFAULT;
@@ -478,14 +476,6 @@ public abstract class Configuration {
 			}
 		}
 		return false;
-	}
-
-	public void setCreateProblemMarkers(boolean value) {
-		_createProblemMarkers = value;
-	}
-
-	public boolean createProblemMarkers() {
-		return _createProblemMarkers;
 	}
 
 	public void setHeader(String header) {

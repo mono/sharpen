@@ -3,7 +3,6 @@ namespace events
 	internal interface EventRegistry
 	{
 		/// <summary>An event.</summary>
-		/// <remarks>An event.</remarks>
 		event System.EventHandler<QueryEventArgs> QueryStarted;
 
 		event System.EventHandler<QueryEventArgs> QueryFinished;

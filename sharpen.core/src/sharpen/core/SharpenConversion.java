@@ -21,12 +21,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.core;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import sharpen.core.csharp.CSharpPrinter;
 import sharpen.core.csharp.ast.CSCompilationUnit;
 import sharpen.core.framework.*;
 import org.eclipse.jdt.core.dom.*;
+import sharpen.core.io.IO;
 
 public class SharpenConversion {
 
@@ -109,12 +111,23 @@ public class SharpenConversion {
 		final Environment environment = Environments.newConventionBasedEnvironment(ast, _configuration, _resolver, compilationUnit);
 		Environments.runWith(environment, new Runnable() { public void run() {
 			CSharpBuilder builder = new CSharpBuilder();
+			String source = readFile(SharpenConversion.this._source);
+			builder.setSourceContent(source);
 			builder.run();
 		}});
 		
 		return compilationUnit;
 	}
-	
+
+	private String readFile(String sourcePath) {
+		try {
+			return IO.readFile(new File(sourcePath));
+		} catch (IOException e) {
+			System.err.println("Can't load source from file " + sourcePath);
+			return "";
+		}
+	}
+
 	private boolean ignoringErrors() {
 		return _configuration.getIgnoreErrors();
 	}

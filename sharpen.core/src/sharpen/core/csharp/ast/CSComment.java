@@ -24,22 +24,19 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 package sharpen.core.csharp.ast;
 
 
-public class CSLineComment extends CSComment {
+public class CSComment extends CSNode {
 
-	private final String _text;
+	private final int _startPosition;
 
-	public CSLineComment(int startPosition, String text) {
-		super(startPosition);
-		_text = text;
+	public CSComment(int startPosition) {
+		_startPosition = startPosition;
 	}
 
 	@Override
 	public void accept(CSVisitor visitor) {
-		visitor.visit(this);
 	}
 
-	public String text() {
-		return _text;
+	public int startPosition() {
+		return _startPosition;
 	}
-
 }

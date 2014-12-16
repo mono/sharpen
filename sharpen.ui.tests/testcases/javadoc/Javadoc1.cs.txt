@@ -14,7 +14,6 @@ namespace javadoc
 	public abstract class Javadoc1
 	{
 		/// <summary>Constructors can have it too.</summary>
-		/// <remarks>Constructors can have it too.</remarks>
 		public Javadoc1()
 		{
 		}
@@ -46,7 +45,6 @@ namespace javadoc
 		public abstract void bar();
 
 		/// <summary>Blah.</summary>
-		/// <remarks>Blah.</remarks>
 		public const int BAR = 42;
 
 		/// <summary>

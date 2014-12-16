@@ -24,13 +24,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 package sharpen.core.csharp.ast;
 
 
-public class CSLineComment extends CSComment {
+public class CSBlockComment extends CSComment {
 
-	private final String _text;
+	private final String[] _lines;
 
-	public CSLineComment(int startPosition, String text) {
+	public CSBlockComment(int startPosition, String text) {
 		super(startPosition);
-		_text = text;
+		_lines = getLines(text);
 	}
 
 	@Override
@@ -38,8 +38,17 @@ public class CSLineComment extends CSComment {
 		visitor.visit(this);
 	}
 
-	public String text() {
-		return _text;
+	public String[] lines() {
+		return _lines;
 	}
 
+	private String[] getLines(String text) {
+		String[] lines = text.split("\\r?\\n");
+
+		for(int i = 0; i < lines.length; i++){
+			lines[i] = lines[i].trim();
+		}
+
+		return lines;
+	}
 }

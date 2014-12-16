@@ -225,6 +225,9 @@ public class CSVisitor {
 	public void visit(CSLineComment node) {
 	}
 
+	public void visit(CSBlockComment node) {
+	}
+
 	public void visit(CSRemovedExpression node) {
     }
 

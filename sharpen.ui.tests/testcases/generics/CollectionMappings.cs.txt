@@ -21,7 +21,7 @@ namespace generics
 		internal static void qualified(System.Collections.Generic.IEnumerable<string> iterable
 			)
 		{
-			System.Collections.Collection.IEnumerator<string> i = iterable.GetEnumerator();
+			System.Collections.Generic.IEnumerator<string> i = iterable.GetEnumerator();
 		}
 	}
 }

@@ -1,6 +1,7 @@
 public class Constructors2
 {
-	public Constructors2() : this(null)
+	public Constructors2()
+		: this(null)
 	{
 	}
 

@@ -24,11 +24,12 @@ package sharpen.ui.tests;
 import static org.junit.Assert.*;
 import sharpen.core.*;
 
-import org.junit.Test;
+import org.junit.*;
 
 public class ConfigurationTestCase {
 	private Configuration _configuration;
 	
+  @Before
 	public void setUp() {
 		_configuration = ConfigurationFactory.defaultConfiguration();
 	}

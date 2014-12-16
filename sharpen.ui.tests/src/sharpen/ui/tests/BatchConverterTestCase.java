@@ -35,6 +35,7 @@ public class BatchConverterTestCase extends AbstractConversionTestCase {
 		runBatchConverterTestCase("EmptyClass");
 	}
 	
+  @Test
 	public void testMultipleClassesEmptyPackage() throws Throwable {
 		runBatchConverterTestCase("EmptyClass", "AnotherEmptyClass");
 	}

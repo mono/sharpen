@@ -21,13 +21,15 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.ui.tests;
 
-import org.junit.Test;
+import org.junit.*;
 
 import sharpen.core.*;
 
 public class PropertyConversionTestCase extends AbstractConversionTestCase {
 	
-	@Test
+	//TODO: Ignored in original version of sharpen
+  @Ignore("This test was ignored in the Eclipse version of sharpen")
+  @Test
 	public void testMappedProperties() throws Throwable {
 		runResourceTestCase("properties/MappedProperties");
 	}

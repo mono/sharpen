@@ -84,6 +84,7 @@ public class GenericsTestCase extends AbstractConversionTestCase {
 		runResourceTestCase("GenericMethodParameters");
 	}
 	
+  @Test 
 	public void testGenericObjectConstruction() throws Throwable {
 		runResourceTestCase("GenericObjectConstruction");
 	}

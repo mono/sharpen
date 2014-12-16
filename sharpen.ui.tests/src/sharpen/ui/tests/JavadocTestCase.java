@@ -23,6 +23,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.ui.tests;
 
+import java.io.IOException;
+
 import sharpen.core.*;
 import org.junit.Test;
 
@@ -63,7 +65,7 @@ public class JavadocTestCase extends AbstractConversionTestCase {
 	}
 	
 	
-	private Configuration newDocumentationOverlayConfiguration(String resourceName) {
+	private Configuration newDocumentationOverlayConfiguration(String resourceName) throws IOException {
 		Configuration configuration = getConfiguration();
 		configuration.setDocumentationOverlay(new XmlDocumentationOverlay(ResourceUtility.getResourceUri(resourceName)));
 		return configuration;

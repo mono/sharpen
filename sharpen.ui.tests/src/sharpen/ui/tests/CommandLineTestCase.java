@@ -43,7 +43,7 @@ public class CommandLineTestCase extends AbstractConversionTestCase {
 		runResourceTestCaseCMD("autocasting/Hex");
 	}
 	
-	//@Test
+	@Test
 	public void testConstructorDeclaration() throws Throwable {
 		runResourceTestCaseCMD("Constructors1");
 	}

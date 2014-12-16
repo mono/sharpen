@@ -76,7 +76,7 @@ public class UnclassifiedConversionTestCase extends AbstractConversionTestCase {
 		runResourceTestCase("StringEmpty");
 	}
 	
-	//@Test
+	@Test
 	public void testEmptyCatch() throws Throwable {
 		runResourceTestCase("Catch1");
 	}
@@ -152,6 +152,7 @@ public class UnclassifiedConversionTestCase extends AbstractConversionTestCase {
 		runResourceTestCase("WrapperTypesMethods1");
 	}
 	
+	@Test
 	public void testDeadBranchElimination() throws Throwable {
 		runResourceTestCase("DeadBranchElimination1");
 	}

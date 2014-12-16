@@ -55,7 +55,7 @@ public class OrganizeUsingsTestCase extends AbstractConversionTestCase {
 		runResourceTestCase("deep/tree/NestedType");
 	}
 
-	//@Test
+	@Test
 	public void testNamespaceConflict() throws Throwable {
 		runResourceTestCase("NamespaceConflict");
 	}

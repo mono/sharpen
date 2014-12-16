@@ -2,7 +2,7 @@ public class Fields1
 {
 	private string _name;
 
-	protected int _intValue;
+	protected internal int _intValue;
 
 	internal bool _boolValue;
 

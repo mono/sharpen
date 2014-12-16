@@ -49,8 +49,9 @@ class SharpenCommandLineParser extends CommandLineParser {
 
 	@Override
 	protected void validate() {
-		if (_cmdLine.project == null) {
-			illegalArgument("unspecified source folder");
+		if((_cmdLine.project == null) && (_cmdLine.help == false)) {
+			System.out.println("Error:unspecified source folder. Please check help.");
+			_cmdLine.help =true;
 		}
 	}
 
@@ -146,9 +147,11 @@ class SharpenCommandLineParser extends CommandLineParser {
 		} else if (areEqual(arg, "-junitConversion")) {
 			_cmdLine.junitConversion = true;		
 		} else if (areEqual(arg, "-sharpenNamespace")) {
-			_cmdLine.sharpenNamespace = consumeNext();		
+			_cmdLine.sharpenNamespace = consumeNext();	
+		} else if (areEqual(arg, "-help")) {
+			_cmdLine.help = true;		
 		} else {
-			illegalArgument(arg);
+			_cmdLine.help = true;
 		}
 	}
 

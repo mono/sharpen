@@ -21,12 +21,15 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.core;
 
+import java.io.Console;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Properties;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -36,10 +39,15 @@ import sharpen.core.io.IO;
 
 public class SharpenApplication {
 	private SharpenCommandLine _args;
+	private static final int HELP_SIZE =27;
 
 	public void start(String[] args) throws Exception {
 		try {
 			_args = SharpenCommandLine.parse(args);
+			if(_args.help==true){
+				displayHelp();
+				return;
+			}
 			System.err.println("Configuration Class: " + _args.configurationClass);
 			System.err.println("Configuration Class: " +_args.runtimeTypeName);
 			Sharpen.getDefault().configuration(ConfigurationFactory.newConfiguration(_args.configurationClass, _args.runtimeTypeName));
@@ -51,7 +59,54 @@ public class SharpenApplication {
 		}
 	}
 
-	
+	void displayHelp()
+	{
+		Properties prop = new Properties();
+    	InputStream input = null;
+ 
+    	try {
+ 
+    		String filename = "sharpen.properties";
+    		input = SharpenApplication.class.getClassLoader().getResourceAsStream(filename);
+    		if(input==null){
+    	            System.out.println("Unable to find " + filename);
+    		    return;
+    		}
+    		prop.load(input);
+    		
+    		System.out.println("**************Help Start**************************");
+            //get the property value and print it out
+    		System.out.println(prop.getProperty("111"));
+    		System.out.println();
+    		System.out.println(prop.getProperty("222"));
+    		System.out.println();
+    		System.out.println("Valid command line options are as following. PRESS ENTER TO PROCEED");
+    		
+    		Console console = System.console();
+    	       
+    		for (int i = 1; i <= HELP_SIZE; i++){
+    			String key= Integer.toString(i);
+    			System.out.println();
+    			System.out.println(prop.getProperty(key));
+    			if(i%5 ==0){
+    			    console.readLine();
+    			}
+    		} 
+            System.out.println("**************Help End**************************");
+  
+    	} catch (IOException ex) {
+    		ex.printStackTrace();
+        } finally{
+        	if(input!=null){
+	        		try {
+					input.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+        	}
+        }
+		
+	}
 
 	void safeRun() throws Exception {
 

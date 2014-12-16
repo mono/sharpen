@@ -88,4 +88,5 @@ public class SharpenCommandLine {
 	public String configurationClass;
 	public boolean junitConversion;
 	public String sharpenNamespace;
+	public boolean help;
 }

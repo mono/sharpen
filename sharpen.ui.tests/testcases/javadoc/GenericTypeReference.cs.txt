@@ -1,8 +1,8 @@
 namespace javadoc
 {
 	/// <summary>
-	/// <see cref="Item{T}">Item&lt;T&gt;</see>
-	/// <see cref="Item{T}.foo{R}()">Item&lt;T&gt;.foo&lt;R&gt;()</see>
+	/// <see cref="Item{T}"/>
+	/// <see cref="Item{T}.foo{R}()"/>
 	/// </summary>
 	internal class GenericTypeReference
 	{

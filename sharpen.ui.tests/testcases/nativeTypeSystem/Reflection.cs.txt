@@ -2,7 +2,7 @@ namespace NativeTypeSystem
 {
 	public class Reflection
 	{
-		/// <exception cref="System.Exception"></exception>
+		/// <exception cref="System.Exception"/>
 		public virtual void InvokeMethod(System.Reflection.MethodInfo m, object[] args)
 		{
 			m.Invoke(null, args);

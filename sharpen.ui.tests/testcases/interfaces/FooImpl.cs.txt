@@ -2,7 +2,7 @@ namespace Interfaces
 {
 	/// <summary>
 	/// See
-	/// <see cref="BaseFoo.Bar">BaseFoo.Bar</see>
+	/// <see cref="BaseFoo.Bar"/>
 	/// </summary>
 	public class FooImpl : Interfaces.IFoo
 	{

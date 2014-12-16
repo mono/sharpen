@@ -21,30 +21,28 @@ namespace javadoc
 
 		/// <summary>
 		/// Link to method with no args specified:
-		/// <see cref="depracatedMethod(string[], string[][])">depracatedMethod(string[], string[][])
-		/// 	</see>
+		/// <see cref="depracatedMethod(string[], string[][])"/>
 		/// Link to method with args specified   :
-		/// <see cref="depracatedMethod(string[], string[][])">depracatedMethod(string[], string[][])
-		/// 	</see>
+		/// <see cref="depracatedMethod(string[], string[][])"/>
 		/// Methods should have a summary.
 		/// Multiple lines also allowed.
 		/// Try with -
-		/// <see cref="BAR">BAR</see>
+		/// <see cref="BAR"/>
 		/// And also with -
-		/// <see cref="BAR">BAR</see>
+		/// <see cref="BAR"/>
 		/// </summary>
 		/// <param name="bar">the bar argument</param>
 		/// <param name="object">the object argument</param>
 		/// <returns>the ultimate answer</returns>
 		/// <exception cref="System.InvalidOperationException">when things go crazy</exception>
-		/// <seealso cref="int.MaxValue">int.MaxValue</seealso>
+		/// <seealso cref="int.MaxValue"/>
 		/// <seealso><a href="http://a-valid-url.com/resource">Ancor Text</a></seealso>
 		public virtual int foo(int bar, object @object)
 		{
 			return 42;
 		}
 
-		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="System.IO.IOException"/>
 		public abstract void bar();
 
 		/// <summary>Blah.</summary>
@@ -58,7 +56,7 @@ namespace javadoc
 		/// <remarks>
 		/// Type references should not cause using statements to be added to
 		/// the c# code.
-		/// <see cref="java.lang.Thread">java.lang.Thread</see>
+		/// <see cref="java.lang.Thread"/>
 		/// .
 		/// </remarks>
 		public abstract void typeReferences();

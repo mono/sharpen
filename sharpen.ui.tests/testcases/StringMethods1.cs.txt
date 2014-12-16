@@ -1,6 +1,6 @@
 public class StringMethods1
 {
-	/// <exception cref="System.Exception"></exception>
+	/// <exception cref="System.Exception"/>
 	public static void run(string s)
 	{
 		int i = s.IndexOf("foo");

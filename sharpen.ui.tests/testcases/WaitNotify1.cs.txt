@@ -2,7 +2,7 @@ public class WaitNotify1
 {
 	private object _lock;
 
-	/// <exception cref="System.Exception"></exception>
+	/// <exception cref="System.Exception"/>
 	public virtual void start()
 	{
 		Sharpen.Runtime.wait(_lock);

@@ -1,6 +1,6 @@
 public class Clone1 : System.ICloneable
 {
-	/// <exception cref="System.Exception"></exception>
+	/// <exception cref="System.Exception"/>
 	public virtual Clone1 copy1()
 	{
 		return (Clone1)MemberwiseClone();

@@ -28,12 +28,10 @@ import org.junit.Test;
 
 public class StringAssert {
 
-	@Test
 	public static void assertEqualLines(String expected, String actual) {
 		Assert.assertEquals(normalizeWhiteSpace(expected), normalizeWhiteSpace(actual));
 	}
-	
-	@Test
+
 	public static String normalizeWhiteSpace(String expected) {
 		return expected.trim().replaceAll("\r\n", "\n");
 	}

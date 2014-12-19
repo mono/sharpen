@@ -60,7 +60,7 @@ public class CommandLineTestCase extends AbstractConversionTestCase {
 	
 	@Test
 	public void testCollectionMappings() throws Throwable {
-		runResourceTestCaseCMD("CollectionMappings");
+		runResourceTestCaseCMD("generics/" + "CollectionMappings");
 	}
 
 	@Test

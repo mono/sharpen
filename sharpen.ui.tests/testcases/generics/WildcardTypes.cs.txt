@@ -10,7 +10,8 @@ namespace generics
 
 	public class WildcardTypes
 	{
-		private static void run(generics.Foo<generics.Item> items)
+		private static void run<_T0>(generics.Foo<_T0> items)
+			where _T0 : generics.Item
 		{
 			generics.Foo<object> i = items;
 		}

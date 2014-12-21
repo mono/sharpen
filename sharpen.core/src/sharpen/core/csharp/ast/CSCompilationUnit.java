@@ -51,11 +51,21 @@ public class CSCompilationUnit extends CSNode {
 	}
 	
 	private boolean namespaceAlreadyUsed(String namespace) {
+
+		//	do not add using with same name as current namespace
+		if(!isEmpty(_namespace) && !isEmpty(namespace) && namespace.equals(_namespace)){
+			return true;
+		}
+
 		for (CSUsing us : _usings)
 			if (us.namespace().equals(namespace))
 				return true;
 
 		return false;
+	}
+
+	private boolean isEmpty(String namespace) {
+		return namespace == null || namespace.length() == 0;
 	}
 
 	public void addType(CSType type) {

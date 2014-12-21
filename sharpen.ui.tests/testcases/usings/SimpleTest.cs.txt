@@ -1,5 +1,3 @@
-using Usings;
-
 namespace Usings
 {
 	public class SimpleTest

@@ -23,6 +23,7 @@ package sharpen.ui.tests;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.After;
@@ -107,15 +108,15 @@ public abstract class AbstractConversionTestCase  {
 
 	protected String sharpenResource(final Configuration configuration,
 			TestCaseResource resource)  {
-		
+
 		String result ="Success";
-				
+
 		try {
-			String cu = createCompilationUnit(resource);			
+			String cu = createCompilationUnit(resource);
 			File cufile = new File(cu);
-			
+
 			result = result + cufile;
-		
+
 			String sourceFilePath =projecttempLocation +"/temp/" +projectName + "/src";
 			String targetProject = projecttempLocation +"/temp/" +projectName + "/" +getConvertedProject();
 			configuration.setSharpenNamespace("nonamespace");
@@ -125,21 +126,28 @@ public abstract class AbstractConversionTestCase  {
 			converter.setsourcePathEntries(sourceFilePath);
 			converter.setTargetProject(targetProject);
 			converter.run();
-			
+
 			String packageName = resource.packageName();
 			if(resource.packageName().isEmpty())
 			{
 				packageName ="src";
 			}
-			
+
 			result= projecttempLocation +"/temp/" +
-										projectName + "/" + 
+										projectName + "/" +
 			                            getConvertedProject() + "/" +
 			                            packageName.replace(".", "/") + "/" +
 					                    cufile.getName().substring(0,cufile.getName().lastIndexOf("."))
 			                            + ".cs";
-			
-			 byte[] encoded = Files.readAllBytes(Paths.get(result));
+
+			Path filePath = Paths.get(result);
+
+			//	to reproduce old behaviour we will return empty string if file not exists
+			if(!Files.exists(filePath)){
+				return "";
+			}
+
+			 byte[] encoded = Files.readAllBytes(filePath);
 			 return new String(encoded);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

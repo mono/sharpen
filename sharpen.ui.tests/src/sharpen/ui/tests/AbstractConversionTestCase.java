@@ -127,7 +127,7 @@ public abstract class AbstractConversionTestCase  {
 			converter.setTargetProject(targetProject);
 			converter.run();
 
-			String packageName = resource.packageName();
+			String packageName = configuration.getNamespaceMappings(resource.packageName());
 			if(resource.packageName().isEmpty())
 			{
 				packageName ="src";
@@ -308,8 +308,8 @@ public abstract class AbstractConversionTestCase  {
 	 * @throws Throwable
 	 */
 	private void checkConversionResult(Configuration configuration, String targetFolder, TestCaseResource resource) throws Throwable {
-		
-		String packageName = resource.packageName();
+
+		String packageName = configuration.getNamespaceMappings(resource.packageName()).toLowerCase();
 		if(resource.packageName().isEmpty())
 		{
 			packageName ="src";

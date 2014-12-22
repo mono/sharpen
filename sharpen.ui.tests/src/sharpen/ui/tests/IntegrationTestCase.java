@@ -9,7 +9,7 @@ public class IntegrationTestCase extends AbstractConversionTestCase {
 	public void testNamespaceMappingWithTypeRenaming() throws Throwable {
 		final Configuration config = getConfiguration();
 		config.enableOrganizeUsings();
-		config.mapNamespace("integration\\.namespaceMapping\\.foo", "UbberFoo");
+		config.mapNamespace("integration.namespaceMapping.foo", "UbberFoo");
 		
 		runBatchConverterTestCase(config,
 				new TestCaseResource("integration/namespaceMapping/foo/Foo") {

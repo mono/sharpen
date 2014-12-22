@@ -343,6 +343,14 @@ public abstract class Configuration {
 			: mappedNamespace(defaultValue);
 	}
 
+	public String getNamespaceMappings(String from) {
+		for (NameMapping mapping : _namespaceMappings) {
+			if(mapping.from.equalsIgnoreCase(from))
+				return mapping.to;
+		}
+		return from;
+	}
+
 	private String applyNamespaceMappings(String typeName) {
 		for (NameMapping mapping : _namespaceMappings) {
 			typeName = typeName.replaceFirst(mapping.from + "\\.", mapping.to + ".");

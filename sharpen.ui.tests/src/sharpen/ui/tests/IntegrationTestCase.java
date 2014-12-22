@@ -13,11 +13,15 @@ public class IntegrationTestCase extends AbstractConversionTestCase {
 		
 		runBatchConverterTestCase(config,
 				new TestCaseResource("integration/namespaceMapping/foo/Foo") {
+					@Override
+					public String getTargetDir() {
+						return "UbberFoo";
+					}
+
 					@Override public String targetSimpleName() {
 						return "FooFactory";
 					}
 				},
 				new TestCaseResource("integration/namespaceMapping/bar/FooUsage"));
 	}
-
 }

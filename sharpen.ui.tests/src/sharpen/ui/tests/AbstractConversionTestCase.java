@@ -127,20 +127,12 @@ public abstract class AbstractConversionTestCase  {
 			converter.setTargetProject(targetProject);
 			converter.run();
 
-			String packageName = configuration.getNamespaceMappings(resource.packageName());
-			if(resource.packageName().isEmpty())
-			{
-				packageName ="src";
+			String targetDir = resource.getTargetDir();
+			if(targetDir.isEmpty()){
+				targetDir ="src";
 			}
 
-			result= projecttempLocation +"/temp/" +
-										projectName + "/" +
-			                            getConvertedProject() + "/" +
-			                            packageName.replace(".", "/") + "/" +
-					                    cufile.getName().substring(0,cufile.getName().lastIndexOf("."))
-			                            + ".cs";
-
-			Path filePath = Paths.get(result);
+			Path filePath = Paths.get(projecttempLocation, "temp", projectName, getConvertedProject(), targetDir, resource.targetSimpleName()+ ".cs");
 
 			//	to reproduce old behaviour we will return empty string if file not exists
 			if(!Files.exists(filePath)){
@@ -182,8 +174,7 @@ public abstract class AbstractConversionTestCase  {
 			
 			
 			String packageName = resource.packageName();
-			if(resource.packageName().isEmpty())
-			{
+			if(resource.packageName().isEmpty()){
 				packageName ="src";
 			}
 			
@@ -309,15 +300,12 @@ public abstract class AbstractConversionTestCase  {
 	 */
 	private void checkConversionResult(Configuration configuration, String targetFolder, TestCaseResource resource) throws Throwable {
 
-		String packageName = configuration.getNamespaceMappings(resource.packageName()).toLowerCase();
-		if(resource.packageName().isEmpty())
-		{
-			packageName ="src";
+		String targetDir = resource.getTargetDir();
+		if(targetDir.isEmpty()){
+			targetDir ="src";
 		}
-		
-		String file= targetFolder + "/" +
-		        packageName.replace(".", "/") + "/" +
-		        resource.targetSimpleName() + ".cs";
+
+		String file = Paths.get(targetFolder, targetDir, resource.targetSimpleName()+ ".cs").toString();
 		
 		assertFile(resource, file);
 	}

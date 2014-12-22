@@ -45,8 +45,18 @@ public class NativeInterfacesTestCase extends AbstractConversionTestCase {
 		configuration.mapNamespace("interfaces", "What.Ever");
 		runBatchConverterTestCase(
 				configuration,
-				"interfaces/MappedFooImpl",
-				"interfaces/MappedBaseFoo");
+				new TestCaseResource("interfaces/MappedFooImpl") {
+					@Override
+					public String getTargetDir() {
+						return "what/ever";
+					}
+				},
+				new TestCaseResource("interfaces/MappedBaseFoo"){
+					@Override
+					public String getTargetDir() {
+						return "what/ever";
+					}
+				});
 	}	
 
 	@Test

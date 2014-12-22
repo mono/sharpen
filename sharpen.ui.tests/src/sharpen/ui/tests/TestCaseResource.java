@@ -38,23 +38,30 @@ public class TestCaseResource {
 	private final String _originalPath;
 	private final String _packageName;
 	private final String _simpleName;
-	private final String _expectedPath;	
+
+	private String _targetDir;
+	private String _targetSimpleName;
+	private final String _expectedPath;
+
+	public TestCaseResource(String originalPath, String expectedPath) {
+
+		String parts[] = originalPath.split("/");
+
+		_simpleName = parts[parts.length-1];
+		_packageName = join(parts, parts.length-1, ".");
+		_originalPath = originalPath;
+
+		String partsExpected[] = expectedPath.split("/");
+		_targetDir = join(parts, parts.length - 1, "/");
+		_targetSimpleName = partsExpected[partsExpected.length-1];
+		_expectedPath = expectedPath;
+	}
 
 	/**
 	 * Create a new test case resource. 
 	 * 
 	 * @param path relative path to the resource from the root of the project, ex.: EmptyClass, com/db4o/Test1.
 	 */
-	public TestCaseResource(String originalPath, String expectedPath) {
-		
-		String parts[] = originalPath.split("/");
-		
-		_simpleName = parts[parts.length-1];
-		_packageName = join(parts, parts.length-1, ".");
-		_originalPath = originalPath;
-		_expectedPath = expectedPath;
-	}
-	
 	public TestCaseResource(String path) {
 		this(path, path);
 	}
@@ -89,9 +96,13 @@ public class TestCaseResource {
 	}
 	
 	public String targetSimpleName() {	
-		return _simpleName;
+		return _targetSimpleName;
 	}
-	
+
+	public String getTargetDir() {
+		return _targetDir;
+	}
+
 	String join(String parts[], int count, String separator) {
 		StringBuffer buffer = new StringBuffer();
 		for (int i=0; i<count; ++i) {

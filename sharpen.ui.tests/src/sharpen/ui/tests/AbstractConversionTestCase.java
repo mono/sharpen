@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.eclipse.core.runtime.CoreException;
 import org.junit.After;
 import org.junit.Before;
 
@@ -84,7 +85,7 @@ public abstract class AbstractConversionTestCase  {
 	}
 	
 	
-	protected void runResourceTestCase(String resourceName) throws IOException {		
+	protected void runResourceTestCase(String resourceName) throws IOException, CoreException {
 		runResourceTestCase(getConfiguration(), resourceName);
 	}
 	
@@ -92,11 +93,11 @@ public abstract class AbstractConversionTestCase  {
 		runResourceTestCaseCMD(resourceName,resourceName);
 	}
 
-	protected void runResourceTestCase(final Configuration configuration, String resourceName) throws IOException {
+	protected void runResourceTestCase(final Configuration configuration, String resourceName) throws IOException, CoreException {
 		runResourceTestCase(configuration, resourceName, resourceName);
 	}
 	
-	protected void runResourceTestCase(final Configuration configuration, String originalResourceName, String expectedResourceName) throws IOException  {
+	protected void runResourceTestCase(final Configuration configuration, String originalResourceName, String expectedResourceName) throws IOException, CoreException {
 		TestCaseResource resource = new TestCaseResource(originalResourceName, expectedResourceName);		
 		resource.assertExpectedContent(sharpenResource(configuration, resource));
 	}
@@ -107,15 +108,11 @@ public abstract class AbstractConversionTestCase  {
 	}
 
 	protected String sharpenResource(final Configuration configuration,
-			TestCaseResource resource)  {
+			TestCaseResource resource) throws IOException, CoreException {
 
-		String result ="Success";
-
-		try {
 			String cu = createCompilationUnit(resource);
 			File cufile = new File(cu);
 
-			result = result + cufile;
 
 			String sourceFilePath =projecttempLocation +"/temp/" +projectName + "/src";
 			String targetProject = projecttempLocation +"/temp/" +projectName + "/" +getConvertedProject();
@@ -141,12 +138,6 @@ public abstract class AbstractConversionTestCase  {
 
 			 byte[] encoded = Files.readAllBytes(filePath);
 			 return new String(encoded);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			result = result + e.toString();
-		}
-		return result;
 	}
 	
 	protected String sharpenResourceCMD(TestCaseResource resource)  {

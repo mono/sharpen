@@ -23,6 +23,7 @@ package sharpen.ui.tests;
 import java.io.*;
 
 
+import org.eclipse.core.runtime.CoreException;
 import sharpen.core.Configuration;
 import org.junit.Test; 
 
@@ -67,13 +68,13 @@ public class OrganizeUsingsTestCase extends AbstractConversionTestCase {
 	
 	@Override
 	protected void runResourceTestCase(final String resource)
-			throws  IOException {
+			throws IOException, CoreException {
 		runResourceTestCase(newOrganizeUsingsConfiguration(), resource);
 	}
 
 	@Override
 	protected void runResourceTestCase(final Configuration config,
-			final String resource) throws  IOException {
+			final String resource) throws IOException, CoreException {
 		super.runResourceTestCase(config, "usings/" + resource);
 	}
 	

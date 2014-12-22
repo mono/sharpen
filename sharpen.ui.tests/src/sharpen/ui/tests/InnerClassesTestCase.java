@@ -24,6 +24,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 package sharpen.ui.tests;
 import java.io.IOException;
 
+import org.eclipse.core.runtime.CoreException;
 import org.junit.Test;
 
 public class InnerClassesTestCase extends AbstractConversionTestCase {
@@ -129,7 +130,7 @@ public class InnerClassesTestCase extends AbstractConversionTestCase {
 	}
 	
 	@Override
-	protected void runResourceTestCase(String resourceName) throws IOException {
+	protected void runResourceTestCase(String resourceName) throws IOException, CoreException {
 		super.runResourceTestCase("innerclasses/" + resourceName);
 	}
 

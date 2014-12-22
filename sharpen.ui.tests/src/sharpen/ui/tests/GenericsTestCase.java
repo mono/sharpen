@@ -25,6 +25,7 @@ package sharpen.ui.tests;
 
 import java.io.IOException;
 
+import org.eclipse.core.runtime.CoreException;
 import sharpen.core.*;
 
 import org.junit.Test;
@@ -95,7 +96,7 @@ public class GenericsTestCase extends AbstractConversionTestCase {
 	}
 	
 	@Override
-	protected void runResourceTestCase(String resourceName) throws IOException {
+	protected void runResourceTestCase(String resourceName) throws IOException, CoreException {
 		super.runResourceTestCase("generics/" + resourceName);
 	}
 }

@@ -9,7 +9,7 @@ namespace collections
 			{
 				object value = map["foo"];
 			}
-			foreach (object value in map.Values)
+			foreach (object value_1 in map.Values)
 			{
 			}
 			foreach (object key in map.Keys)
@@ -21,7 +21,7 @@ namespace collections
 
 		internal static System.Collections.IDictionary genericSortedMap()
 		{
-			return new System.Collections.Generic.SortedList<string, string>();
+			return new System.Collections.Generic.SortedDictionary<string, string>();
 		}
 
 		internal static System.Collections.IDictionary sortedMap()

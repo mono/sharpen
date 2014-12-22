@@ -137,11 +137,16 @@ public class DefaultConfiguration extends Configuration {
 	    	mapProperty("java.util.Iterator.next", "Current");
 	    }
 	    mapMethod("java.util.Map.remove", collectionRuntimeMethod("Remove"));
+		mapMethod("java.util.Map.containsKey", "Contains");
 	    mapProperty("java.util.Map.Entry.getKey", "Key");
 	    mapProperty("java.util.Map.Entry.getValue", "Value");
 	    mapProperty("java.util.Map.values", "Values");
 	    mapProperty("java.util.Map.keySet", "Keys");
-	    mapIndexer("java.util.Dictionary.get");
+
+		mapIndexer("java.util.Dictionary.get");
+		mapIndexer("java.util.Dictionary.put");
+		mapIndexer("java.util.Map.get");
+		mapIndexer("java.util.Map.put");
 	    
 	    //  jdk 1.0 collection framework
 	    mapType("java.util.Vector", "System.Collections.ArrayList");
@@ -156,8 +161,8 @@ public class DefaultConfiguration extends Configuration {
 	    mapMethod("java.util.Vector.removeAllElements", "Clear");
 	    mapMethod("java.util.Enumeration.hasMoreElements", "MoveNext");
 	    mapProperty("java.util.Enumeration.nextElement", "Current");
-	    
-	    mapType("java.util.Hashtable", "System.Collections.Hashtable");
+
+		mapType("java.util.Hashtable", "System.Collections.Hashtable");
 	    mapProperty("java.util.Dictionary.keys", "Keys");
 	    mapProperty("java.util.Dictionary.size", "Count");
 	    

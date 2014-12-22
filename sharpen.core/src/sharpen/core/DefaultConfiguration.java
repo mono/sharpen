@@ -138,6 +138,7 @@ public class DefaultConfiguration extends Configuration {
 	    }
 	    mapMethod("java.util.Map.remove", collectionRuntimeMethod("Remove"));
 		mapMethod("java.util.Map.containsKey", "Contains");
+		mapMethod("java.util.Map.entrySet", "");
 	    mapProperty("java.util.Map.Entry.getKey", "Key");
 	    mapProperty("java.util.Map.Entry.getValue", "Value");
 	    mapProperty("java.util.Map.values", "Values");

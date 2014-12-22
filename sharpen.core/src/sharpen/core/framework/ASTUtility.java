@@ -67,19 +67,13 @@ public class ASTUtility {
 	public static int lineNumber(CompilationUnit ast, ASTNode node) {
 		return ast.lineNumber(node.getStartPosition());
 	}
-	
-	public static void checkForProblems(CompilationUnit ast, boolean throwOnError) {
-		if (dumpProblemsToStdErr(ast) && throwOnError) {
-			throw new RuntimeException("'" + compilationUnitPath(ast) + "' has errors, check stderr for details.");
-		}
-	}
 
 	private static void dumpProblem(IProblem problem) {
 		System.err.print(problem.getOriginatingFileName());
 		System.err.println("(" + problem.getSourceLineNumber() + "): " + problem.getMessage());
 	}
 
-	private static boolean dumpProblemsToStdErr(CompilationUnit ast) {
+	public static boolean dumpProblemsToStdErr(CompilationUnit ast) {
 		boolean hasErrors = false;
 		for (IProblem problem : ast.getProblems()) {
 			if (problem.isError()) {

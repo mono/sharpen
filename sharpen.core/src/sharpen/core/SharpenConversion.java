@@ -103,7 +103,9 @@ public class SharpenConversion {
 	}
 
 	protected void processProblems(CompilationUnit ast) {
-		ASTUtility.checkForProblems(ast, !ignoringErrors());
+		if (ASTUtility.dumpProblemsToStdErr(ast) && !ignoringErrors()) {
+			throw new RuntimeException("'" + _source + "' has errors, check stderr for details.");
+		}
 	}
 
 	private CSCompilationUnit convert(final CompilationUnit ast) {

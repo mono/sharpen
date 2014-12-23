@@ -1839,7 +1839,8 @@ public class CSharpBuilder extends ASTVisitor {
 		if (method instanceof CSMethod) {
 			IVariableBinding vb = parameter.resolveBinding();
 			ITypeBinding[] ta = vb.getType().getTypeArguments();
-			if (ta.length > 0 && ta[0].getName().startsWith("?")) {
+			//	we need to check that generic class is not Class<?>
+			if (ta.length > 0 && ta[0].getName().startsWith("?") && !isJavaLangClass(parameter.resolveBinding().getType())) {
 				ITypeBinding extended = mapTypeParameterExtendedType (ta[0]);
 				CSMethod met = (CSMethod)method;
 				String genericArg = "_T" + met.typeParameters().size();

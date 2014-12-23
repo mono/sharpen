@@ -45,6 +45,7 @@ public class DefaultConfiguration extends Configuration {
 	    mapMethod("java.lang.Object.toString", "ToString");
 	    mapMethod("java.lang.Object.hashCode", "GetHashCode");
 	    mapMethod("java.lang.Object.equals", "Equals");
+		mapMethod("java.lang.Object.clone", "MemberwiseClone");
 	    
 	    mapMethod("java.lang.Float.isNaN", "float.IsNaN");
 	    mapMethod("java.lang.Double.isNaN", "double.IsNaN");

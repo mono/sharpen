@@ -4,6 +4,6 @@ public class UnsignedRightShift
 
 	public virtual void run()
 	{
-		int a = (DELTA) >> (2 & 0x1f);
+		int a = (int)(((uint)DELTA) >> 2);
 	}
 }

@@ -27,6 +27,7 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
@@ -72,8 +73,8 @@ public class ConfigurationFactory {
 		String configJar = NameUtility.unqualify(configurationClass)+ ".sharpenconfig.jar";
 
 		try {
-			URI contentURI = ConfigurationFactory.class.getProtectionDomain().getCodeSource().getLocation().toURI();
-			File currentDirectory = new File(contentURI);
+			URI currentDirectoryURI = getCurrentDirectoryURI();
+			File currentDirectory = new File(currentDirectoryURI);
 			Path configPath = Paths.get(currentDirectory.getPath(), configJar);
 			URI jarURI = configPath.toUri();
 			File configFile = configPath.toFile();
@@ -87,6 +88,10 @@ public class ConfigurationFactory {
 		catch (Exception ex){
 			throw new Exception("External configuration library error : " + ex.getMessage(), ex);
 		}
+	}
+
+	public static URI getCurrentDirectoryURI() throws URISyntaxException {
+		return ConfigurationFactory.class.getProtectionDomain().getCodeSource().getLocation().toURI();
 	}
 
 	private static String evalRuntimeType(String runtimeTypeName) {

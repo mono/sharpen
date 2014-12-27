@@ -1,6 +1,6 @@
 namespace innerclasses
 {
-	public class GenericAnonymousWithPrivateMethod<T>
+	public class GenericAnonymousWithAdditionalMethods<T>
 	{
 		public static java.lang.Comparable run(object obj)
 		{
@@ -15,10 +15,14 @@ namespace innerclasses
 
 			public int compareTo(object target)
 			{
-				return result(target);
+				return this.result(target);
 			}
-			
-			private int result()
+
+			/*
+			For some unknown reason in MappingsImpl#isDeclaringClassIgnoringExtends() declaringClassBinding believes it is non anonymous.
+			I can see, people don't like to be anonymous (at least most of the time).
+			*/
+			private int result(object target)
 			{
 				return 0;
 			}

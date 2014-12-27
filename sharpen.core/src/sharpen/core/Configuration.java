@@ -21,6 +21,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.core;
 
+import sharpen.core.framework.NameUtility;
+
 import java.util.*;
 
 public abstract class Configuration {
@@ -504,19 +506,12 @@ public abstract class Configuration {
 	}
 
 	public void mapEvent(String qualifiedMethodName, String eventArgsTypeName) {
-		mapProperty(qualifiedMethodName, unqualify(qualifiedMethodName));
+		mapProperty(qualifiedMethodName, NameUtility.unqualify(qualifiedMethodName));
 		_mappedEvents.put(qualifiedMethodName, eventArgsTypeName);
 	}
 	
 	public String mappedEvent(String qualifiedMethodName) {
 		return _mappedEvents.get(qualifiedMethodName);
-	}
-
-	private String unqualify(String qualifiedMethodName) {
-		final int lastDot = qualifiedMethodName.lastIndexOf('.');
-		return lastDot == -1
-			? qualifiedMethodName
-			: qualifiedMethodName.substring(lastDot+1);
 	}
 
 	public void mapEventAdds(Iterable<String> eventAddMappings) {

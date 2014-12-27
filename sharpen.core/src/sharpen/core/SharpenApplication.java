@@ -50,7 +50,10 @@ public class SharpenApplication {
 			}
 			System.err.println("Configuration Class: " + _args.configurationClass);
 			System.err.println("Configuration Class: " +_args.runtimeTypeName);
-			Sharpen.getDefault().configuration(ConfigurationFactory.newConfiguration(_args.configurationClass, _args.runtimeTypeName));
+			Configuration config = ConfigurationFactory.newExternalConfiguration(_args.configurationClass, _args.runtimeTypeName, newProgressMonitor());
+			if(config == null)
+				config = ConfigurationFactory.newConfiguration(_args.configurationClass, _args.runtimeTypeName);
+			Sharpen.getDefault().configuration(config);
 			safeRun();
 		} catch (Exception x) {
 			System.err.println("ERROR: " + x.getMessage());

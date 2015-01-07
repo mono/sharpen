@@ -1,6 +1,6 @@
 # Sharpen - Automated Java->C# coversion
 
-[![master](https://img.shields.io/travis/imazen/sharpen/master.svg?label=master)](https://travis-ci.org/imazen/sharpen/builds) [![develop](https://img.shields.io/travis/imazen/slimmage/sharpen.svg?label=develop)](https://travis-ci.org/imazen/sharpen/builds) 
+[![master](https://img.shields.io/travis/imazen/sharpen/master.svg?label=master)](https://travis-ci.org/imazen/sharpen/builds) [![develop](https://img.shields.io/travis/imazen/slimmage/sharpen.svg?label=develop)](https://travis-ci.org/imazen/sharpen/builds) [![commandline](https://img.shields.io/travis/imazen/slimmage/sharpen.svg?label=commandline)](https://travis-ci.org/imazen/sharpen/builds) 
 
 Sharpen is a library and command-line tool for automating Java to C# code conversion. You can provide configuration classes to control a wide range of class and functionality mapping.
 

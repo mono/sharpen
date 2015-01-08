@@ -90,24 +90,31 @@ public class BindingUtils {
 		return findOverriddenMethodInHierarchy(type, binding, true);
 	}
 	
-	public static IMethodBinding findOverriddenMethodInHierarchy(ITypeBinding type, IMethodBinding binding, boolean considerInterfaces) {
+	public static IMethodBinding findOverriddenMethodInHierarchy(ITypeBinding type, IMethodBinding binding, boolean considerInterfaces, boolean considerItself) {
 		final ITypeBinding superClass= type.getSuperclass();
 		if (superClass != null) {
-			final IMethodBinding superClassMethod= findOverriddenMethodInHierarchy(superClass, binding);
-			if (superClassMethod != null) return superClassMethod;			
+			final IMethodBinding superClassMethod= findOverriddenMethodInHierarchy(superClass, binding, true, true);
+			if (superClassMethod != null) return superClassMethod;      
 		}
-		final IMethodBinding method = findOverriddenMethodInType(type, binding);
-		if (method != null) return method;
+		if (considerItself) {
+			final IMethodBinding method = BindingUtils.findOverriddenMethodInType(type, binding);
+			if (method != null) return method;
+		}
 		
 		if (considerInterfaces) {
 			final ITypeBinding[] interfaces= type.getInterfaces();
 			for (int i= 0; i < interfaces.length; i++) {
-				final IMethodBinding interfaceMethod= findOverriddenMethodInHierarchy(interfaces[i], binding);
+				final IMethodBinding interfaceMethod= findOverriddenMethodInHierarchy(interfaces[i], binding, true, true);
 				if (interfaceMethod != null) return interfaceMethod;
 			}
 		}
 		
 		return null;
+	}
+	
+	
+	public static IMethodBinding findOverriddenMethodInHierarchy(ITypeBinding type, IMethodBinding binding, boolean considerInterfaces) {
+		return findOverriddenMethodInHierarchy(type, binding, considerInterfaces, true);
 	}
 	
 	

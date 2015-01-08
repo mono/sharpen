@@ -210,6 +210,7 @@ public class DefaultConfiguration extends Configuration {
 	    mapType("java.lang.UnsupportedOperationException", "System.NotSupportedException");
 	    mapType("java.lang.ArrayIndexOutOfBoundsException", "System.IndexOutOfRangeException");
 	    mapType("java.lang.NoSuchMethodError", "System.MissingMethodException");
+	    mapType("java.lang.NoSuchMethodException", "System.MissingMethodException");
 	    mapType("java.io.IOException", "System.IO.IOException");
 	    mapType("java.net.SocketException", "System.Net.Sockets.SocketException");
 	    mapType("java.lang.SecurityException", "System.Security.SecurityException");

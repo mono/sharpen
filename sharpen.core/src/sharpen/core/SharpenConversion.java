@@ -80,7 +80,7 @@ public class SharpenConversion {
 
 	private void printHeader() {
 		try {
-			_writer.write(_configuration.header());
+			_writer.write(_configuration.header().replace("\n", "\r\n"));
 		} catch (IOException x) {
 			throw new RuntimeException(x);
 		}

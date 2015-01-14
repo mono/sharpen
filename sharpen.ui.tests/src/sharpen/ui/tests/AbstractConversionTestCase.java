@@ -241,9 +241,7 @@ public abstract class AbstractConversionTestCase  {
 			units = createCompilationUnits(resources);
 		}
 			
-		final String targetProject  = projecttempLocation +"/temp/" +
-		    		projectName + "/"  + projectName + ".net" ;	
-		  
+		final String targetProject  = Paths.get(projecttempLocation, "temp", projectName,projectName + ".net").toString();
 	    
 	    configuration.setSharpenNamespace("nonamespace");
 		final SharpenConversionBatch converter = new SharpenConversionBatch(configuration);

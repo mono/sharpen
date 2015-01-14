@@ -118,7 +118,7 @@ public class TestCaseResource {
 	 * @return
 	 */
 	public String packageName() {
-		return _packageName.toLowerCase();
+		return _packageName;
 	}
 
 	public void assertFile(String actualFile) throws IOException {

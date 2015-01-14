@@ -1,6 +1,8 @@
 # Sharpen - Automated Java->C# coversion
 
-[![master](https://img.shields.io/travis/imazen/sharpen/master.svg?label=master)](https://travis-ci.org/imazen/sharpen/builds) [![develop](https://img.shields.io/travis/imazen/sharpen/develop.svg?label=develop)](https://travis-ci.org/imazen/sharpen/builds) [![commandline](https://img.shields.io/travis/imazen/sharpen/commandline.svg?label=commandline)](https://travis-ci.org/imazen/sharpen/builds) 
+[![master](https://img.shields.io/travis/imazen/sharpen/master.svg?label=master)](https://travis-ci.org/imazen/sharpen/builds)[![master - AppVeyor](https://ci.appveyor.com/api/projects/status/qxrbmyx70iuoev0x/branch/master?svg=true&passingText=master%20-%20passing&failingText=master%20-%20failed)](https://ci.appveyor.com/project/imazen/sharpen/branch/master) [![develop](https://img.shields.io/travis/imazen/sharpen/develop.svg?label=develop)](https://travis-ci.org/imazen/sharpen/builds)
+[![develop - AppVeyor](https://ci.appveyor.com/api/projects/status/qxrbmyx70iuoev0x/branch/develop?svg=true&passingText=develop%20-%20passing&failingText=develop%20-%20failed)](https://ci.appveyor.com/project/imazen/sharpen/branch/develop)
+
 
 Sharpen is a library and command-line tool for automating Java to C# code conversion. You can provide configuration classes to control a wide range of class and functionality mapping.
 
@@ -40,7 +42,13 @@ An example configuration project can be found here https://github.com/ydanila/sh
 
 #### Using your custom config class
 
-Name your jar file `<configuration class name>`.sharpenconfig.jar in the sharpen directory. Then specify the full configuration name via the command line parameter `-runtimeTypeName` (or via the options file).
+Name your jar file `<configuration class name>`.sharpenconfig.jar in the sharpen directory. Then specify the full configuration name via the command line parameter `-configurationClass` (or via the options file).
 
-
-  
+For example, for the [XMP core port](https://github.com/ydanila/n-metadata-extractor/tree/xmp-core) with this prebuilt [Sharpen configuration](https://github.com/ydanila/sharpen_imazen_config) could be used as follows.
+```
+java -jar sharpen-jar-with-dependencies.jar C:/java_src/ -configurationClass sharpen.config.MEConfiguration @sharpen-all-options-without-configuration
+```
+Configuration also could be specified in an options file. In this case, for the [XMP core port](https://github.com/ydanila/n-metadata-extractor/tree/xmp-core) with this prebuilt [Sharpen configuration](https://github.com/ydanila/sharpen_imazen_config) it could be used like this:
+```
+java -jar sharpen-jar-with-dependencies.jar C:/java_src/ @sharpen-all-options
+```

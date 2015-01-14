@@ -102,22 +102,51 @@
         </executions>
       </plugin> 
 
-      <plugin>
-        <groupId>com.qulice</groupId>
-        <artifactId>qulice-maven-plugin</artifactId>
-        <version>0.12</version>
-        <configuration>
-          <license>file:${basedir}/LICENSE.txt</license>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
    
   </build>
+
+  <profiles>
+    <profile>
+        <!--
+        Static quality analysis with Qulice and other tools.
+        This profile is supposed to be activated in continuous
+        integration environment, right before the final approval
+        of the build. It runs a number of static code analysis
+        tools to validate and approve the quality of source
+        code and the SCM repository.
+        @see http://www.jcabi.com/jcabi-parent/profile-qulice.html
+        -->
+        <id>qulice</id>
+        <build>
+            <plugins>
+                <plugin>
+                    <!--
+                    Qulice-maven-plugin is a compound static analysis
+                    tool that aggregates Checkstyle, PMD, FindBugs,
+                    CodeNarc (for Groovy code) and a few other analyzers.
+                    Qulice also configures them correctly to enable the
+                    most important rules.
+                    @see http://www.qulice.com/qulice-maven-plugin/
+                    -->
+                    <groupId>com.qulice</groupId>
+                    <artifactId>qulice-maven-plugin</artifactId>
+                    <version>0.12</version>
+                    <executions>
+                        <execution>
+                            <id>jcabi-check</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                            <configuration>
+                                <license>file:${basedir}/LICENSE.txt</license>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </build>
+    </profile>
+  </profiles>
 </project>

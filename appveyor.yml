@@ -19,9 +19,9 @@ install:
   - cmd: SET MAVEN_OPTS=-XX:MaxPermSize=2g -Xmx4g
   - cmd: SET JAVA_OPTS=-XX:MaxPermSize=2g -Xmx4g
 build_script:
-  - mvn clean package --batch-mode -DskipTests -DfinalName=sharpen
+  - cmd: mvn clean package --batch-mode -DskipTests -DfinalName=sharpen
 test_script:
-  - mvn test
+  - cmd: mvn test
 
 cache:
   - C:\maven\

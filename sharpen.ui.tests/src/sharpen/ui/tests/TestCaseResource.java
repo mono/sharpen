@@ -100,7 +100,7 @@ public class TestCaseResource {
 	}
 
 	public String getTargetDir() {
-		return _targetDir;
+		return _targetDir.toLowerCase();
 	}
 
 	String join(String parts[], int count, String separator) {
@@ -118,7 +118,7 @@ public class TestCaseResource {
 	 * @return
 	 */
 	public String packageName() {
-		return _packageName;
+		return _packageName.toLowerCase();
 	}
 
 	public void assertFile(String actualFile) throws IOException {

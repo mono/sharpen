@@ -15,7 +15,7 @@ public class IntegrationTestCase extends AbstractConversionTestCase {
 				new TestCaseResource("integration/namespaceMapping/foo/Foo") {
 					@Override
 					public String getTargetDir() {
-						return "UbberFoo";
+						return "ubberfoo";
 					}
 
 					@Override public String targetSimpleName() {

@@ -1,6 +1,6 @@
 language: java
 before_install: mvn install -DskipTests=true -DfinalName=sharpen
-install: mvn test
+script: mvn test
 notifications:
   email:
     recipients:

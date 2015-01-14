@@ -24,5 +24,23 @@ Sharpen was originally created by db40 [svn source here](https://source.db4o.com
 2. Run `java -jar sharpencore-0.0.1-SNAPSHOT-jar-with-dependencies.jar SOURCEPATH -cp JAR_DEPENDENCY_A JAR_DEPENDENCY_B`  
     Each dependecy needed by the java source should be specified as a full path to the jar file. SOURCEPATH should also be a full path.
 3. Run -help for syntax
-Minimum command to for conversion 
+
+### Sharpen allows for configuration through code
+
+Sharpen’s command-line options don’t let you fully override all conversion options and behaviour. For example if you need to change mapping of primitive types or allow/deny mapping between iterators and enumerators, ...
+
+#### Creating external config class
+
+Your external configuration class must:
+* inherit [Configuration](sharpen.core/src/sharpen/core/Configuration.java) class;
+* must be publicly visible;
+* must have a public constructor;
+
+An example configuration project can be found here https://github.com/ydanila/sharpen_imazen_config.
+
+#### Using your custom config class
+
+Name your jar file `<configuration class name>`.sharpenconfig.jar in the sharpen directory. Then specify the full configuration name via the command line parameter `-runtimeTypeName` (or via the options file).
+
+
   

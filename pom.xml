@@ -8,7 +8,72 @@
   <packaging>jar</packaging>
 
   <name>sharpencore</name>
-  <url>http://maven.apache.org</url>
+  <url>https://github.com/imazen/sharpen</url>
+    <organization>
+        <name>Imazen</name>
+        <url>http://www.imazen.io</url>
+    </organization>
+    <licenses>
+        <license>
+            <name>GPL 2 </name>
+            <url>http://www.gnu.org/licenses/gpl-2.0.html</url>
+            <distribution>repo</distribution>
+            <comments>GPL 2 License</comments>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>1</id>
+            <name>Nathanael Jones</name>
+            <email>nathanael.jones@gmail.com</email>
+            <organization>Imazen</organization>
+            <organizationUrl>http://www.imazen.io</organizationUrl>
+            <roles>
+                <role>Architect</role>
+                <role>Developer</role>
+            </roles>
+            <timezone>-5</timezone>
+        </developer>
+        <developer>
+            <id>2</id>
+            <name>Yakov Daniloc</name>
+            <email>yakodani@gmail.com</email>
+            <organization>imazen.io</organization>
+            <organizationUrl>http://www.imazen.io</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+3</timezone>
+        </developer>
+    </developers>
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/imazen/sharpen/issues</url>
+    </issueManagement>
+    <ciManagement>
+        <system>travis</system>
+        <url>https://travis-ci.org/imazen/sharpen</url>
+    </ciManagement>
+    <scm>
+        <connection>scm:git:github.com:imazen/sharpen.git</connection>
+        <developerConnection>scm:git:github.com:imazen/sharpen.git</developerConnection>
+        <url>https://github.com/imazen/sharpen</url>
+    </scm>
+    <!--<distributionManagement>-->
+        <!--<downloadUrl>https://oss.sonatype.org/content/groups/public</downloadUrl>-->
+        <!--<repository>-->
+            <!--<id>oss.sonatype.org</id>-->
+            <!--<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>-->
+        <!--</repository>-->
+        <!--<snapshotRepository>-->
+            <!--<id>oss.sonatype.org</id>-->
+            <!--<url>https://oss.sonatype.org/content/repositories/snapshots</url>-->
+        <!--</snapshotRepository>-->
+        <!--<site>-->
+            <!--<id>parent.jcabi.com</id>-->
+            <!--<url>http://parent.jcabi.com/</url>-->
+        <!--</site>-->
+    <!--</distributionManagement>-->
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -67,17 +132,6 @@
     </testResources>
     
     <plugins>
-   
-      <!-- 
-      <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.17</version>
-            <configuration>
-              <skipTests>true</skipTests>
-            </configuration>
-        </plugin> 
-      -->
       
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
@@ -100,7 +154,7 @@
             </goals>
           </execution>
         </executions>
-      </plugin> 
+      </plugin>
 
     </plugins>
    
@@ -134,7 +188,7 @@
                     <version>0.12</version>
                     <executions>
                         <execution>
-                            <id>jcabi-check</id>
+                            <id>sharpen-check</id>
                             <phase>verify</phase>
                             <goals>
                                 <goal>check</goal>

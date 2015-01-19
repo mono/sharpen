@@ -17,9 +17,11 @@ install:
   - cmd: SET MAVEN_OPTS=-XX:MaxPermSize=2g -Xmx4g
   - cmd: SET JAVA_OPTS=-XX:MaxPermSize=2g -Xmx4g
 build_script:
-  - cmd: mvn clean package --batch-mode -DskipTests -DfinalName=sharpen
+  - cmd: mvn clean package -q --batch-mode -DskipTests -DfinalName=sharpen
 test_script:
-  - cmd: mvn test
+  - cmd: mvn test -q
+after_test:
+  - cmd: mvn clean install -q -Pqulice -DskipTests exit /B 0
 cache:
   - C:\maven\
   - C:\Users\appveyor\.m2

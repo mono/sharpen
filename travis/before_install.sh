@@ -5,4 +5,4 @@ if [[ $TRAVIS_TAG =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+)?$ ]]; then
   myVer=$(echo $TRAVIS_TAG | sed -e s/^v//)
   mvn versions:set "-DnewVersion=$myVer"
 fi
-mvn install -DskipTests=true -DfinalName=sharpen -q
+mvn install -q -DskipTests=true -DfinalName=sharpen

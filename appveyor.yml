@@ -21,7 +21,7 @@ build_script:
 test_script:
   - cmd: mvn test -q
 after_test:
-  - cmd: mvn clean install -q -Pqulice -DskipTests exit /B 0
+  - cmd: mvn clean install -q -Pqulice -DskipTests || exit /B 0
 cache:
   - C:\maven\
   - C:\Users\appveyor\.m2

@@ -20,4 +20,4 @@ deploy:
     all_branches: true
     tags: true
 after_success:
-  - mvn clean install -q -Pqulice -DskipTests || true
+  - mvn clean install -q -Pqulice -DskipTests -DfinalName=sharpen || true

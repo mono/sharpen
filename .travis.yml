@@ -3,7 +3,7 @@ jdk:
   - oraclejdk7
 before_install:
 - travis/before_install.sh
-script: mvn test -q
+script: mvn -DfinalName=sharpen test -q
 
 notifications:
   email:
@@ -20,4 +20,4 @@ deploy:
     all_branches: true
     tags: true
 after_success:
-  - mvn clean install -q -Pqulice -DskipTests -DfinalName=sharpen || true
+  - mvn install -q -Pqulice -DskipTests -DfinalName=sharpen || true

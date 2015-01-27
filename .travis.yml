@@ -14,10 +14,12 @@ deploy:
   provider: releases
   api_key:
     secure: qZtmVlKGoFdfKvSJNzn79M08KfZCatymHuhfXwn5ZdoDh5D3tqr5Z14e+uVo0DVWZuWT0RVBGFJCqL2w4xve7NNizd0Y5mkfkaZJDlyH3EPhG/EA8X/zU+28c3qk/AJnaWm0C99772C+YiFIsGu7KCC4URA0jmu5+XN9ND3mynA=
-  file: src/target/sharpen-jar-with-dependencies.jar
+  file: 
+    - src/target/sharpen-jar-with-dependencies.jar
+    - code_quality_report.txt
   on:
     repo: imazen/sharpen
     all_branches: true
     tags: true
 after_success:
-  - mvn install -q -Pqulice -DskipTests -DfinalName=sharpen || true
+  - mvn install -q -Pqulice -DskipTests -DfinalName=sharpen > code_quality_report.txt || true

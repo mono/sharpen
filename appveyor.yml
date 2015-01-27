@@ -21,14 +21,13 @@ build_script:
 test_script:
   - cmd: mvn -DfinalName=sharpen test -q
 after_test:
-  - cmd: mvn install -q -Pqulice -DskipTests -DfinalName=sharpen > code_quality.txt || exit /B 0
+  - cmd: mvn install -q -Pqulice -DskipTests -DfinalName=sharpen > code_quality_report.txt || exit /B 0
 artifacts: 
   - path: src\target\sharpen-jar-with-dependencies.jar
     name: sharpen-with-dependencies
 
-  - path: code_quality.txt
+  - path: code_quality_report.txt
     name: Code quality messages
-    type: zip
 cache:
   - C:\maven\
   - C:\Users\appveyor\.m2

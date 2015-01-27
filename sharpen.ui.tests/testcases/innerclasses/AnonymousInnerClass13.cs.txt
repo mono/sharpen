@@ -24,8 +24,8 @@ namespace innerclasses
 
 		private sealed class _Base_13 : innerclasses.Base
 		{
-			public _Base_13(AnonymousInnerClass13 _enclosing, string baseArg1) : base(baseArg1
-				)
+			public _Base_13(AnonymousInnerClass13 _enclosing, string baseArg1)
+				: base(baseArg1)
 			{
 				this._enclosing = _enclosing;
 			}
@@ -40,7 +40,8 @@ namespace innerclasses
 
 		private sealed class _Base_19 : innerclasses.Base
 		{
-			public _Base_19(string baseArg1) : base(baseArg1)
+			public _Base_19(string baseArg1)
+				: base(baseArg1)
 			{
 			}
 
@@ -51,7 +52,8 @@ namespace innerclasses
 
 		private sealed class _Base_25 : innerclasses.Base
 		{
-			public _Base_25(string baseArg1) : base(baseArg1)
+			public _Base_25(string baseArg1)
+				: base(baseArg1)
 			{
 			}
 
@@ -62,7 +64,8 @@ namespace innerclasses
 
 		private sealed class _Base_30 : innerclasses.Base
 		{
-			public _Base_30(string baseArg1) : base(baseArg1)
+			public _Base_30(string baseArg1)
+				: base(baseArg1)
 			{
 			}
 

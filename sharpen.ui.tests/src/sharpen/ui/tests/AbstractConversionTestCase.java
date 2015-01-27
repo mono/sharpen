@@ -22,28 +22,32 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 package sharpen.ui.tests;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-import junit.framework.*;
-
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.junit.After;
+import org.junit.Before;
 
 import sharpen.core.*;
-import sharpen.core.framework.resources.SimpleProject;
-import sharpen.core.framework.resources.WorkspaceUtilities;
 
-public abstract class AbstractConversionTestCase extends TestCase {
+public abstract class AbstractConversionTestCase  {
 
-	protected JavaProject _project;
-
-	protected void setUp() throws Exception {
+	protected JavaProjectCmd _project;
+	private String projectName="DPrj";
+	//To Run from MAVEN
+	protected String projecttempLocation = System.getProperty("user.dir") + "/sharpen.core/target/testcases";
+	//To Run From Eclipse GUI
+	//protected String projecttempLocation = System.getProperty("user.dir") + "/sharpen.ui.tests/testcases";
+	@Before
+	public void setUp() throws Exception {
 		Sharpen.getDefault().configuration(configuration());
-		_project = new JavaProject();		
+		_project = new JavaProjectCmd();		
 	}
-
-	protected void tearDown() throws Exception {
-		_project.dispose();
+	@After
+	public  void tearDown() throws Exception {
+		_project.deleteProject();
 	}
 	
 	protected Configuration configuration() {
@@ -56,39 +60,132 @@ public abstract class AbstractConversionTestCase extends TestCase {
 	 * @throws CoreException
 	 * @throws IOException
 	 */
-	protected ICompilationUnit createCompilationUnit(TestCaseResource resource) throws CoreException, IOException {
-		return _project.createCompilationUnit(resource.packageName(), resource.javaFileName(), resource.actualStringContents());
+	protected String createCompilationUnit(TestCaseResource resource) throws IOException {
+		
+		String sourcePackage= projecttempLocation +"/temp/" + projectName + "/src/" + resource.packageName().replace(".", "/");
+		sourcePackage =sourcePackage.replace("\\", "/");
+		File sourcePackagePath = new File(sourcePackage);
+		if (!sourcePackagePath.exists())
+		{
+			sourcePackagePath.mkdirs();
+		}
+		return _project.createCompilationUnit(sourcePackage, resource.javaFileName(), resource.actualStringContents());
 	}
 	
-	protected ICompilationUnit createCompilationUnit(IPackageFragmentRoot srcFolder, TestCaseResource resource) throws CoreException, IOException {
-		return _project.createCompilationUnit(srcFolder, resource.packageName(), resource.javaFileName(), resource.actualStringContents());
+	protected String createCompilationUnit(TestCaseResource resource, String targetProject) throws IOException  {
+		
+		String sourcePackage= projecttempLocation +"/temp/" + targetProject + "/src/" + resource.packageName().replace(".", "/");
+		sourcePackage =sourcePackage.replace("\\", "/");
+		File sourcePackagePath = new File(sourcePackage);
+		if (!sourcePackagePath.exists())
+		{
+			sourcePackagePath.mkdirs();
+		}
+		return _project.createCompilationUnit(sourcePackage, resource.javaFileName(), resource.actualStringContents());
 	}
 	
-	protected void runResourceTestCase(String resourceName) throws Throwable {		
+	
+	protected void runResourceTestCase(String resourceName) throws IOException, CoreException {
 		runResourceTestCase(getConfiguration(), resourceName);
 	}
+	
+	protected void runResourceTestCaseCMD(String resourceName) throws IOException {		
+		runResourceTestCaseCMD(resourceName,resourceName);
+	}
 
-	protected void runResourceTestCase(final Configuration configuration, String resourceName) throws CoreException, IOException {
+	protected void runResourceTestCase(final Configuration configuration, String resourceName) throws IOException, CoreException {
 		runResourceTestCase(configuration, resourceName, resourceName);
 	}
 	
-	protected void runResourceTestCase(final Configuration configuration, String originalResourceName, String expectedResourceName) throws CoreException, IOException {
+	protected void runResourceTestCase(final Configuration configuration, String originalResourceName, String expectedResourceName) throws IOException, CoreException {
 		TestCaseResource resource = new TestCaseResource(originalResourceName, expectedResourceName);		
 		resource.assertExpectedContent(sharpenResource(configuration, resource));
 	}
+	
+	protected void runResourceTestCaseCMD(String originalResourceName, String expectedResourceName) throws IOException  {
+		TestCaseResource resource = new TestCaseResource(originalResourceName, expectedResourceName);		
+		resource.assertExpectedContent(sharpenResourceCMD(resource));
+	}
 
 	protected String sharpenResource(final Configuration configuration,
-			TestCaseResource resource) throws CoreException, IOException {
-		ICompilationUnit cu = createCompilationUnit(resource);
-	
-		StandaloneConverter converter = new StandaloneConverter(configuration);
-		converter.setSource(cu);
-		converter.setTargetWriter(new StringWriter());
-		converter.run();
-		
-		return converter.getTargetWriter().toString();
+			TestCaseResource resource) throws IOException, CoreException {
+
+			String cu = createCompilationUnit(resource);
+			File cufile = new File(cu);
+
+
+			String sourceFilePath =projecttempLocation +"/temp/" +projectName + "/src";
+			String targetProject = projecttempLocation +"/temp/" +projectName + "/" +getConvertedProject();
+			configuration.setSharpenNamespace("nonamespace");
+
+			final SharpenConversionBatch converter = new SharpenConversionBatch(configuration);
+			converter.setsourceFiles(new String[] { cu });
+			converter.setsourcePathEntries(sourceFilePath);
+			converter.setTargetProject(targetProject);
+			converter.setclassPathEntries(_project.getclassPath());
+			converter.run();
+
+			String targetDir = resource.getTargetDir();
+			if(targetDir.isEmpty()){
+				targetDir ="src";
+			}
+
+			Path filePath = Paths.get(projecttempLocation, "temp", projectName, getConvertedProject(), targetDir, resource.targetSimpleName()+ ".cs");
+
+			//	to reproduce old behaviour we will return empty string if file not exists
+			if(!Files.exists(filePath)){
+				return "";
+			}
+
+			 byte[] encoded = Files.readAllBytes(filePath);
+			 return new String(encoded);
 	}
 	
+	protected String sharpenResourceCMD(TestCaseResource resource)  {
+		
+		String result ="Success";
+				
+		try {
+			String cu = createCompilationUnit(resource);			
+			File cufile = new File(cu);
+			
+			result = result + cufile;
+		
+			String sourceFilePath =projecttempLocation +"/temp/" +projectName + "/src";
+			
+
+			SharpenApplication AppCmd = new SharpenApplication();
+			
+			String[] args = new String[3];
+			
+			args[0] =sourceFilePath;
+			args[1] = "-sharpenNamespace";
+			args[2] = "nonamespace";
+			
+			AppCmd.start(args);
+			
+			
+			String packageName = resource.packageName();
+			if(resource.packageName().isEmpty()){
+				packageName ="src";
+			}
+			
+			result= projecttempLocation +"/temp/" +
+										projectName + "/" + 
+			                            getConvertedProject() + "/" +
+			                            packageName.replace(".", "/") + "/" +
+					                    cufile.getName().substring(0,cufile.getName().lastIndexOf("."))
+			                            + ".cs";
+			
+			 byte[] encoded = Files.readAllBytes(Paths.get(result));
+			 return new String(encoded);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			result = result + e.toString();
+		}
+		return result;
+	}
 	protected Configuration getConfiguration() {
 		return newConfiguration();
 	}
@@ -109,7 +206,7 @@ public abstract class AbstractConversionTestCase extends TestCase {
 		return configuration;
 	}
 
-	protected void runBatchConverterTestCase(Configuration configuration, String... resourceNames) throws CoreException, IOException, Throwable {
+	protected void runBatchConverterTestCase(Configuration configuration, String... resourceNames) throws IOException, Throwable {
 		runBatchConverterTestCase(configuration, toTestCaseResources(resourceNames));
 	}
 
@@ -122,23 +219,34 @@ public abstract class AbstractConversionTestCase extends TestCase {
 	}
 
 	protected void runBatchConverterTestCase(Configuration configuration,
-			TestCaseResource... resources) throws CoreException,
+			TestCaseResource... resources) throws 
 			IOException, Throwable {
-		final SimpleProject targetProject = new SimpleProject("converted");
+		
 		try {
-			runBatchConverterTestCaseWithTargetProject(targetProject, configuration, resources);
+			runBatchConverterTestCaseWithTargetProject(configuration, resources);
 		} finally {
-			targetProject.dispose();
+			tearDown();
 		}
 	}
 
-	private void runBatchConverterTestCaseWithTargetProject(final SimpleProject targetProject,
-            Configuration configuration, TestCaseResource... resources) throws CoreException, IOException, Throwable {
-	    final ICompilationUnit[] units = createCompilationUnits(resources); 
-		
+	private void runBatchConverterTestCaseWithTargetProject(
+            Configuration configuration, TestCaseResource... resources) throws IOException, Throwable {
+		String projectName="MultipleSource";
+		String[] units;
+		if(resources.length> 0){
+			units = createCompilationUnits(projectName,resources); 
+		}
+		else {
+			projectName = resources[0].targetSimpleName();
+			units = createCompilationUnits(resources);
+		}
+			
+		final String targetProject  = Paths.get(projecttempLocation, "temp", projectName,projectName + ".net").toString();
+	    
+	    configuration.setSharpenNamespace("nonamespace");
 		final SharpenConversionBatch converter = new SharpenConversionBatch(configuration);
-		converter.setSource(units);
-		converter.setTargetProject(targetProject.getProject());
+		converter.setsourceFiles(units);
+		converter.setTargetProject(targetProject);
 		converter.run();
 	
 		for (int i=0; i<resources.length; ++i) { 
@@ -146,15 +254,27 @@ public abstract class AbstractConversionTestCase extends TestCase {
 			if (resource.isSupportingLibrary()) {
 				continue;
 			}
-			checkConversionResult(configuration, targetProject.getFolder("src"), units[i], resource);
+			checkConversionResult(configuration, targetProject, resource);
 		}
     }
 
-	private ICompilationUnit[] createCompilationUnits(
-			TestCaseResource... resources) throws CoreException, IOException {
-		final ICompilationUnit[] units = new ICompilationUnit[resources.length];
-		for (int i=0; i<resources.length; ++i) {		
+	private String[] createCompilationUnits(
+			TestCaseResource... resources) throws IOException  {
+		final String[] units = new String[resources.length];
+		for (int i=0; i<resources.length; ++i) {
 			units[i] = createCompilationUnit(resources[i]);
+		}
+		return units;
+	}
+	
+	private String[] createCompilationUnits(String projectName,
+			TestCaseResource... resources) throws IOException {
+		final String[] units = new String[resources.length];
+		for (int i=0; i<resources.length; ++i) {
+			if(resources.length >1)
+				units[i] = createCompilationUnit(resources[i],projectName);
+			else
+				units[i] = createCompilationUnit(resources[i],projectName);
 		}
 		return units;
 	}
@@ -168,34 +288,25 @@ public abstract class AbstractConversionTestCase extends TestCase {
 	 * @throws IOException
 	 * @throws Throwable
 	 */
-	private void checkConversionResult(Configuration configuration, IFolder targetFolder, ICompilationUnit cu, TestCaseResource resource) throws Throwable {
-		String path = pathFromNamespace(configuration.mappedNamespace(getNamespace(cu)));
-		IFile file = targetFolder.getFile(path + "/" + resource.targetSimpleName() + ".cs");
+	private void checkConversionResult(Configuration configuration, String targetFolder, TestCaseResource resource) throws Throwable {
+
+		String targetDir = resource.getTargetDir();
+		if(targetDir.isEmpty()){
+			targetDir ="src";
+		}
+
+		String file = Paths.get(targetFolder, targetDir, resource.targetSimpleName()+ ".cs").toString();
+		
 		assertFile(resource, file);
 	}
 
-	private String pathFromNamespace(String s) {
-		return SharpenConversionBatch.cleanupNamespace(s).replace('.', '/');
-	}
-
-	private String getNamespace(ICompilationUnit cu) throws CoreException {
-		IPackageDeclaration[] packages = cu.getPackageDeclarations();
-		return packages.length > 0 ? packages[0].getElementName() : "";
-	}
-
-	protected void assertFile(TestCaseResource expectedResource, IFile actualFile) throws Throwable {
+	protected void assertFile(TestCaseResource expectedResource, String actualFile) throws IOException {
 		expectedResource.assertFile(actualFile);
 	}
 
-	protected IProject getConvertedProject() {
-		return getProject(_project.getName() + SharpenConstants.SHARPENED_PROJECT_SUFFIX);
+	protected String getConvertedProject() {
+		return _project.getProjectName() + SharpenConstants.SHARPENED_PROJECT_SUFFIX;
 	}
 
-	IProject getProject(String name) {
-		return WorkspaceUtilities.getProject(name);
-	}
-
-	protected void delete(IProject convertedProject) throws CoreException {
-		convertedProject.delete(true, true, null);
-	}
+	
 }

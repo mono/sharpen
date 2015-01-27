@@ -1,0 +1,18 @@
+package comments;
+
+public class BodyBlock {
+
+	/*
+	*   Block comment tabs indented
+	*/
+
+	public void foo() {
+	}
+
+	/*
+    *   Block comment spaces indented
+    */
+
+	public void bar() {
+	}
+}

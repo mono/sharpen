@@ -22,9 +22,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 /* Copyright (C) 2004 - 2006 Versant Inc. http://www.db4o.com */
 
 package sharpen.ui.tests;
+import org.junit.Test;
 
 public class ReplaceTestCase extends AbstractConversionTestCase {
 
+	@Test
 	public void testReplaceExtends() throws Throwable {
 		runResourceTestCase("replace/ReplaceExtends");
 	}

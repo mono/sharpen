@@ -22,9 +22,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 package sharpen.ui.tests;
 
 import sharpen.core.*;
+import org.junit.Test;
 
 public class EventConversionTestCase extends AbstractConversionTestCase {
-	
+	@Test
 	public void testEventMapping() throws Throwable {
 		
 		final Configuration config = getConfiguration();
@@ -40,14 +41,17 @@ public class EventConversionTestCase extends AbstractConversionTestCase {
 				});
 	}
 
+	@Test
 	public void testInterfaceWithEvents() throws Throwable {
 		runResourceTestCase("events/EventInterface");
 	}
 	
+	@Test
 	public void testClassImplementingInterfaceWithEvents() throws Throwable {
 		runResourceTestCase("events/EventInClassInterface");
 	}
 	
+	@Test
 	public void testEventConsumers() throws Throwable {
 		runResourceTestCase("events/EventConsumer");
 	}

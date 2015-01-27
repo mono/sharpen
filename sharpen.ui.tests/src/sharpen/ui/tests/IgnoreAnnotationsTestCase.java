@@ -22,41 +22,51 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 /* Copyright (C) 2004 - 2006 Versant Inc. http://www.db4o.com */
 
 package sharpen.ui.tests;
+import java.io.IOException;
 
+import org.eclipse.core.runtime.CoreException;
+import org.junit.Test;
 
 public class IgnoreAnnotationsTestCase extends AbstractConversionTestCase {
 	
+	@Test
 	public void testIgnoreAbstractMethod() throws Throwable {
 		runResourceTestCase("IgnoreAbstractMethod");
 	}
 	
+	@Test
 	public void testIgnoreImplements() throws Throwable {
 		runResourceTestCase("IgnoreImplements");
 	}
 
+	@Test
 	public void testIgnoreExtendsOverride() throws Throwable {
 		runResourceTestCase("IgnoreExtendsOverride");
 	}
 	
+	@Test
 	public void testIgnoreExtends() throws Throwable {
 		runResourceTestCase("IgnoreExtends");
 	}
 	
+	@Test
 	public void testIgnore() throws Throwable {
 		final String converted = sharpenResource(getConfiguration(), new TestCaseResource("ignore/Ignore"));
 		StringAssert.assertEqualLines("", converted);
 	}
 	
+	@Test
 	public void testIgnoreMethod() throws Throwable {
 		runResourceTestCase("IgnoreMethod");
 	}
 	
+	@Test
 	public void testIgnoreField() throws Throwable {
 		runResourceTestCase("IgnoreField");
 	}
 	
 	@Override
-	protected void runResourceTestCase(String expectedResourceName) throws Throwable {
+	protected void runResourceTestCase(String expectedResourceName) throws IOException, CoreException {
 		super.runResourceTestCase("ignore/" + expectedResourceName);
 	}
 }

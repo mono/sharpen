@@ -21,78 +21,33 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.core;
 
-import org.eclipse.core.runtime.Plugin;
-import org.osgi.framework.BundleContext;
-import java.util.*;
-
 /**
- * The main plugin class to be used in the desktop.
+ * Centralize class to access configuration 
  */
-public class Sharpen extends Plugin {
+public class Sharpen {
 	
 	public static final String PLUGIN_ID = "sharpen.core";
 	
-	public static final String PROBLEM_MARKER = PLUGIN_ID + ".problem";
+	//public static final String PROBLEM_MARKER = PLUGIN_ID + ".problem";
 	
 	//The shared instance.
 	private static Sharpen plugin;
-	//Resource bundle.
-	private ResourceBundle resourceBundle;
 
 	private Configuration _configuration;
 	
 	/**
 	 * The constructor.
 	 */
-	public Sharpen() {
-		super();
+	private Sharpen() {
 		plugin = this;
-		try {
-			resourceBundle = ResourceBundle.getBundle("sharpen.SharpenPluginResources");
-		} catch (MissingResourceException x) {
-			resourceBundle = null;
-		}
-	}
-
-	/**
-	 * This method is called upon plug-in activation
-	 */
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-	}
-
-	/**
-	 * This method is called when the plug-in is stopped
-	 */
-	public void stop(BundleContext context) throws Exception {
-		super.stop(context);
 	}
 
 	/**
 	 * Returns the shared instance.
 	 */
 	public static Sharpen getDefault() {
+		if(plugin ==null)plugin =new Sharpen();
 		return plugin;
-	}
-
-	/**
-	 * Returns the string from the plugin's resource bundle,
-	 * or 'key' if not found.
-	 */
-	public static String getResourceString(String key) {
-		ResourceBundle bundle = Sharpen.getDefault().getResourceBundle();
-		try {
-			return (bundle != null) ? bundle.getString(key) : key;
-		} catch (MissingResourceException e) {
-			return key;
-		}
-	}
-
-	/**
-	 * Returns the plugin's resource bundle,
-	 */
-	public ResourceBundle getResourceBundle() {
-		return resourceBundle;
 	}
 
 	public void configuration(Configuration configuration) {

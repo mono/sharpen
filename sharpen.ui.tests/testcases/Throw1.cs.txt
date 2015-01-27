@@ -1,6 +1,6 @@
 public class Throw1
 {
-	/// <exception cref="System.Exception"></exception>
+	/// <exception cref="System.Exception"/>
 	public static void run()
 	{
 		try

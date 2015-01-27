@@ -21,14 +21,19 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.ui.tests;
 
+import static org.junit.Assert.*;
+
 import java.io.*;
+
+import org.junit.Test;
 
 import sharpen.core.*;
 import sharpen.core.io.IO;
-import junit.framework.TestCase;
 
-public class SharpenCommandLineTestCase extends TestCase {
+
+public class SharpenCommandLineTestCase  {
 	
+	@Test
 	public void testDefaults() {
 		SharpenCommandLine cmdLine = parse("core/src");		
 		assertEquals("core", cmdLine.project);
@@ -43,6 +48,7 @@ public class SharpenCommandLineTestCase extends TestCase {
 		assertEquals(0, cmdLine.eventAddMappings.size());
 	}
 	
+	@Test
 	public void testEventMappings() {
 		SharpenCommandLine cmdLine = parse("-eventAddMapping", "foo.bar", "-eventMapping", "foo", "bar", "core/src");
 		assertEquals("core", cmdLine.project);
@@ -50,6 +56,7 @@ public class SharpenCommandLineTestCase extends TestCase {
 		assertEquals(1, cmdLine.eventAddMappings.size());
 	}
 	
+	@Test
 	public void testNativeInterfaces() {
 		SharpenCommandLine cmdLine = parse("-nativeInterfaces", "core/src");
 		assertTrue(cmdLine.nativeInterfaces);
@@ -57,6 +64,7 @@ public class SharpenCommandLineTestCase extends TestCase {
 		assertEquals("src", cmdLine.sourceFolders.get(0));
 	}
 
+	@Test
 	public void testManageUsings() {
 		SharpenCommandLine cmdLine = parse("-organizeUsings", "core/src");
 		assertTrue(cmdLine.organizeUsings);
@@ -64,6 +72,7 @@ public class SharpenCommandLineTestCase extends TestCase {
 		assertEquals("src", cmdLine.sourceFolders.get(0));		
 	}
 	
+	@Test
 	public void testNameConflicts() {
 		SharpenCommandLine cmdLine = parse("-fullyQualify", "File", "core/src");
 		assertTrue(cmdLine.fullyQualifiedTypes.contains("File"));
@@ -71,6 +80,7 @@ public class SharpenCommandLineTestCase extends TestCase {
 		assertEquals("src", cmdLine.sourceFolders.get(0));
 	}
 	
+	@Test
 	public void testPascalCase() {
 		SharpenCommandLine cmdLine = parse("-pascalCase", "core/src");
 		assertSame(PascalCaseIdentifiersNamingStrategy.DEFAULT, cmdLine.pascalCase.getNamingStrategy());
@@ -78,6 +88,7 @@ public class SharpenCommandLineTestCase extends TestCase {
 		assertEquals("src", cmdLine.sourceFolders.get(0));
 	}
 	
+	@Test
 	public void testClasspath() {
 		SharpenCommandLine cmdLine = parse("foo/bar", "-cp", "../foo.jar");
 		assertEquals(NamingStrategy.DEFAULT, cmdLine.pascalCase.getNamingStrategy());
@@ -87,6 +98,7 @@ public class SharpenCommandLineTestCase extends TestCase {
 		assertEquals("../foo.jar", cmdLine.classpath.get(0));
 	}
 	
+	@Test
 	public void testSourceFolders() {
 		SharpenCommandLine cmdLine = parse("foo", "-srcFolder", "bar", "-srcFolder", "baz");
 		assertEquals(NamingStrategy.DEFAULT, cmdLine.pascalCase.getNamingStrategy());
@@ -97,12 +109,14 @@ public class SharpenCommandLineTestCase extends TestCase {
 		assertEquals("baz", cmdLine.sourceFolders.get(1));
 	}
 	
+	@Test
 	public void testNativeTypeSystem() {
 		SharpenCommandLine cmdLine = parse("foo", "-nativeTypeSystem");
 		assertEquals("foo", cmdLine.project);
 		assertEquals(true, cmdLine.nativeTypeSystem);
 	}
 	
+	@Test
 	public void testNamespaceMappings() {
 		SharpenCommandLine cmdLine = parse("foo", "-namespaceMapping", "^from", "to", "-namespaceMapping", "anotherFrom", "anotherTo");
 		assertEquals("foo", cmdLine.project);
@@ -111,6 +125,7 @@ public class SharpenCommandLineTestCase extends TestCase {
 		assertEquals(new Configuration.NameMapping("anotherFrom", "anotherTo"), cmdLine.namespaceMappings.get(1));
 	}
 	
+	@Test
 	public void testMethodMappings() {
 		SharpenCommandLine cmdLine = parse("foo", "-methodMapping", "Foo.bar", "Foo.baz");
 		assertEquals("foo", cmdLine.project);
@@ -118,6 +133,7 @@ public class SharpenCommandLineTestCase extends TestCase {
 		assertEquals(new Configuration.MemberMapping("Foo.baz", sharpen.core.MemberKind.Method), cmdLine.memberMappings.get("Foo.bar"));
 	}
 	
+	@Test
 	public void testResponseFile() throws Exception {
 		String fname = createTempFileFromResource("resources/options");
 		SharpenCommandLine cmdLine = parse("foo", "@" + fname);
@@ -128,27 +144,32 @@ public class SharpenCommandLineTestCase extends TestCase {
 		assertEquals(new Configuration.NameMapping("spam", "eggs"), cmdLine.namespaceMappings.get(0));
 	}
 	
+	@Test
 	public void testPascalCasePlus() throws Exception {
 		final SharpenCommandLine cmdLine = parse("foo", "-pascalCase+");
 		assertEquals("foo", cmdLine.project);
 		assertSame(PascalCaseNamingStrategy.DEFAULT, cmdLine.pascalCase.getNamingStrategy());
 	}
 	
+	@Test
 	public void testRuntimeTypeName() throws Exception {
 		final SharpenCommandLine cmdLine = parse("foo", "-runtimeTypeName", "Foo.Bar");
 		assertEquals("Foo.Bar", cmdLine.runtimeTypeName);
 	}
 	
+	@Test
 	public void testHeader() throws Exception {
 		final SharpenCommandLine cmdLine = parse("foo", "-header", "header.txt");
 		assertEquals("header.txt", cmdLine.headerFile);
 	}
-	
+
+	@Test
 	public void testXmlDoc() throws Exception {
 		final SharpenCommandLine cmdLine = parse("foo", "-xmldoc", "foo.xml");
 		assertEquals("foo.xml", cmdLine.xmldoc);
 	}
 	
+	@Test
 	public void testConditionalCompilation() {
 		final SharpenCommandLine cmdLine = parse("fooSourceFolder", "-conditionalCompilation", "package.name", "IAMRICH");
 		assertEquals("IAMRICH", cmdLine.conditionalCompilation.get("package.name"));

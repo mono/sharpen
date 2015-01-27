@@ -45,6 +45,7 @@ public class DefaultConfiguration extends Configuration {
 	    mapMethod("java.lang.Object.toString", "ToString");
 	    mapMethod("java.lang.Object.hashCode", "GetHashCode");
 	    mapMethod("java.lang.Object.equals", "Equals");
+		mapMethod("java.lang.Object.clone", "MemberwiseClone");
 	    
 	    mapMethod("java.lang.Float.isNaN", "float.IsNaN");
 	    mapMethod("java.lang.Double.isNaN", "double.IsNaN");
@@ -137,11 +138,17 @@ public class DefaultConfiguration extends Configuration {
 	    	mapProperty("java.util.Iterator.next", "Current");
 	    }
 	    mapMethod("java.util.Map.remove", collectionRuntimeMethod("Remove"));
+		mapMethod("java.util.Map.containsKey", "Contains");
+		mapMethod("java.util.Map.entrySet", "");
 	    mapProperty("java.util.Map.Entry.getKey", "Key");
 	    mapProperty("java.util.Map.Entry.getValue", "Value");
 	    mapProperty("java.util.Map.values", "Values");
 	    mapProperty("java.util.Map.keySet", "Keys");
-	    mapIndexer("java.util.Dictionary.get");
+
+		mapIndexer("java.util.Dictionary.get");
+		mapIndexer("java.util.Dictionary.put");
+		mapIndexer("java.util.Map.get");
+		mapIndexer("java.util.Map.put");
 	    
 	    //  jdk 1.0 collection framework
 	    mapType("java.util.Vector", "System.Collections.ArrayList");
@@ -156,8 +163,8 @@ public class DefaultConfiguration extends Configuration {
 	    mapMethod("java.util.Vector.removeAllElements", "Clear");
 	    mapMethod("java.util.Enumeration.hasMoreElements", "MoveNext");
 	    mapProperty("java.util.Enumeration.nextElement", "Current");
-	    
-	    mapType("java.util.Hashtable", "System.Collections.Hashtable");
+
+		mapType("java.util.Hashtable", "System.Collections.Hashtable");
 	    mapProperty("java.util.Dictionary.keys", "Keys");
 	    mapProperty("java.util.Dictionary.size", "Count");
 	    
@@ -203,6 +210,7 @@ public class DefaultConfiguration extends Configuration {
 	    mapType("java.lang.UnsupportedOperationException", "System.NotSupportedException");
 	    mapType("java.lang.ArrayIndexOutOfBoundsException", "System.IndexOutOfRangeException");
 	    mapType("java.lang.NoSuchMethodError", "System.MissingMethodException");
+	    mapType("java.lang.NoSuchMethodException", "System.MissingMethodException");
 	    mapType("java.io.IOException", "System.IO.IOException");
 	    mapType("java.net.SocketException", "System.Net.Sockets.SocketException");
 	    mapType("java.lang.SecurityException", "System.Security.SecurityException");

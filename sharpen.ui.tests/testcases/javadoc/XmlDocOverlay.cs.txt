@@ -15,7 +15,6 @@ namespace javadoc
 		}
 
 		/// <summary>Methods should have a summary.</summary>
-		/// <remarks>Methods should have a summary.</remarks>
 		public virtual int foo(int bar)
 		{
 			return 42;
@@ -38,7 +37,6 @@ namespace javadoc
 		}
 
 		/// <summary>This SHOULD APPEAR in the final doc.</summary>
-		/// <remarks>This SHOULD APPEAR in the final doc.</remarks>
 		public virtual int baz(string s)
 		{
 			return 0;
@@ -53,7 +51,6 @@ namespace javadoc
 		}
 
 		/// <summary>Blah.</summary>
-		/// <remarks>Blah.</remarks>
 		public const int BAR = 42;
 
 		/// <summary>

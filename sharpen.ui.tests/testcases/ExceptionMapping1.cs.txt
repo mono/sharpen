@@ -14,7 +14,7 @@ public class ExceptionMapping1
 		throw new System.ArgumentException();
 	}
 
-	/// <exception cref="System.Net.Sockets.SocketException"></exception>
+	/// <exception cref="System.Net.Sockets.SocketException"/>
 	public virtual void baz()
 	{
 		throw new System.Net.Sockets.SocketException();

@@ -3,7 +3,6 @@ namespace events
 	public interface EventInterface
 	{
 		/// <summary>An event.</summary>
-		/// <remarks>An event.</remarks>
 		event System.EventHandler<events.QueryEventArgs> QueryStarted;
 	}
 }

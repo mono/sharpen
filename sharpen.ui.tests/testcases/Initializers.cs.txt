@@ -1,11 +1,13 @@
 public class Initializers
 {
-	public Initializers() : this(null)
+	public Initializers()
+		: this(null)
 	{
 		bar(null);
 	}
 
-	public Initializers(int value) : base()
+	public Initializers(int value)
+		: base()
 	{
 		{
 			foo("instance 1");

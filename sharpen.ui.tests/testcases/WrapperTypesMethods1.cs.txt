@@ -16,13 +16,13 @@ public class WrapperTypesMethods1
 		long anotherLongWrapper = 42L;
 		byte byteWrapper = System.Convert.ToByte("10");
 		byte byteValue = byteWrapper;
-		byte anotherByteWrapper = (byte)10;
+		byte anotherByteWrapper = unchecked((byte)10);
 		char charWrapper = 'A';
 		char charValue = charWrapper;
 		string longString = System.Convert.ToString(32);
 		long anotherLongValue = long.Parse("32");
 		int yetAnotherIntWrapper = int.Parse("32");
-		int parsedInt = int.Parse("32");
+		int parsedInt = System.Convert.ToInt32("32");
 		bool isWS = char.IsWhiteSpace(' ');
 	}
 }

@@ -1,5 +1,3 @@
-using Usings.Deep.Tree;
-
 namespace Usings.Deep.Tree
 {
 	public sealed class InnerStaticClass

@@ -49,22 +49,30 @@ class SharpenCommandLineParser extends CommandLineParser {
 
 	@Override
 	protected void validate() {
-		if (_cmdLine.project == null) {
-			illegalArgument("unspecified source folder");
+		if((_cmdLine.project == null) && (_cmdLine.help == false)) {
+			System.out.println("Error:unspecified source folder. Please check help.");
+			_cmdLine.help =true;
 		}
 	}
 
 	@Override
 	protected void processArgument(String arg) {
+		//Making compatible both for Unix & Window based directory structure
+		arg = arg.replace("\\", "/");
 		if (_cmdLine.project != null) {
 			illegalArgument(arg);
 		}
 		
 		if (arg.indexOf('/') > -1) {
-			String projectName = arg.split("/")[0];
-			String srcFolder = arg.substring(projectName.length() + 1);
+			//String projectName = arg.split("/")[0];
+			//String srcFolder = arg.substring(projectName.length() + 1);
+			
+			String srcFolder = arg.substring(arg.lastIndexOf("/")+1);
+			String projectPath =arg.substring(0,arg.lastIndexOf("/"));
+			String projectName = projectPath.substring(projectPath.lastIndexOf("/")+1);
 			
 			_cmdLine.project = projectName;
+			_cmdLine.projectPath = projectPath;
 			_cmdLine.sourceFolders.add(srcFolder);
 		} else {
 			_cmdLine.project = arg;
@@ -139,9 +147,11 @@ class SharpenCommandLineParser extends CommandLineParser {
 		} else if (areEqual(arg, "-junitConversion")) {
 			_cmdLine.junitConversion = true;		
 		} else if (areEqual(arg, "-sharpenNamespace")) {
-			_cmdLine.sharpenNamespace = consumeNext();		
+			_cmdLine.sharpenNamespace = consumeNext();	
+		} else if (areEqual(arg, "-help")) {
+			_cmdLine.help = true;		
 		} else {
-			illegalArgument(arg);
+			_cmdLine.help = true;
 		}
 	}
 

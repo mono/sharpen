@@ -24,43 +24,51 @@ package sharpen.ui.tests;
 import java.io.IOException;
 
 import sharpen.core.SharpenConversionBatch;
-import sharpen.core.framework.resources.*;
 
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.core.ICompilationUnit;
+import org.junit.Test;
+
 
 public class BatchConverterTestCase extends AbstractConversionTestCase {
 
+	@Test
 	public void testSingleClassEmptyPackage() throws Throwable {
 		runBatchConverterTestCase("EmptyClass");
 	}
 	
+  @Test
 	public void testMultipleClassesEmptyPackage() throws Throwable {
 		runBatchConverterTestCase("EmptyClass", "AnotherEmptyClass");
 	}
 	
+	@Test
 	public void testKeywordNamespaces() throws Throwable {
 		runBatchConverterTestCase("namespaceMapping/out/event/Foo");
 	}
 	
+	
+	@Test
 	public void testEventInterfaceAndClassInDifferentCompilationUnits() throws Throwable, IOException, Throwable {
 		runBatchConverterPascalCaseTestCase("events/EventInterface", "events/EventInterfaceImpl");
 	}
 	
-	private void runBatchConverterPascalCaseTestCase(String... resourceNames) throws CoreException, IOException, Throwable {
+	
+
+	private void runBatchConverterPascalCaseTestCase(String... resourceNames) throws IOException, Throwable {
 		runBatchConverterTestCase(newPascalCaseIdentifiersConfiguration(), resourceNames);
 	}
 	
-	private void runBatchConverterTestCase(String... resourceNames) throws CoreException, IOException, Throwable {
+	private void runBatchConverterTestCase(String... resourceNames) throws  IOException, Throwable {
 		runBatchConverterTestCase(getConfiguration(), resourceNames);
 	}
 	
+	
+	@Test
 	public void testSingleClassSimplePackageAndTargetFolder() throws Throwable {
 
 		runResourceTestCaseWithTargetProject("mp/Albatross");
 	}
 	
+	@Test
 	public void testSingleClassNestedPackageAndTargetFolder() throws Throwable {
 		
 		runResourceTestCaseWithTargetProject("mp/nested/Parrot");
@@ -71,22 +79,26 @@ public class BatchConverterTestCase extends AbstractConversionTestCase {
 			throws Throwable {
 
 		TestCaseResource resource = new TestCaseResource(path);
-		ICompilationUnit cu = createCompilationUnit(resource);
+		String cu = createCompilationUnit(resource,"TargetProject");
+		
+		String targetProject= projecttempLocation +"/temp/" +
+				"TargetProject/TargetProject.net"; 
 
-		SimpleProject targetProject = new SimpleProject("TargetProject");
-		IFolder targetFolder = targetProject.createFolder("src");
+		String targetFolder =  projecttempLocation +"/temp/" +
+				"TargetProject/src";
 
 		try {
-
 			SharpenConversionBatch converter = new SharpenConversionBatch(getConfiguration());
-			converter.setSource(new ICompilationUnit[] {cu});
-			converter.setTargetProject(targetProject.getProject());
+			converter.setsourceFiles(new String[] {cu});
+			converter.setTargetProject(targetProject);
+			converter.setsourcePathEntries(targetFolder);
+			converter.getConfiguration().setSharpenNamespace("nonamespace");
 			converter.run();
 
-			assertFile(resource, targetFolder.getFile(path + ".cs"));
+			assertFile(resource, targetProject + "/"+ path + ".cs");
 
 		} finally {
-			targetProject.dispose();
+			tearDown();
 		}
 
 	}

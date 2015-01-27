@@ -1,6 +1,6 @@
 public class Fields2
 {
-	protected string _name;
+	protected internal string _name;
 
 	public virtual string getName()
 	{

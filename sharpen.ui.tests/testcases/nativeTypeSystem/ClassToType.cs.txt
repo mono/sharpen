@@ -2,7 +2,7 @@ namespace nativeTypeSystem
 {
 	public class ClassToType
 	{
-		/// <exception cref="System.TypeLoadException"></exception>
+		/// <exception cref="System.TypeLoadException"/>
 		public virtual void run()
 		{
 			run(typeof(nativeTypeSystem.ClassToType));

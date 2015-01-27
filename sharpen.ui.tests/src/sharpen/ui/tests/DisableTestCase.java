@@ -26,22 +26,27 @@ package sharpen.ui.tests;
 import java.util.*;
 
 import sharpen.core.*;
+import org.junit.Test;
 
 
 public class DisableTestCase extends AbstractConversionTestCase {
 	
+	@Test
 	public void testDisableMethod() throws Throwable {
 		runResourceTestCase("disable/DisableMethod");
 	}
 	
+	@Test
 	public void testDisableClass() throws Throwable {
 		runResourceTestCase("disable/DisableClass");
 	}
 	
+	@Test
 	public void testDisableInnerClass() throws Throwable {
 		runResourceTestCase("disable/DisableInnerClass");
 	}
 	
+	@Test
 	public void testDisableCompilationUnit() throws Throwable {
 		runResourceTestCase(newConfigWithOrganizeUsings(), "disable/DisableCompilationUnit");
 	}
@@ -53,10 +58,12 @@ public class DisableTestCase extends AbstractConversionTestCase {
 		return config;
 	}
 
+	@Test
 	public void testDisableMethodInInterface() throws Throwable {
 		runResourceTestCase("disable/DisabledMethodInInterface");
 	}
 	
+	@Test
 	public void testConditionalCompilation() throws Throwable {
 		final Configuration config = conditionalCompilationConfigFor("DisabledByConfig");
 		runResourceTestCase(config, "disable/NotSubjectToConditionalCompilation");

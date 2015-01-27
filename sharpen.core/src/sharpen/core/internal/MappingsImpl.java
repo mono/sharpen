@@ -233,11 +233,12 @@ public class MappingsImpl implements Mappings {
 	private boolean isDeclaringClassIgnoringExtends(final IMethodBinding binding) {
 		ITypeBinding declaringClassBinding = binding.getDeclaringClass();
 		if (declaringClassBinding.isAnonymous()) return false;
-		
-		AbstractTypeDeclaration declaringClass = findDeclaringNode(declaringClassBinding);
-		return declaringClass == null 
-					? false 
-					: isAnnotatedWith(declaringClass, SharpenAnnotations.SHARPEN_IGNORE_EXTENDS);
+
+		final ASTNode node = findDeclaringNode(declaringClassBinding);
+		AbstractTypeDeclaration declaringClass = node instanceof AbstractTypeDeclaration ? (AbstractTypeDeclaration) node: null;
+		return declaringClass == null
+				? false
+				: isAnnotatedWith(declaringClass, SharpenAnnotations.SHARPEN_IGNORE_EXTENDS);
 	}
 	
 	private String annotatedRenaming(BodyDeclaration method) {

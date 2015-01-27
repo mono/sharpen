@@ -22,13 +22,16 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 /* Copyright (C) 2004 - 2006 Versant Inc. http://www.db4o.com */
 
 package sharpen.ui.tests;
+import org.junit.Test;
 
 public class AutoCastingTestCase extends AbstractConversionTestCase {
 	
+	@Test
 	public void testChar() throws Throwable {
 		runResourceTestCase("autocasting/Char");
 	}
-
+	
+	@Test
 	public void testHex() throws Throwable {
 		runResourceTestCase("autocasting/Hex");
 	}

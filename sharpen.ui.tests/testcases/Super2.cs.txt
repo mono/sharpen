@@ -7,7 +7,8 @@ internal class Super2Base
 
 internal class Super2Derived : Super2Base
 {
-	public Super2Derived(string name) : base(name)
+	public Super2Derived(string name)
+		: base(name)
 	{
 	}
 }

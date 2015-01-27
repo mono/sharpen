@@ -1,0 +1,19 @@
+namespace comments
+{
+	public class BodyBlock
+	{
+		/*
+		*   Block comment tabs indented
+		*/
+		public virtual void foo()
+		{
+		}
+
+		/*
+		*   Block comment spaces indented
+		*/
+		public virtual void bar()
+		{
+		}
+	}
+}

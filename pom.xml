@@ -1,0 +1,206 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>sharpen</groupId>
+  <artifactId>sharpencore</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>sharpencore</name>
+  <url>https://github.com/imazen/sharpen</url>
+    <organization>
+        <name>Imazen</name>
+        <url>http://www.imazen.io</url>
+    </organization>
+    <licenses>
+        <license>
+            <name>GPL 2 </name>
+            <url>http://www.gnu.org/licenses/gpl-2.0.html</url>
+            <distribution>repo</distribution>
+            <comments>GPL 2 License</comments>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>1</id>
+            <name>Nathanael Jones</name>
+            <email>nathanael.jones@gmail.com</email>
+            <organization>Imazen</organization>
+            <organizationUrl>http://www.imazen.io</organizationUrl>
+            <roles>
+                <role>Architect</role>
+                <role>Developer</role>
+            </roles>
+            <timezone>-5</timezone>
+        </developer>
+        <developer>
+            <id>2</id>
+            <name>Yakov Daniloc</name>
+            <email>yakodani@gmail.com</email>
+            <organization>imazen.io</organization>
+            <organizationUrl>http://www.imazen.io</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+3</timezone>
+        </developer>
+    </developers>
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/imazen/sharpen/issues</url>
+    </issueManagement>
+    <ciManagement>
+        <system>travis</system>
+        <url>https://travis-ci.org/imazen/sharpen</url>
+    </ciManagement>
+    <scm>
+        <connection>scm:git:github.com:imazen/sharpen.git</connection>
+        <developerConnection>scm:git:github.com:imazen/sharpen.git</developerConnection>
+        <url>https://github.com/imazen/sharpen</url>
+    </scm>
+    <!--<distributionManagement>-->
+        <!--<downloadUrl>https://oss.sonatype.org/content/groups/public</downloadUrl>-->
+        <!--<repository>-->
+            <!--<id>oss.sonatype.org</id>-->
+            <!--<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>-->
+        <!--</repository>-->
+        <!--<snapshotRepository>-->
+            <!--<id>oss.sonatype.org</id>-->
+            <!--<url>https://oss.sonatype.org/content/repositories/snapshots</url>-->
+        <!--</snapshotRepository>-->
+        <!--<site>-->
+            <!--<id>parent.jcabi.com</id>-->
+            <!--<url>http://parent.jcabi.com/</url>-->
+        <!--</site>-->
+    <!--</distributionManagement>-->
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+   <finalName>${project.artifactId}-${project.version}</finalName>
+  </properties>
+
+  <dependencies>
+    
+    <dependency>
+      <groupId>org.eclipse.jdt</groupId>
+      <artifactId>org.eclipse.jdt.core</artifactId>
+      <version>3.7.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.core</groupId>
+      <artifactId>runtime</artifactId>
+      <version>3.10.0-v20140318-2214</version>
+    </dependency>
+     <dependency>
+      <groupId>org.eclipse.equinox</groupId>
+      <artifactId>common</artifactId>
+      <version>3.6.200-v20130402-1505</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.osgi</groupId>
+      <artifactId>org.eclipse.osgi</artifactId>
+      <version>3.6.0.v20100517</version>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.4</version>
+      <scope>test</scope>
+    </dependency>
+    
+  </dependencies>
+  
+  <build>
+    <directory>sharpen.core/target</directory>
+    <outputDirectory>sharpen.core/target/classes</outputDirectory>
+    <finalName>${finalName}</finalName>
+    <testOutputDirectory>sharpen.core/target/testcases</testOutputDirectory>
+    <sourceDirectory>sharpen.core/src</sourceDirectory>
+    <scriptSourceDirectory>sharpen.core/src</scriptSourceDirectory>
+    <testSourceDirectory>sharpen.ui.tests/src</testSourceDirectory>
+    <resources>
+      <resource>
+        <directory>sharpen.core/src/resources</directory>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>sharpen.ui.tests/testcases</directory>
+      </testResource>
+    </testResources>
+    
+    <plugins>
+      
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>sharpen.core.SharpenCmd</mainClass>
+            </manifest>
+          </archive>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id> <!-- this is used for inheritance merges -->
+            <phase>package</phase> <!-- bind to the packaging phase -->
+            <goals>
+            <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+   
+  </build>
+
+  <profiles>
+    <profile>
+        <!--
+        Static quality analysis with Qulice and other tools.
+        This profile is supposed to be activated in continuous
+        integration environment, right before the final approval
+        of the build. It runs a number of static code analysis
+        tools to validate and approve the quality of source
+        code and the SCM repository.
+        @see http://www.jcabi.com/jcabi-parent/profile-qulice.html
+        -->
+        <id>qulice</id>
+        <build>
+            <plugins>
+                <plugin>
+                    <!--
+                    Qulice-maven-plugin is a compound static analysis
+                    tool that aggregates Checkstyle, PMD, FindBugs,
+                    CodeNarc (for Groovy code) and a few other analyzers.
+                    Qulice also configures them correctly to enable the
+                    most important rules.
+                    @see http://www.qulice.com/qulice-maven-plugin/
+                    -->
+                    <groupId>com.qulice</groupId>
+                    <artifactId>qulice-maven-plugin</artifactId>
+                    <version>0.12</version>
+                    <executions>
+                        <execution>
+                            <id>sharpen-check</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                            <configuration>
+                                <license>file:${basedir}/LICENSE.txt</license>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </build>
+    </profile>
+  </profiles>
+</project>

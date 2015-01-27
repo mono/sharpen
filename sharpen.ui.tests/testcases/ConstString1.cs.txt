@@ -1,4 +1,4 @@
 public class ConstString1
 {
-	public static readonly string Message = "This is an ex parrot!";
+	public const string Message = "This is an ex parrot!";
 }

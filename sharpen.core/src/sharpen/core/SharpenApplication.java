@@ -21,46 +21,93 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.core;
 
-import java.io.*;
-import java.util.*;
+import java.io.Console;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Properties;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.app.*;
-import org.eclipse.jdt.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
-import sharpen.core.framework.*;
-import sharpen.core.io.*;
+import sharpen.core.framework.ConsoleProgressMonitor;
+import sharpen.core.io.IO;
 
-/**
- * Start this application with: <code>
- * java -cp startup.jar org.eclipse.core.launcher.Main -application sharpen.core.application resourcePath
- * </code>
- */
-public class SharpenApplication implements IApplication {
-
+public class SharpenApplication {
 	private SharpenCommandLine _args;
+	private static final int HELP_SIZE =27;
 
-	public Object start(IApplicationContext context) throws Exception {
+	public void start(String[] args) throws Exception {
 		try {
-			String[] args = argv(context);
 			_args = SharpenCommandLine.parse(args);
+			if(_args.help==true){
+				displayHelp();
+				return;
+			}
 			System.err.println("Configuration Class: " + _args.configurationClass);
-			Sharpen.getDefault().configuration(ConfigurationFactory.newConfiguration(_args.configurationClass, _args.runtimeTypeName));
+			System.err.println("Configuration Class: " +_args.runtimeTypeName);
+			Configuration config = ConfigurationFactory.newExternalConfiguration(_args.configurationClass, _args.runtimeTypeName, newProgressMonitor());
+			if(config == null)
+				config = ConfigurationFactory.newConfiguration(_args.configurationClass, _args.runtimeTypeName);
+			Sharpen.getDefault().configuration(config);
 			safeRun();
 		} catch (Exception x) {
 			System.err.println("ERROR: " + x.getMessage());
 			x.printStackTrace();
 			throw x;
 		}
-		return IApplication.EXIT_OK;
 	}
 
-	private String[] argv(IApplicationContext context) {
-		return (String[])context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
-	}
-	
-	public void stop() {
+	void displayHelp()
+	{
+		Properties prop = new Properties();
+    	InputStream input = null;
+ 
+    	try {
+ 
+    		String filename = "sharpen.properties";
+    		input = SharpenApplication.class.getClassLoader().getResourceAsStream(filename);
+    		if(input==null){
+    	            System.out.println("Unable to find " + filename);
+    		    return;
+    		}
+    		prop.load(input);
+    		
+    		System.out.println("**************Help Start**************************");
+            //get the property value and print it out
+    		System.out.println(prop.getProperty("111"));
+    		System.out.println();
+    		System.out.println(prop.getProperty("222"));
+    		System.out.println();
+    		System.out.println("Valid command line options are as following. PRESS ENTER TO PROCEED");
+    		
+    		Console console = System.console();
+    	       
+    		for (int i = 1; i <= HELP_SIZE; i++){
+    			String key= Integer.toString(i);
+    			System.out.println();
+    			System.out.println(prop.getProperty(key));
+    			if(i%5 ==0){
+    			    console.readLine();
+    			}
+    		} 
+            System.out.println("**************Help End**************************");
+  
+    	} catch (IOException ex) {
+    		ex.printStackTrace();
+        } finally{
+        	if(input!=null){
+	        		try {
+					input.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+        	}
+        }
 		
 	}
 
@@ -76,29 +123,45 @@ public class SharpenApplication implements IApplication {
 	}
 
 	private void convert() throws CoreException, IOException, InterruptedException {
-		JavaProject project = setUpJavaProject();
-		
-		List<ICompilationUnit> units = sortedByName(project.getAllCompilationUnits());
-		
-		convertTo(units, resetTargetFolder(project));
+		JavaProjectCmd project = setUpJavaProject();
+		convertTo(project);
 	}
 
-	private IProject resetTargetFolder(JavaProject project) throws CoreException {
+	private String resetTargetFolder(JavaProjectCmd project) throws IOException {
 		return deleteTargetProject(project);
 	}
 
-	private void convertTo(List<ICompilationUnit> units, IProject targetFolder)
+	private void convertTo(JavaProjectCmd project)
 			throws IOException, CoreException, InterruptedException {
+		List<String> units = sortedByName(project.getAllCompilationUnits());
+		String targetFolder =resetTargetFolder(project);
 		SharpenConversionBatch converter = new SharpenConversionBatch(getConfiguration());
 		converter.setContinueOnError(_args.continueOnError);
 		converter.setProgressMonitor(newProgressMonitor());
 		converter.setTargetProject(targetFolder);
-		converter.setSource(units);
+		converter.setsourceFiles(units);
+		converter.setsourcePathEntries(project.getSourceFolder());
+		converter.setclassPathEntries(project.getclassPath());
 		converter.run();
 	}
 
-	private IProject deleteTargetProject(JavaProject project) throws CoreException {
-		return JavaModelUtility.deleteTargetProject(project.getJavaProject());
+	private String deleteTargetProject(JavaProjectCmd project) throws IOException 
+	{
+		String target = project.getProjectPath() + "/" + project.getProjectName() + SharpenConstants.SHARPENED_PROJECT_SUFFIX;
+		File targetfile = new File(target);
+		if (targetfile.exists()) {
+			delete(targetfile);
+		}
+		return target;
+	}
+	
+	private void delete(File f) throws IOException {
+	  if (f.isDirectory()) {
+	    for (File c : f.listFiles())
+	      delete(c);
+	  }
+	  if (!f.delete())
+	    throw new FileNotFoundException("Failed to delete file: " + f);
 	}
 
 	private Configuration getConfiguration() throws IOException {
@@ -174,10 +237,10 @@ public class SharpenApplication implements IApplication {
 		return configuration;
 	}
 
-	private List<ICompilationUnit> sortedByName(List<ICompilationUnit> units) {
-		Collections.sort(units, new Comparator<ICompilationUnit>() {
-			public int compare(ICompilationUnit o1, ICompilationUnit o2) {
-				return o1.getElementName().compareTo(o2.getElementName());
+	private List<String> sortedByName(List<String> units) {
+		Collections.sort(units, new Comparator<String>() {
+			public int compare(String o1, String o2) {
+				return o1.compareTo(o2);
 			}
 		});
 		return units;
@@ -187,12 +250,14 @@ public class SharpenApplication implements IApplication {
 		return new ConsoleProgressMonitor();
 	}
 
-	JavaProject setUpJavaProject() throws CoreException {
+	JavaProjectCmd setUpJavaProject() throws CoreException {
 		ods("project: " + _args.project);
-		return new JavaProject.Builder(newProgressMonitor(), _args.project)
-			.classpath(_args.classpath)
-			.sourceFolders(_args.sourceFolders)
-			.project;
+		JavaProjectCmd jpCmd = new JavaProjectCmd();
+		jpCmd.setProjectName(_args.project);
+		jpCmd.setProjectPath(_args.projectPath);
+		jpCmd.setSourceFolder(_args.sourceFolders);
+		jpCmd.setclassPath(_args.classpath);
+		return jpCmd;
 	}
 	
 	private static void ods(String message) {

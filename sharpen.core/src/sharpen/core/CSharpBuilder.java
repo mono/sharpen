@@ -63,6 +63,8 @@ public class CSharpBuilder extends ASTVisitor {
 
 	protected CSTypeDeclaration _currentAuxillaryType;
 
+	private String _content;
+
 	private CSBlock _currentBlock;
 
 	private CSExpression _currentExpression;
@@ -109,7 +111,9 @@ public class CSharpBuilder extends ASTVisitor {
 		_ast = my(CompilationUnit.class);
 		_resolver = my(ASTResolver.class);
 		_compilationUnit = my(CSCompilationUnit.class);
-		_compilationUnit.addUsing(new CSUsing (_configuration.sharpenNamespace()));
+		if(!_configuration.sharpenNamespace().equals("nonamespace")) {
+			_compilationUnit.addUsing(new CSUsing (_configuration.sharpenNamespace()));
+		}
 	}
 
 	protected CSharpBuilder(CSharpBuilder other) {
@@ -129,6 +133,10 @@ public class CSharpBuilder extends ASTVisitor {
 		_ast = ast;
 	}
 
+	public void setSourceContent(String content) {
+		_content = content;
+	}
+
 	public void run() {
 		if (null == warningHandler() || null == _ast) {
 			throw new IllegalStateException();
@@ -143,10 +151,29 @@ public class CSharpBuilder extends ASTVisitor {
 		        .getLength())));
 		return false;
 	}
+	
+	@Override
+	public boolean visit(BlockComment node) {
+		_compilationUnit.addComment(new CSBlockComment(node.getStartPosition(), getText(node.getStartPosition(), node
+		        .getLength())));
+		return false;
+	};
 
 	private String getText(int startPosition, int length) {
 		try {
-			return ((ICompilationUnit) _ast.getJavaElement()).getBuffer().getText(startPosition, length);
+			ICompilationUnit cu = (ICompilationUnit) _ast.getJavaElement();
+			if(cu != null){
+				IBuffer buffer = cu.getBuffer();
+				if(buffer != null){
+					return buffer.getText(startPosition, length);
+				}
+			}
+
+			if(_content != null && !_content.isEmpty()){
+				return _content.substring(startPosition, startPosition + length);
+			}
+
+			return ""; 
 		} catch (JavaModelException e) {
 			throw new RuntimeException(e);
 		}
@@ -258,6 +285,7 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(PackageDeclaration node) {
+		_compilationUnit.setPackagePosition(node.getStartPosition());
 		String namespace = node.getName().toString();
 		_compilationUnit.namespace(mappedNamespace(namespace));
 		
@@ -1154,10 +1182,38 @@ public class CSharpBuilder extends ASTVisitor {
 				summaryNode.addFragment(new CSDocTextNode(fragment));
 			}
 			member.addDoc(summaryNode);
-			member.addDoc(createTagNode(member, "remarks", element, false));
+			CSDocNode remarksNode = createTagNode(member, "remarks", element, false);
+			if(!summaryEqualsRemarks(summary, remarksNode))
+				member.addDoc(remarksNode);
 		} else {
 			member.addDoc(createTagNode(member, "summary", element, false));
 		}
+	}
+	
+	private boolean summaryEqualsRemarks(List<String> summaryList, CSDocNode remarksNode) {
+		if(!(remarksNode instanceof CSDocTagNode)){
+			return false;
+		}
+		
+		String summary = "";
+		
+		for(String str : summaryList){
+			summary += str.trim();
+		}
+		
+		String remarksStr = "";
+		
+		CSDocTagNode remarks = (CSDocTagNode) remarksNode;
+		for(CSDocNode node : remarks.fragments()){
+			if(!(node instanceof CSDocTextNode)){
+				return false;
+			}
+			
+			CSDocTextNode remarksDoc = (CSDocTextNode)node;			
+			remarksStr += remarksDoc.text().trim();
+		}
+		
+		return summary.equalsIgnoreCase(remarksStr);
 	}
 
 	private List<String> getFirstSentence(TagElement element) {
@@ -1783,7 +1839,8 @@ public class CSharpBuilder extends ASTVisitor {
 		if (method instanceof CSMethod) {
 			IVariableBinding vb = parameter.resolveBinding();
 			ITypeBinding[] ta = vb.getType().getTypeArguments();
-			if (ta.length > 0 && ta[0].getName().startsWith("?")) {
+			//	we need to check that generic class is not Class<?>
+			if (ta.length > 0 && ta[0].getName().startsWith("?") && !isJavaLangClass(parameter.resolveBinding().getType())) {
 				ITypeBinding extended = mapTypeParameterExtendedType (ta[0]);
 				CSMethod met = (CSMethod)method;
 				String genericArg = "_T" + met.typeParameters().size();

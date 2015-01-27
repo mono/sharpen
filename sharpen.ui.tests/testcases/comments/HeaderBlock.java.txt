@@ -1,0 +1,12 @@
+/*
+*   Block comment header
+*/
+package comments;
+
+public class HeaderBlock {
+	public void foo() {
+	}
+	
+	public void bar() {
+	}
+}

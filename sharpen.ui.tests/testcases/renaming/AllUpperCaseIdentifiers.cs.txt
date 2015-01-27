@@ -2,7 +2,7 @@ namespace Renaming
 {
 	public class AllUpperCaseIdentifiers
 	{
-		/// <summary><see cref="FooBar">FooBar</see></summary>
+		/// <summary><see cref="FooBar"/></summary>
 		public readonly object Foo = null;
 
 		public readonly object FooBar = null;

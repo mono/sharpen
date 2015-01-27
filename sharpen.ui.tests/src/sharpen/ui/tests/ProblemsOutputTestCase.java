@@ -23,10 +23,15 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.ui.tests;
 
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
 import java.io.*;
 
 public class ProblemsOutputTestCase extends AbstractConversionTestCase {
 	
+	@Test
 	public void testProblemsGoToStderr() throws Throwable {		
 		final ByteArrayOutputStream stderr = new ByteArrayOutputStream();
 		
@@ -34,15 +39,17 @@ public class ProblemsOutputTestCase extends AbstractConversionTestCase {
 		try {
 			System.setErr(new PrintStream(stderr));
 			
-			final String resourcePath = "/TestProject/src/problems/Spam.java";			
+			final String resourcePath = "/problems/Spam.java";
 			try {
 				runResourceTestCase("problems/Spam");
 			} catch (RuntimeException x) {
 				assertTrue(x.getMessage().contains(resourcePath));
-			}			
-			assertEquals(
-					resourcePath + "(4): Eggs cannot be resolved to a type",
-					stderr.toString().trim());
+			}
+
+			String message = stderr.toString().trim();
+			message = message.replace(File.separator, "/");
+
+			assertTrue(message.contains(resourcePath + "(4): Eggs cannot be resolved to a type"));
 		} finally {
 			System.setErr(saved);
 		}

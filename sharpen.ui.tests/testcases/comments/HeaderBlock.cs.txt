@@ -1,0 +1,16 @@
+/*
+*   Block comment header
+*/
+namespace comments
+{
+	public class HeaderBlock
+	{
+		public virtual void foo()
+		{
+		}
+
+		public virtual void bar()
+		{
+		}
+	}
+}

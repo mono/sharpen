@@ -20,23 +20,30 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
 package sharpen.ui.tests;
+import org.junit.Test;
 
 
 public class RenamingConversionsTestCase extends AbstractConversionTestCase {
 
+	@Test
 	public void testRenamingMethods() throws Throwable {
 		runResourceTestCase("renaming/SimpleMethodRenaming");
 	}
 	
+	@Test
 	public void testAllUppercase() throws Throwable {
 		runResourceTestCase(newPascalCasePlusConfiguration(), "renaming/AllUpperCaseIdentifiers");
 	}
 	
+	
+	@Test
 	public void testRenamingInTypeHierarchy() throws Throwable {
 		runResourceTestCase(newPascalCasePlusConfiguration(), "renaming/RenamingInTypeHierarchy");
 	}
 	
+	@Test
 	public void testRenamingTypes() throws Throwable {
 		runResourceTestCase(getConfiguration(), "renaming/TypeRenaming", "renaming/Renamed");
 	}
+	
 }

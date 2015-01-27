@@ -1,7 +1,11 @@
 # Sharpen - Automated Java->C# coversion
 
-[![master](https://img.shields.io/travis/imazen/sharpen/master.svg?label=master)](https://travis-ci.org/imazen/sharpen/builds)[![master - AppVeyor](https://ci.appveyor.com/api/projects/status/qxrbmyx70iuoev0x/branch/master?svg=true&passingText=master%20-%20passing&failingText=master%20-%20failed)](https://ci.appveyor.com/project/imazen/sharpen/branch/master) [![develop](https://img.shields.io/travis/imazen/sharpen/develop.svg?label=develop)](https://travis-ci.org/imazen/sharpen/builds)
-[![develop - AppVeyor](https://ci.appveyor.com/api/projects/status/qxrbmyx70iuoev0x/branch/develop?svg=true&passingText=develop%20-%20passing&failingText=develop%20-%20failed)](https://ci.appveyor.com/project/imazen/sharpen/branch/develop)
+[imazen/sharpen](https://github.com/imazen/sharpen) [![master](https://img.shields.io/travis/imazen/sharpen/master.svg?label=imazen%20master)](https://travis-ci.org/imazen/sharpen/builds)[![imazen master - AppVeyor](https://ci.appveyor.com/api/projects/status/qxrbmyx70iuoev0x/branch/master?svg=true&passingText=imazen%20master%20-%20passing&failingText=imazen%20master%20-%20failed)](https://ci.appveyor.com/project/imazen/sharpen/branch/master) [![develop](https://img.shields.io/travis/imazen/sharpen/develop.svg?label=imazen%20develop)](https://travis-ci.org/imazen/sharpen/builds)
+[![imazen develop - AppVeyor](https://ci.appveyor.com/api/projects/status/qxrbmyx70iuoev0x/branch/develop?svg=true&passingText=imazen%20develop%20-%20passing&failingText=imazen%20develop%20-%20failed)](https://ci.appveyor.com/project/imazen/sharpen/branch/develop)
+
+[slluis/sharpen](https://github.com/imazen/sharpen) [![master](https://img.shields.io/travis/slluis/sharpen/master.svg?label=slluis%20master)](https://travis-ci.org/slluis/sharpen/builds)[![slluis master - AppVeyor](https://ci.appveyor.com/api/projects/status/[projectid]/branch/master?svg=true&passingText=slluis%20master%20-%20passing&failingText=slluis%20master%20-%20failed)](https://ci.appveyor.com/project/slluis/sharpen/branch/master) [![develop](https://img.shields.io/travis/slluis/sharpen/develop.svg?label=slluis%20develop)](https://travis-ci.org/slluis/sharpen/builds)
+[![slluis develop - AppVeyor](https://ci.appveyor.com/api/projects/status/[projectid]/branch/develop?svg=true&passingText=slluis%20develop%20-%20passing&failingText=slluis%20develop%20-%20failed)](https://ci.appveyor.com/project/slluis/sharpen/branch/develop)
+
 
 
 Sharpen is a library and command-line tool for automating Java to C# code conversion. You can provide configuration classes to control a wide range of class and functionality mapping.

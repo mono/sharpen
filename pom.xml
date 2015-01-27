@@ -36,7 +36,7 @@
         </developer>
         <developer>
             <id>2</id>
-            <name>Yakov Daniloc</name>
+            <name>Yakov Danilov</name>
             <email>yakodani@gmail.com</email>
             <organization>imazen.io</organization>
             <organizationUrl>http://www.imazen.io</organizationUrl>
@@ -113,21 +113,21 @@
   </dependencies>
   
   <build>
-    <directory>sharpen.core/target</directory>
-    <outputDirectory>sharpen.core/target/classes</outputDirectory>
+    <directory>src/target</directory>
+    <outputDirectory>src/target/classes</outputDirectory>
     <finalName>${finalName}</finalName>
-    <testOutputDirectory>sharpen.core/target/testcases</testOutputDirectory>
-    <sourceDirectory>sharpen.core/src</sourceDirectory>
-    <scriptSourceDirectory>sharpen.core/src</scriptSourceDirectory>
-    <testSourceDirectory>sharpen.ui.tests/src</testSourceDirectory>
+    <testOutputDirectory>src/target/testcases</testOutputDirectory>
+    <sourceDirectory>src/main</sourceDirectory>
+    <scriptSourceDirectory>src/main/resources</scriptSourceDirectory>
+    <testSourceDirectory>src/test</testSourceDirectory>
     <resources>
       <resource>
-        <directory>sharpen.core/src/resources</directory>
+        <directory>src/test/resources</directory>
       </resource>
     </resources>
     <testResources>
       <testResource>
-        <directory>sharpen.ui.tests/testcases</directory>
+        <directory>src/test/resources</directory>
       </testResource>
     </testResources>
     

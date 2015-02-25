@@ -77,10 +77,9 @@ public class CustomConfigurationTestCase extends AbstractConversionTestCase {
 
 	private static Path createConfigurationJar(Class<?> configurationClass) throws Exception {
 		String jar = JarUtilities.createJar(configurationClass);
-		URI currentDirectoryURI = ConfigurationFactory.getCurrentDirectoryURI();
-		File currentDirectory = new File(currentDirectoryURI);
+		Path currentDirectory = ConfigurationFactory.getCurrentDirectory();
 		String configJar = configurationClass.getSimpleName()+ ".sharpenconfig.jar";
-		Path configPath = Paths.get(currentDirectory.getPath(), configJar);
+		Path configPath = Paths.get(currentDirectory.toString(), configJar);
 		tryDelete(configPath);
 		Files.move(Paths.get(jar), configPath);
 		return configPath;

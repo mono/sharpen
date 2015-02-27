@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class CSMember extends CSNode {
+public abstract class CSMember extends CSNode implements CSAttributesContainer {
 
 	protected String _name;
 	
@@ -73,11 +73,13 @@ public abstract class CSMember extends CSNode {
 		return Collections.unmodifiableList(_docs);
 	}
 	
-	public void addAttribute(CSAttribute attribute) {
+	@Override
+    public void addAttribute(CSAttribute attribute) {
 		_attributes.add(attribute);
 	}
 	
-	public boolean removeAttribute (String name) {
+	@Override
+    public boolean removeAttribute(String name) {
 		for (CSAttribute at : _attributes) {
 			if (at.name().equals(name)) {
 				_attributes.remove(at);
@@ -87,7 +89,8 @@ public abstract class CSMember extends CSNode {
 		return false;
 	}
 	
-	public List<CSAttribute> attributes() {
+	@Override
+    public List<CSAttribute> attributes() {
 		return Collections.unmodifiableList(_attributes);
 	}
 	

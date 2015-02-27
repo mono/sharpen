@@ -305,6 +305,7 @@ public class CSharpPrinter extends CSVisitor {
 	}
 	
 	public void visit(CSVariableDeclaration node) {
+        writeAttributes(node);
 		node.type().accept(this);
 		if (null != node.name()) {
 			write(" ");
@@ -878,14 +879,24 @@ public class CSharpPrinter extends CSVisitor {
 	}
 
 	public void visit(CSAttribute node) {
-		writeIndented("[");
+        if(node.isParameter()) {
+            write("[");
+        }
+        else {
+            writeIndented("[");
+        }
 		write(node.name());
 		if (!node.arguments().isEmpty()) {
 			writeParameterList(node.arguments());
 		}
-		writeLine("]");
+        if(node.isParameter()) {
+            write("]");
+        }
+        else {
+            writeLine("]");
+        }
 	}
-	
+
 	@Override
 	public void visit(CSLabelStatement node) {
 		//labels can't be free-standing, for simplicity simply emit an empty statement
@@ -956,7 +967,7 @@ public class CSharpPrinter extends CSVisitor {
 		}
 	}
 	
-	private void writeAttributes(CSMember node) {
+	private void writeAttributes(CSAttributesContainer node) {
 		visitList(node.attributes());
 	}
 	

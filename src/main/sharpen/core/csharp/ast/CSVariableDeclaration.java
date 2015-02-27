@@ -21,13 +21,18 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.core.csharp.ast;
 
-public class CSVariableDeclaration extends CSNode {
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class CSVariableDeclaration extends CSNode implements CSAttributesContainer {
 	
 	private String _name;
 	private CSTypeReferenceExpression _type;
 	private CSExpression _initializer;
-	
-	public CSVariableDeclaration(String name, CSTypeReferenceExpression type) {
+    private List<CSAttribute> _attributes = new ArrayList<CSAttribute>();
+
+    public CSVariableDeclaration(String name, CSTypeReferenceExpression type) {
 		this(name, type, null);
 	}
 
@@ -64,4 +69,25 @@ public class CSVariableDeclaration extends CSNode {
 	public void name(String name) {
 		_name = name;
 	}
+
+    @Override
+    public void addAttribute(CSAttribute attribute) {
+        _attributes.add(new CSVariableAttribute(attribute.name()));
+    }
+
+    @Override
+    public boolean removeAttribute(String name) {
+        for (CSAttribute at : _attributes) {
+            if (at.name().equals(name)) {
+                _attributes.remove(at);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public List<CSAttribute> attributes() {
+        return Collections.unmodifiableList(_attributes);
+    }
 }

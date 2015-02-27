@@ -18,6 +18,11 @@ public class AnnotationsTestCase extends AbstractConversionTestCase {
     public void testSimpleAnnotationMapping() throws IOException, CoreException {
         runResourceTestCase("SimpleAnnotationMapping");
     }
+
+    @Test
+    public void testMethodAnnotationMapping() throws IOException, CoreException {
+        runResourceTestCase("MethodAnnotation");
+    }
 	
 	@Test
 	public void testCompilerAnnotations() throws IOException, CoreException {

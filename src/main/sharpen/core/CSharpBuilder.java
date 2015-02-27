@@ -1491,13 +1491,13 @@ public class CSharpBuilder extends ASTVisitor {
 		} else {
 			processFieldModifiers(field, node.getModifiers());
 		}
-		mapAnnotations(node, field);
+		mapAnnotations(node.modifiers(), field);
 		mapDocumentation(node, field);
 		return field;
 	}
 
-	private void mapAnnotations(BodyDeclaration node, CSMember member) {
-		for (Object m : node.modifiers()) {
+	private void mapAnnotations(List modifiers, CSAttributesContainer member) {
+		for (Object m : modifiers) {
 			if (!(m instanceof Annotation)) {
 				continue;
 			}
@@ -1514,7 +1514,7 @@ public class CSharpBuilder extends ASTVisitor {
 		return _configuration.isIgnoredAnnotation(qualifiedName(m.resolveAnnotationBinding().getAnnotationType()));
     }
 
-	private void mapMarkerAnnotation(MarkerAnnotation annotation, CSMember member) {
+	private void mapMarkerAnnotation(MarkerAnnotation annotation, CSAttributesContainer member) {
 		final IAnnotationBinding binding = annotation.resolveAnnotationBinding();
 		final CSAttribute attribute = new CSAttribute(mappedTypeName(binding.getAnnotationType()));
 		member.addAttribute(attribute);
@@ -1800,7 +1800,7 @@ public class CSharpBuilder extends ASTVisitor {
 		method.startPosition(node.getStartPosition());
 		method.isVarArgs(node.isVarargs());
 		mapParameters(node, method);
-		mapAnnotations(node, method);
+		mapAnnotations(node.modifiers(), method);
 		mapDocumentation(node, method);
 		visitBodyDeclarationBlock(node, node.getBody(), method);
 		
@@ -2835,7 +2835,7 @@ public class CSharpBuilder extends ASTVisitor {
 		CSField field = new CSField(fieldName(node), typeName, visibility, initializer);
 		field.addModifier(CSFieldModifier.Static);
 		field.addModifier(CSFieldModifier.Readonly);
-		mapAnnotations(node, field);
+		mapAnnotations(node.modifiers(), field);
 		mapDocumentation(node, field);
 
 		popExpectedType(saved);
@@ -3745,7 +3745,9 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private CSVariableDeclaration createParameter(SingleVariableDeclaration declaration) {
-		return createVariableDeclaration(declaration.resolveBinding(), null);
+		CSVariableDeclaration varDeclaration = createVariableDeclaration(declaration.resolveBinding(), null);
+        mapAnnotations(declaration.modifiers(), varDeclaration);
+        return varDeclaration;
 	}
 
 	protected void visit(List nodes) {

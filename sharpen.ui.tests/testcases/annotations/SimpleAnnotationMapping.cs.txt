@@ -1,0 +1,8 @@
+namespace annotations
+{
+	internal class Annotated
+	{
+		[annotations.MappedAnnotation]
+		public string field;
+	}
+}

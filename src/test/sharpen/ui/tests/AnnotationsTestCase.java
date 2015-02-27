@@ -13,6 +13,11 @@ public class AnnotationsTestCase extends AbstractConversionTestCase {
 	public void testSimpleAnnotation() throws IOException, CoreException {
 		runResourceTestCase("SimpleAnnotation");
 	}
+
+    @Test
+    public void testSimpleAnnotationMapping() throws IOException, CoreException {
+        runResourceTestCase("SimpleAnnotationMapping");
+    }
 	
 	@Test
 	public void testCompilerAnnotations() throws IOException, CoreException {
@@ -28,6 +33,7 @@ public class AnnotationsTestCase extends AbstractConversionTestCase {
 	protected Configuration getConfiguration() {
 	    final Configuration config = super.getConfiguration();
 	    config.enableNativeInterfaces();
+        config.mapType("annotations.AnnotationToMap", "annotations.MappedAnnotation");
 		return config;
 	}
 }

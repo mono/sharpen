@@ -305,7 +305,13 @@ public class CSharpPrinter extends CSVisitor {
 	}
 	
 	public void visit(CSVariableDeclaration node) {
-        writeAttributes(node);
+        if(node.attributes().size() > 0) {
+            writeAttributes(node);
+            write(" ");
+        }
+        if(node.isVarArgs()) {
+            write("params ");
+        }
 		node.type().accept(this);
 		if (null != node.name()) {
 			write(" ");
@@ -787,18 +793,8 @@ public class CSharpPrinter extends CSVisitor {
 	}
 
 	protected void writeParameterList(CSMethodBase node) {
-		List<CSVariableDeclaration> parameters = node.parameters();
 		write("(");
-		if (node.isVarArgs()) {
-			if (parameters.size() > 1) {
-				writeCommaSeparatedList(parameters.subList(0, parameters.size()-1));
-				write(", ");
-			}
-			write("params ");
-			visit(parameters.get(parameters.size()-1));
-		} else {
-			writeCommaSeparatedList(parameters);
-		}
+        writeCommaSeparatedList(node.parameters());
 		write(")");
 	}
 	

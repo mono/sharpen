@@ -3,7 +3,12 @@ namespace annotations
 	internal class Annotated
 	{
 		[annotations.TestAnnotation]
-		public virtual void annotatedMethod([annotations.NotNull]string name)
+		public virtual void annotatedMethod([annotations.NotNull] string name)
+		{
+		}
+
+		public virtual void annotatedMethodWithVarAgs([annotations.NotNull] params string
+			[] names)
 		{
 		}
 	}

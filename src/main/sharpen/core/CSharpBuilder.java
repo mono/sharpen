@@ -1798,7 +1798,6 @@ public class CSharpBuilder extends ASTVisitor {
 		_currentType.addMember(method);
 
 		method.startPosition(node.getStartPosition());
-		method.isVarArgs(node.isVarargs());
 		mapParameters(node, method);
 		mapAnnotations(node.modifiers(), method);
 		mapDocumentation(node, method);
@@ -3746,6 +3745,7 @@ public class CSharpBuilder extends ASTVisitor {
 
 	private CSVariableDeclaration createParameter(SingleVariableDeclaration declaration) {
 		CSVariableDeclaration varDeclaration = createVariableDeclaration(declaration.resolveBinding(), null);
+        varDeclaration.isVarArgs(declaration.isVarargs());
         mapAnnotations(declaration.modifiers(), varDeclaration);
         return varDeclaration;
 	}

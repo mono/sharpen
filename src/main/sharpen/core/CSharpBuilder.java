@@ -3551,7 +3551,7 @@ public class CSharpBuilder extends ASTVisitor {
 							return false;
 						}
 					}
-					else if (cls.isEnum() && ident.indexOf('.') == -1){
+					else if (cls.isEnum() && ident.indexOf('.') == -1 && vb.isEnumConstant()){
 						pushExpression(new CSMemberReferenceExpression(mappedTypeReference(cls), ident));
 						return false;
 					}

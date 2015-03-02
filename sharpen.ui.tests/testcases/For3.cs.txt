@@ -1,0 +1,9 @@
+public class For3
+{
+	public virtual void run(string[] args)
+	{
+		for (int j = 1, i = 1; i < 5; ++i, ++j)
+		{
+		}
+	}
+}

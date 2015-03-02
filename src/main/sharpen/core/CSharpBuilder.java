@@ -2132,8 +2132,15 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(VariableDeclarationExpression node) {
-		pushExpression(new CSDeclarationExpression(createVariableDeclaration((VariableDeclarationFragment) node
-		        .fragments().get(0))));
+        List<CSVariableDeclaration> declarations = new ArrayList<CSVariableDeclaration>();
+        for(int i = 0; i < node.fragments().size(); i++){
+            VariableDeclarationFragment fragment = (VariableDeclarationFragment) node.fragments().get(i);
+            CSVariableDeclaration variableDeclaraion = createVariableDeclaration(fragment);
+            //  write type declaration only for the first expression
+            variableDeclaraion.declareType(i == 0);
+            declarations.add(variableDeclaraion);
+        }
+		pushExpression(new CSDeclarationExpression(declarations));
 		return false;
 	}
 

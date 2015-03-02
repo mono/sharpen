@@ -312,9 +312,13 @@ public class CSharpPrinter extends CSVisitor {
         if(node.isVarArgs()) {
             write("params ");
         }
-		node.type().accept(this);
+        if(node.declareType()) {
+            node.type().accept(this);
+        }
 		if (null != node.name()) {
-			write(" ");
+            if(node.declareType()) {
+                write(" ");
+            }
 			write(node.name());
 		}
 		if (null != node.initializer()) {
@@ -420,7 +424,7 @@ public class CSharpPrinter extends CSVisitor {
 	}
 	
 	public void visit(CSDeclarationExpression node) {
-		node.declaration().accept(this);
+        writeCommaSeparatedList(node.declarations());
 	}
 
 	private void writeDeclaration(CSTypeReferenceExpression type, String name, CSExpression initializer) {

@@ -32,6 +32,7 @@ public class CSVariableDeclaration extends CSNode implements CSAttributesContain
 	private CSExpression _initializer;
     private List<CSAttribute> _attributes = new ArrayList<CSAttribute>();
     private boolean _isVarArgs;
+    private boolean _declareType = true;
 
     public CSVariableDeclaration(String name, CSTypeReferenceExpression type) {
 		this(name, type, null);
@@ -98,5 +99,13 @@ public class CSVariableDeclaration extends CSNode implements CSAttributesContain
 
     public boolean isVarArgs() {
         return _isVarArgs;
+    }
+
+    public boolean declareType() {
+        return _declareType;
+    }
+
+    public void declareType(boolean declareType) {
+        _declareType = declareType;
     }
 }

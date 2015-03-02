@@ -186,6 +186,11 @@ public class UnclassifiedConversionTestCase extends AbstractConversionTestCase {
 	public void testForWithAssignment() throws Throwable {
 		runResourceTestCase("For2");
 	}
+
+    @Test
+    public void testForWithMultipleInitializers() throws Throwable {
+        runResourceTestCase("For3");
+    }
 	
 	@Test
 	public void testGetClass() throws Throwable {

@@ -64,6 +64,11 @@ public class NativeInterfacesTestCase extends AbstractConversionTestCase {
 		runResourceTestCase(newNativeInterfacesConfiguration(), "interfaces/DiamondImpl");
 	}
 
+    @Test
+    public void testInterfaceConversionToClass() throws Throwable {
+        runResourceTestCase(newNativeInterfacesConfiguration(), "interfaces/InterfaceToClass", "interfaces/IInterfaceToClass");
+    }
+
 	public Configuration newNativeInterfacesConfiguration() {
 		Configuration configuration = newPascalCasePlusConfiguration();
 		configuration.enableNativeInterfaces();

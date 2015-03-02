@@ -1,0 +1,6 @@
+package interfaces;
+
+public interface InterfaceToClass {
+    int value = 0;
+	void bar();
+}

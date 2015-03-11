@@ -46,7 +46,7 @@ public class CSBlockComment extends CSComment {
 		String[] lines = text.split("\\r?\\n");
 
 		for(int i = 0; i < lines.length; i++){
-			lines[i] = lines[i].trim();
+			lines[i] = lines[i];
 		}
 
 		return lines;

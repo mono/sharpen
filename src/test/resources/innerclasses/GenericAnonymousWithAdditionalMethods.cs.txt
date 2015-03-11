@@ -18,10 +18,10 @@ namespace innerclasses
 				return this.result(target);
 			}
 
-			/*
-			For some unknown reason in MappingsImpl#isDeclaringClassIgnoringExtends() declaringClassBinding believes it is non anonymous.
-			I can see, people don't like to be anonymous (at least most of the time).
-			*/
+  			/* 
+  				For some unknown reason in MappingsImpl#isDeclaringClassIgnoringExtends() declaringClassBinding believes it is non anonymous.
+  				I can see, people don't like to be anonymous (at least most of the time).  				
+  			 */
 			private int result(object target)
 			{
 				return 0;

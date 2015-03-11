@@ -154,30 +154,69 @@ public class CSharpBuilder extends ASTVisitor {
 	
 	@Override
 	public boolean visit(BlockComment node) {
-		_compilationUnit.addComment(new CSBlockComment(node.getStartPosition(), getText(node.getStartPosition(), node
+        String originalIndentation = getIndentation(node.getStartPosition());
+		_compilationUnit.addComment(new CSBlockComment(node.getStartPosition(), originalIndentation + getText(node.getStartPosition(), node
 		        .getLength())));
 		return false;
-	};
+	}
+
+    private String getIndentation(int position) {
+        try {
+            ICompilationUnit cu = (ICompilationUnit) _ast.getJavaElement();
+            String content;
+            if(cu != null){
+                IBuffer buffer = cu.getBuffer();
+                if(buffer == null){
+                    return "";
+                }
+
+                content = buffer.getContents();
+            }
+            else {
+                content = _content;
+            }
+
+            if (content == null || content.isEmpty()) {
+                return "";
+            }
+
+            StringBuilder builder = new StringBuilder();
+
+            while(position > 0){
+                char ch = content.charAt(--position);
+                if(ch == ' ' || ch == '\t'){
+                    builder.insert(0, ch);
+                    continue;
+                }
+
+                break;
+            }
+
+            return builder.toString();
+        } catch (JavaModelException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 	private String getText(int startPosition, int length) {
-		try {
-			ICompilationUnit cu = (ICompilationUnit) _ast.getJavaElement();
-			if(cu != null){
-				IBuffer buffer = cu.getBuffer();
-				if(buffer != null){
-					return buffer.getText(startPosition, length);
-				}
-			}
+        try {
+            ICompilationUnit cu = (ICompilationUnit) _ast.getJavaElement();
+            if(cu != null){
+                IBuffer buffer = cu.getBuffer();
+                if(buffer != null){
+                    return buffer.getText(startPosition, length);
+                }
+            }
 
-			if(_content != null && !_content.isEmpty()){
-				return _content.substring(startPosition, startPosition + length);
-			}
+            if(_content != null && !_content.isEmpty()){
+                return _content.substring(startPosition, startPosition + length);
+            }
 
-			return ""; 
-		} catch (JavaModelException e) {
-			throw new RuntimeException(e);
-		}
-	}
+            return "";
+        } catch (JavaModelException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 	public CSCompilationUnit compilationUnit() {
 		return _compilationUnit;

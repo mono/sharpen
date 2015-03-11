@@ -446,7 +446,7 @@ public class CSharpPrinter extends CSVisitor {
 	@Override
 	public void visit(CSBlockComment node) {
 		for(String line : node.lines()){
-			writeIndentedLine(line);
+			writeLine(line);
 		}
 	}
 

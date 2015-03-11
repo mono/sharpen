@@ -4,7 +4,13 @@ namespace imports
 	{
 		internal virtual void bar()
 		{
-			imports.StaticallyImported.foo();
+			switch (imports.StaticallyImported.foo())
+			{
+				case imports.StaticallyImported.TAG:
+				{
+					break;
+				}
+			}
 		}
 	}
 }

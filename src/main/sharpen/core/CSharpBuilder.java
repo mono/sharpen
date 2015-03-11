@@ -3553,10 +3553,8 @@ public class CSharpBuilder extends ASTVisitor {
 				ITypeBinding cls = vb.getDeclaringClass();
 				if (cls != null) {
 					if (isStaticImport(vb, _ast.imports())) {
-						if (cls != null) {
 							pushExpression(new CSMemberReferenceExpression(mappedTypeReference(cls), ident));
 							return false;
-						}
 					}
 					else if (cls.isEnum() && ident.indexOf('.') == -1 && vb.isEnumConstant()){
 						pushExpression(new CSMemberReferenceExpression(mappedTypeReference(cls), ident));
@@ -3573,7 +3571,7 @@ public class CSharpBuilder extends ASTVisitor {
 		return false;
 	}
 
-	private void addStatement(CSStatement statement) {
+    private void addStatement(CSStatement statement) {
 		_currentBlock.addStatement(statement);
 	}
 

@@ -22,7 +22,7 @@ Sharpen was originally created by db40 [svn source here](https://source.db4o.com
 1. Clone this repository
 2. Install Java 7 and maven. Java 6 and 8 aren’t supported.
 3. Run ‘mvn clean test’ to test
-4. Run ‘mvn install ’ to generate .jar files in /sharpen.core/target
+4. Run ‘mvn install ’ to generate .jar files in /src/target
 
 ### Running sharpen
 
@@ -38,7 +38,7 @@ Sharpen’s command-line options don’t let you fully override all conversion o
 #### Creating external config class
 
 Your external configuration class must:
-* inherit [Configuration](sharpen.core/src/sharpen/core/Configuration.java) class;
+* inherit [Configuration](src/main/sharpen/core/Configuration.java) class;
 * must be publicly visible;
 * must have a public constructor;
 

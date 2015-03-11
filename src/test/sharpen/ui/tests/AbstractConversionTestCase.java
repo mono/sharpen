@@ -37,7 +37,7 @@ public abstract class AbstractConversionTestCase  {
 	protected JavaProjectCmd _project;
 	private String projectName="DPrj";
 	//To Run from MAVEN
-	protected String projecttempLocation = System.getProperty("user.dir") + "/sharpen.core/target/testcases";
+	protected String projecttempLocation = System.getProperty("user.dir") + "/src/target/testcases";
 	//To Run From Eclipse GUI
 	//protected String projecttempLocation = System.getProperty("user.dir") + "/sharpen.ui.tests/testcases";
 	@Before

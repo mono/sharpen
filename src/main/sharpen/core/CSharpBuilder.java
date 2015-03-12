@@ -2455,7 +2455,7 @@ public class CSharpBuilder extends ASTVisitor {
 		CSExpression literal = new CSNumberLiteralExpression(token);
 
         if (expectingType ("byte") && token.startsWith("-")) {
-			literal = uncheckedCast ("byte",literal);
+			literal = uncheckedCast (mappedTypeName("byte"),literal);
 		}
 		else if (token.startsWith("0x")) {
             if (expectingType ("char")) {
@@ -2465,9 +2465,9 @@ public class CSharpBuilder extends ASTVisitor {
                 }
             }
             else if (token.endsWith("l") || token.endsWith("L")) {
-				literal = uncheckedCast("long", literal);
+				literal = uncheckedCast(mappedTypeName("long"), literal);
 			} else {
-				literal = uncheckedCast("int", literal);
+				literal = uncheckedCast(mappedTypeName("int"), literal);
 			}
 
 		} else if (token.startsWith("0") && token.indexOf('.') == -1 && Character.isDigit(token.charAt(token.length() - 1))) {
@@ -2782,7 +2782,7 @@ public class CSharpBuilder extends ASTVisitor {
 		CSExpression expr;
 		expr = new CSPrefixExpression(node.getOperator().toString(), mapExpression(node.getOperand()));
 		if (expectingType ("byte") && node.getOperator() == PrefixExpression.Operator.MINUS) {
-			expr = uncheckedCast ("byte", expr);
+			expr = uncheckedCast (mappedTypeName("byte"), expr);
 		}
 		pushExpression(expr);
 		return false;

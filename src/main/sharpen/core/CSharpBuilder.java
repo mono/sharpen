@@ -2832,8 +2832,9 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(ConditionalExpression node) {
-		pushExpression(new CSConditionalExpression(mapExpression(node.getExpression()), mapExpression(node
-		        .getThenExpression()), mapExpression(node.getElseExpression())));
+		pushExpression(new CSConditionalExpression(mapExpression(node.getExpression()),
+                mapExpression(_currentExpectedType, node.getThenExpression()),
+                mapExpression(_currentExpectedType, node.getElseExpression())));
 		return false;
 	}
 

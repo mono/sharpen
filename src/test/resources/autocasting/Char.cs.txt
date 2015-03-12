@@ -16,5 +16,11 @@ namespace autocasting
 			}
 			return ' ';
 		}
+
+		public virtual char ch(int index)
+		{
+			string str = "teststr";
+			return index < str.Length ? str[index] : (char)0x0000;
+		}
 	}
 }

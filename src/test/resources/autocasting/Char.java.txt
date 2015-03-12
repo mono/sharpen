@@ -14,4 +14,10 @@ class CharAutocasting {
 
         return ' ';
 	}
+
+	public char ch(int index)
+    {
+        String str = "teststr";
+        return index < str.length() ? str.charAt(index) : 0x0000;
+    }
 }

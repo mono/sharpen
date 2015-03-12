@@ -2195,8 +2195,9 @@ public class CSharpBuilder extends ASTVisitor {
 
 	private CSVariableDeclaration createVariableDeclaration(VariableDeclarationFragment variable) {
 		IVariableBinding binding = variable.resolveBinding();
-		ITypeBinding saved = pushExpectedType(binding.getType());
-		CSExpression initializer = mapExpression(variable.getInitializer());
+        ITypeBinding expectedType = binding.getType();
+		ITypeBinding saved = pushExpectedType(expectedType);
+		CSExpression initializer = mapExpression(expectedType, variable.getInitializer());
 		popExpectedType(saved);
 		return createVariableDeclaration(binding, initializer);
 	}
@@ -2928,6 +2929,9 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private CSExpression mapExpression(ITypeBinding expectedType, Expression expression) {
+        if (null == expression)
+            return null;
+
 		if (expectedType != null && expectedType != resolveWellKnownType("void"))
 			return castIfNeeded(expectedType, expression.resolveTypeBinding(), mapExpression(expression));
 		else

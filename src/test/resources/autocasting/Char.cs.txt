@@ -4,9 +4,17 @@ namespace autocasting
 	{
 		private char _ch;
 
-		private void test()
+		private char test()
 		{
 			this._ch = (char)1;
+			switch (this._ch)
+			{
+				case (char)0x0022:
+				{
+					return (char)0x0033;
+				}
+			}
+			return ' ';
 		}
 	}
 }

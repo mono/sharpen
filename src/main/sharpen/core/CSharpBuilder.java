@@ -1790,6 +1790,7 @@ public class CSharpBuilder extends ASTVisitor {
 		}
 
 		CSMethod method = new CSMethod(mappedMethodDeclarationName(node));
+        ITypeBinding savedType = pushExpectedType(node.getReturnType2().resolveBinding());
 		method.returnType(mappedReturnType(node));
 		method.modifier(mapMethodModifier(node));
 		mapTypeParameters(node.typeParameters(), method);
@@ -1811,6 +1812,7 @@ public class CSharpBuilder extends ASTVisitor {
 				}
 			}
 		}
+        popExpectedType(savedType);
 	}
 	
 	private void cleanBaseSetupCalls (CSMethod method) {
@@ -2443,7 +2445,7 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(ReturnStatement node) {
-		addStatement(new CSReturnStatement(node.getStartPosition(), mapExpression(node.getExpression())));
+		addStatement(new CSReturnStatement(node.getStartPosition(), mapExpression(_currentExpectedType, node.getExpression())));
 		return false;
 	}
 
@@ -2452,11 +2454,17 @@ public class CSharpBuilder extends ASTVisitor {
 		String token = node.getToken();
 		CSExpression literal = new CSNumberLiteralExpression(token);
 
-		if (expectingType ("byte") && token.startsWith("-")) {
+        if (expectingType ("byte") && token.startsWith("-")) {
 			literal = uncheckedCast ("byte",literal);
 		}
 		else if (token.startsWith("0x")) {
-			if (token.endsWith("l") || token.endsWith("L")) {
+            if (expectingType ("char")) {
+                if(token.startsWith("-")) {
+                    unsupportedConstruct(node, "Negative number cannot be converted to char");
+                    return false;
+                }
+            }
+            else if (token.endsWith("l") || token.endsWith("L")) {
 				literal = uncheckedCast("long", literal);
 			} else {
 				literal = uncheckedCast("int", literal);
@@ -2475,7 +2483,7 @@ public class CSharpBuilder extends ASTVisitor {
 		return false;
 	}
 
-	private CSUncheckedExpression uncheckedCast(String type, CSExpression expression) {
+    private CSUncheckedExpression uncheckedCast(String type, CSExpression expression) {
 		return new CSUncheckedExpression(new CSCastExpression(new CSTypeReference(type), new CSParenthesizedExpression(
 		        expression)));
 	}
@@ -2726,7 +2734,7 @@ public class CSharpBuilder extends ASTVisitor {
 						openCaseBlock.addStatement(new CSGotoStatement (Integer.MIN_VALUE, "default"));
 				} else {
 					ITypeBinding stype = pushExpectedType (switchType);
-					CSExpression caseExpression = mapExpression(sc.getExpression());
+					CSExpression caseExpression = mapExpression(switchType, sc.getExpression());
 					current.addExpression(caseExpression);
 					popExpectedType(stype);
 					if (openCaseBlock != null)
@@ -2919,7 +2927,7 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private CSExpression mapExpression(ITypeBinding expectedType, Expression expression) {
-		if (expectedType != null)
+		if (expectedType != null && expectedType != resolveWellKnownType("void"))
 			return castIfNeeded(expectedType, expression.resolveTypeBinding(), mapExpression(expression));
 		else
 			return mapExpression (expression);

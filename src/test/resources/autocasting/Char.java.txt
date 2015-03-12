@@ -3,7 +3,15 @@ package autocasting;
 class CharAutocasting {
 	private char _ch;
 	
-	private void test() {
+	private char test() {
 		this._ch = 1;
+
+		switch (this._ch)
+        {
+            case 0x0022:
+                return 0x0033;
+        }
+
+        return ' ';
 	}
 }

@@ -4,6 +4,8 @@ namespace innerclasses
 	{
 		public class Foo
 		{
+			private innerclasses.NestedClass2.Foo _child;
+
 			public Foo(NestedClass2 _enclosing, int i)
 			{
 				this._enclosing = _enclosing;
@@ -12,6 +14,7 @@ namespace innerclasses
 			public virtual void foo()
 			{
 				this._enclosing.bar();
+				this._child = new innerclasses.NestedClass2.Foo(this._enclosing, 1);
 			}
 
 			private readonly NestedClass2 _enclosing;

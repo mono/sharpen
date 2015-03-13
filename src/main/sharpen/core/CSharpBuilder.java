@@ -2978,7 +2978,12 @@ public class CSharpBuilder extends ASTVisitor {
 		}
 
 		if (isNonStaticNestedTypeCreation(node)) {
-			expression.addArgument(new CSThisExpression());
+            if(_currentType.name().equals(node.resolveTypeBinding().getName())){
+                expression.addArgument(new CSMemberReferenceExpression(new CSThisExpression(), AbstractNestedClassBuilder.ENCLOSING_FIELD));
+            }
+            else {
+                expression.addArgument(new CSThisExpression());
+            }
 		}
 
 		mapArguments(expression, node.arguments());

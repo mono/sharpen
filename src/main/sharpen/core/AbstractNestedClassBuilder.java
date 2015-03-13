@@ -32,7 +32,9 @@ import org.eclipse.jdt.core.dom.*;
  */
 public abstract class AbstractNestedClassBuilder extends CSharpBuilder {
 
-	private boolean _usesEnclosingMember;
+    public static final String ENCLOSING_FIELD = "_enclosing";
+
+    private boolean _usesEnclosingMember;
 
 	public AbstractNestedClassBuilder(CSharpBuilder other) {
 		super(other);
@@ -145,7 +147,7 @@ public abstract class AbstractNestedClassBuilder extends CSharpBuilder {
 	}
 
 	protected CSField createEnclosingField() {
-		return CSharpCode.newPrivateReadonlyField("_enclosing", enclosingTypeReference());
+		return CSharpCode.newPrivateReadonlyField(ENCLOSING_FIELD, enclosingTypeReference());
 	}
 
 	private CSTypeReference enclosingTypeReference() {

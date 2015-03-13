@@ -2954,7 +2954,8 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 	
 	private boolean isGenericCollection (ITypeBinding t) {
-		return t.getName().startsWith("List<") || t.getName().startsWith("Set<");
+		return t.getName().startsWith("List<") || t.getName().startsWith("Set<")
+                || t.getName().startsWith("Collection<");
 	}
 	
 	private boolean isSubclassOf (ITypeBinding t, ITypeBinding tbase) {

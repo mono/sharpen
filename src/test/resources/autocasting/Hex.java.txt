@@ -9,6 +9,13 @@ public class Hex {
 		withLong(0xabl);
 	}
 
+	public void withCastDefined() {
+        withInt((int)0xab);
+        withLong((int)0xab);
+        withLong((long)0xabL);
+        withLong((long)0xabL);
+    }
+
 	private void withLong(long l) {
 	}
 

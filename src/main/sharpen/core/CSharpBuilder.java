@@ -2455,8 +2455,11 @@ public class CSharpBuilder extends ASTVisitor {
 		String token = node.getToken();
 		CSExpression literal = new CSNumberLiteralExpression(token);
 
-        if (expectingType ("byte") && token.startsWith("-")) {
-			literal = uncheckedCast (mappedTypeName("byte"),literal);
+        if (hasCastExpression(node)) {
+            //  if cast already defined - do nothing
+        }
+        else if (expectingType ("byte") && token.startsWith("-")) {
+            literal = uncheckedCast (mappedTypeName("byte"),literal);
 		}
 		else if (token.startsWith("0x")) {
             if (expectingType ("char")) {
@@ -2488,6 +2491,10 @@ public class CSharpBuilder extends ASTVisitor {
 		return new CSUncheckedExpression(new CSCastExpression(new CSTypeReference(type), new CSParenthesizedExpression(
 		        expression)));
 	}
+
+    private boolean hasCastExpression(NumberLiteral node) {
+        return (node.getParent() instanceof CastExpression);
+    }
 
 	public boolean visit(StringLiteral node) {
 		String value = node.getLiteralValue();

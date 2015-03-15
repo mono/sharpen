@@ -12,6 +12,8 @@ namespace autocasting
 
 		public virtual void withCastDefined()
 		{
+			withShort((short)0x00FF);
+			withShort(unchecked((short)(0xFF00)));
 			withInt((int)0xab);
 			withLong((int)0xab);
 			withLong((long)0xabL);
@@ -23,6 +25,10 @@ namespace autocasting
 		}
 
 		private void withInt(int i)
+		{
+		}
+
+		private void withShort(short i)
 		{
 		}
 	}

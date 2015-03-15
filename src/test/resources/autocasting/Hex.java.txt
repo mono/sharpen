@@ -10,6 +10,8 @@ public class Hex {
 	}
 
 	public void withCastDefined() {
+	    withShort((short)0x00FF);
+	    withShort((short)0xFF00);
         withInt((int)0xab);
         withLong((int)0xab);
         withLong((long)0xabL);
@@ -21,4 +23,7 @@ public class Hex {
 
 	private void withInt(int i) {
 	}
+
+	private void withShort(short i) {
+    }
 }

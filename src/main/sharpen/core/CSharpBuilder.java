@@ -2456,10 +2456,13 @@ public class CSharpBuilder extends ASTVisitor {
 		CSExpression literal = new CSNumberLiteralExpression(token);
 
         if (hasCastExpression(node)) {
-            //  if cast already defined - do nothing
+            ITypeBinding castTypeBinding = getCastType(node).resolveBinding();
+            if(!isInRange(castTypeBinding, token)){
+                literal = uncheckedCast (mappedTypeName(castTypeBinding.getName()), literal);
+            }
         }
         else if (expectingType ("byte") && token.startsWith("-")) {
-            literal = uncheckedCast (mappedTypeName("byte"),literal);
+			literal = uncheckedCast (mappedTypeName("byte"),literal);
 		}
 		else if (token.startsWith("0x")) {
             if (expectingType ("char")) {
@@ -2487,14 +2490,28 @@ public class CSharpBuilder extends ASTVisitor {
 		return false;
 	}
 
+    private boolean hasCastExpression(NumberLiteral node) {
+        return (node.getParent() instanceof CastExpression);
+    }
+
+    private Type getCastType(NumberLiteral node) {
+        return ((CastExpression)node.getParent()).getType();
+    }
+
+    private boolean isInRange(ITypeBinding typeBinding, String token) {
+        if(typeBinding.getQualifiedName().equals("short")){
+            Long val = Long.decode(token);
+            //  check that it matches C# range
+            return val >= -32768 && val <= 32767;
+        }
+
+        return true;
+    }
+
     private CSUncheckedExpression uncheckedCast(String type, CSExpression expression) {
 		return new CSUncheckedExpression(new CSCastExpression(new CSTypeReference(type), new CSParenthesizedExpression(
 		        expression)));
 	}
-
-    private boolean hasCastExpression(NumberLiteral node) {
-        return (node.getParent() instanceof CastExpression);
-    }
 
 	public boolean visit(StringLiteral node) {
 		String value = node.getLiteralValue();
@@ -2779,14 +2796,40 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(CastExpression node) {
-		pushExpression(new CSCastExpression(mappedTypeReference(node.getType()), mapExpression(node.getExpression())));
-		// Make all byte casts unchecked
-		if (node.getType().resolveBinding().getName().equals("byte"))
-			pushExpression(new CSUncheckedExpression (popExpression()));
+        CSExpression expression = mapExpression(node.getExpression());
+        if(isSameTypeCast(node, expression)) {
+            pushExpression(expression);
+        }
+        else {
+            pushExpression(new CSCastExpression(mappedTypeReference(node.getType()), expression));
+            // Make all byte casts unchecked
+            if (node.getType().resolveBinding().getName().equals("byte"))
+                pushExpression(new CSUncheckedExpression (popExpression()));
+        }
 		return false;
 	}
 
-	public boolean visit(PrefixExpression node) {
+    private boolean isSameTypeCast(CastExpression node, CSExpression expression) {
+        CSExpression castExpression = expression;
+        if(expression instanceof CSUncheckedExpression){
+            castExpression = ((CSUncheckedExpression)expression).expression();
+        }
+        if (!(castExpression instanceof CSCastExpression)) {
+            return false;
+        }
+        return castTypeName((CSCastExpression)castExpression).equals(mappedTypeName(node.resolveTypeBinding()));
+    }
+
+    private String castTypeName(CSCastExpression cast) {
+        CSTypeReferenceExpression expression = cast.type();
+        if(expression instanceof CSTypeReference){
+            return ((CSTypeReference)expression).typeName();
+        }
+
+        throw new UnsupportedOperationException();
+    }
+
+    public boolean visit(PrefixExpression node) {
 		CSExpression expr;
 		expr = new CSPrefixExpression(node.getOperator().toString(), mapExpression(node.getOperand()));
 		if (expectingType ("byte") && node.getOperator() == PrefixExpression.Operator.MINUS) {

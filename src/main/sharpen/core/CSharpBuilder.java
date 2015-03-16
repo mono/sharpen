@@ -4188,8 +4188,25 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private CSTypeReferenceExpression mappedWildcardTypeReference(ITypeBinding type) {
-		final ITypeBinding bound = type.getBound();
-		return bound != null ? mappedTypeReference(bound) : OBJECT_TYPE_REFERENCE;
+        final ITypeBinding bound = type.getBound();
+        if (bound == null) {
+            return OBJECT_TYPE_REFERENCE;
+        }
+
+        CSTypeReferenceExpression mappedTypeReference = mappedTypeReference(bound);
+
+        if(_currentMethod != null && _currentMethod instanceof CSMethod){
+            CSMethod method = (CSMethod)_currentMethod;
+            if(method.typeParameters().size() > 0){
+                for(CSTypeParameter param : method.typeParameters()){
+                    if(param.superClass().equals(mappedTypeReference)){
+                        return new CSTypeReference(param.name());
+                    }
+                }
+            }
+        }
+
+        return mappedTypeReference;
 	}
 
 	private CSTypeReferenceExpression mappedArrayTypeReference(ITypeBinding type) {

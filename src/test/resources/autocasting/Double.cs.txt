@@ -1,0 +1,21 @@
+namespace autocasting
+{
+	internal class CharAutocasting
+	{
+		public virtual double dbl()
+		{
+			double? val = 110.00;
+			double? res = minus((double)val, 100.00);
+			if (res != null)
+			{
+				return (double)res;
+			}
+			return 0;
+		}
+
+		private double minus(double arg1, double arg2)
+		{
+			return arg1 - arg2;
+		}
+	}
+}

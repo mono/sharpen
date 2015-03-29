@@ -2996,13 +2996,26 @@ public class CSharpBuilder extends ASTVisitor {
 			return new CSCastExpression(mappedTypeReference(expectedType), expression);
 
 		ITypeBinding charType = resolveWellKnownType("char");
-		if (expectedType != charType)
-			return expression;
-		if (actualType == expectedType)
-			return expression;
-		return new CSCastExpression(mappedTypeReference(expectedType), expression);
+		if (expectedType == charType) {
+			if (actualType == expectedType)
+				return expression;
+
+			return new CSCastExpression(mappedTypeReference(expectedType), expression);
+		}
+
+		CSTypeReferenceExpression mappedActualType = mappedTypeReference(actualType);
+		CSTypeReferenceExpression mappedExpectedType = mappedTypeReference(expectedType);
+
+		if(mappedActualType instanceof CSTypeReference && mappedExpectedType instanceof CSTypeReference) {
+			if (((CSTypeReference)mappedExpectedType).typeName().equals("double") &&
+					((CSTypeReference)mappedActualType).typeName().equals("double?")) {
+				return new CSCastExpression(mappedTypeReference(expectedType), expression);
+			}
+		}
+
+		return expression;
 	}
-	
+
 	private boolean isGenericCollection (ITypeBinding t) {
 		return t.getName().startsWith("List<") || t.getName().startsWith("Set<")
                 || t.getName().startsWith("Collection<");

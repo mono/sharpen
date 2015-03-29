@@ -23,9 +23,17 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.ui.tests;
 import org.junit.Test;
+import sharpen.core.Configuration;
 
 public class AutoCastingTestCase extends AbstractConversionTestCase {
-	
+
+	@Override
+	protected Configuration getConfiguration() {
+		final Configuration config = super.getConfiguration();
+		config.mapType("java.lang.Double", "double?");
+		return config;
+	}
+
 	@Test
 	public void testChar() throws Throwable {
 		runResourceTestCase("autocasting/Char");
@@ -36,4 +44,8 @@ public class AutoCastingTestCase extends AbstractConversionTestCase {
 		runResourceTestCase("autocasting/Hex");
 	}
 
+	@Test
+	public void testDouble() throws Throwable {
+		runResourceTestCase("autocasting/Double");
+	}
 }

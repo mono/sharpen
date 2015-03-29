@@ -1,0 +1,18 @@
+package autocasting;
+
+class CharAutocasting {
+
+	public double dbl(){
+	    Double val = 110.00;
+        Double res = minus(val, 100.00);
+        if(res != null){
+            return res;
+        }
+
+        return 0;
+    }
+
+    private double minus(double arg1, double arg2){
+        return arg1 - arg2;
+    }
+}

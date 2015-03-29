@@ -5,17 +5,23 @@ namespace autocasting
 		public virtual double dbl()
 		{
 			double? val = 110.00;
-			double? res = minus((double)val, 100.00);
+			double? res = minus((double)val, (double)val / 2);
 			if (res != null)
 			{
-				return (double)res;
+				return (double)res + 5;
 			}
 			return 0;
 		}
 
 		private double minus(double arg1, double arg2)
 		{
-			return arg1 - arg2;
+			double? result = arg1 - arg2;
+			double test = (double)result + 4;
+			if (test < 0)
+			{
+				return 0;
+			}
+			return (double)(double)result;
 		}
 	}
 }

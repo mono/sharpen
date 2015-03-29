@@ -4,15 +4,20 @@ class CharAutocasting {
 
 	public double dbl(){
 	    Double val = 110.00;
-        Double res = minus(val, 100.00);
+        Double res = minus(val, val / 2);
         if(res != null){
-            return res;
+            return res + 5;
         }
 
         return 0;
     }
 
     private double minus(double arg1, double arg2){
-        return arg1 - arg2;
+        Double result = arg1 - arg2;
+        double test = result + 4;
+        if(test < 0)
+            return 0;
+
+        return result;
     }
 }

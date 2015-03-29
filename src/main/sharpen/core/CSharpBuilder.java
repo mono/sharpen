@@ -2690,7 +2690,7 @@ public class CSharpBuilder extends ASTVisitor {
 	public boolean visit(final ForStatement node) {
 		consumeContinueLabel(new Function<CSBlock>() {
 			public CSBlock apply() {
-				ArrayList<CSExpression> initializers = new ArrayList<CSExpression> ();
+				ArrayList<CSExpression> initializers = new ArrayList<CSExpression>();
 				for (Object i : node.initializers()) {
 					initializers.add(mapExpression((Expression) i));
 				}
@@ -2846,8 +2846,12 @@ public class CSharpBuilder extends ASTVisitor {
 
 	public boolean visit(InfixExpression node) {
 
+		ITypeBinding expressionExpectedType = node.resolveTypeBinding();
+		ITypeBinding prevExpectedType = pushExpectedType(expressionExpectedType);
+
 		CSExpression left = mapExpression(node.getLeftOperand());
 		CSExpression right = mapExpression(node.getRightOperand());
+		popExpectedType(prevExpectedType);
 		String type = node.getLeftOperand().resolveTypeBinding().getQualifiedName();
 		if (node.getOperator() == InfixExpression.Operator.RIGHT_SHIFT_UNSIGNED) {
 			if (type.equals ("byte")) {
@@ -2891,7 +2895,7 @@ public class CSharpBuilder extends ASTVisitor {
 
 	public boolean visit(InstanceofExpression node) {
 		pushExpression(new CSInfixExpression("is", mapExpression(node.getLeftOperand()), mappedTypeReference(node
-		        .getRightOperand().resolveBinding())));
+				.getRightOperand().resolveBinding())));
 		return false;
 	}
 
@@ -3003,12 +3007,17 @@ public class CSharpBuilder extends ASTVisitor {
 			return new CSCastExpression(mappedTypeReference(expectedType), expression);
 		}
 
+		return castNullableIfRequired(expectedType, actualType, expression);
+	}
+
+	private CSExpression castNullableIfRequired(ITypeBinding expectedType, ITypeBinding actualType, CSExpression expression) {
 		CSTypeReferenceExpression mappedActualType = mappedTypeReference(actualType);
 		CSTypeReferenceExpression mappedExpectedType = mappedTypeReference(expectedType);
 
 		if(mappedActualType instanceof CSTypeReference && mappedExpectedType instanceof CSTypeReference) {
 			if (((CSTypeReference)mappedExpectedType).typeName().equals("double") &&
 					((CSTypeReference)mappedActualType).typeName().equals("double?")) {
+
 				return new CSCastExpression(mappedTypeReference(expectedType), expression);
 			}
 		}
@@ -3670,24 +3679,31 @@ public class CSharpBuilder extends ASTVisitor {
 			String ident = mapVariableName (identifier (node));
 			IBinding b = node.resolveBinding();
 			IVariableBinding vb = b instanceof IVariableBinding ? (IVariableBinding) b : null;
+			CSReferenceExpression resultExpression = null;
 			if (vb != null) {
 				ITypeBinding cls = vb.getDeclaringClass();
 				if (cls != null) {
 					if (isStaticImport(vb, _ast.imports())) {
-							pushExpression(new CSMemberReferenceExpression(mappedTypeReference(cls), ident));
-							return false;
+						resultExpression = new CSMemberReferenceExpression(mappedTypeReference(cls), ident);
 					}
 					else if (cls.isEnum() && ident.indexOf('.') == -1 && vb.isEnumConstant()){
-						pushExpression(new CSMemberReferenceExpression(mappedTypeReference(cls), ident));
-						return false;
+						resultExpression = new CSMemberReferenceExpression(mappedTypeReference(cls), ident);
 					}
 					else if (_configuration.separateInterfaceConstants() && cls.isInterface() && ident.indexOf('.') == -1) {
-						pushExpression(new CSMemberReferenceExpression(mappedAuxillaryTypeReference(cls), ident));
-						return false;
+						resultExpression = new CSMemberReferenceExpression(mappedAuxillaryTypeReference(cls), ident);
 					}
 				}
 			}
-			pushExpression(new CSReferenceExpression(ident));
+			if(resultExpression == null) {
+				resultExpression = new CSReferenceExpression(ident);
+			}
+
+			///	because Java makes autocasting i.e Double -> double, only one way to support nullables in C#,
+			///	to cast nullable to expected type immediately
+
+			ITypeBinding actualType = node.resolveTypeBinding();
+
+			pushExpression(castNullableIfRequired(_currentExpectedType, actualType, resultExpression));
 		}
 		return false;
 	}

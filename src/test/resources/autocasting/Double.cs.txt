@@ -21,7 +21,7 @@ namespace autocasting
 			{
 				return 0;
 			}
-			return (double)(double)result;
+			return (double)result;
 		}
 	}
 }

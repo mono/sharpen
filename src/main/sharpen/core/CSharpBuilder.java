@@ -2797,7 +2797,7 @@ public class CSharpBuilder extends ASTVisitor {
 
 	public boolean visit(CastExpression node) {
         CSExpression expression = mapExpression(node.getExpression());
-        if(isSameTypeCast(node, expression)) {
+        if(isSameTypeCast(expression, mappedTypeName(node.resolveTypeBinding()))) {
             pushExpression(expression);
         }
         else {
@@ -2809,7 +2809,7 @@ public class CSharpBuilder extends ASTVisitor {
 		return false;
 	}
 
-    private boolean isSameTypeCast(CastExpression node, CSExpression expression) {
+    private boolean isSameTypeCast(CSExpression expression, String expectedCSType) {
         CSExpression castExpression = expression;
         if(expression instanceof CSUncheckedExpression){
             castExpression = ((CSUncheckedExpression)expression).expression();
@@ -2817,7 +2817,7 @@ public class CSharpBuilder extends ASTVisitor {
         if (!(castExpression instanceof CSCastExpression)) {
             return false;
         }
-        return castTypeName((CSCastExpression)castExpression).equals(mappedTypeName(node.resolveTypeBinding()));
+        return castTypeName((CSCastExpression)castExpression).equals(expectedCSType);
     }
 
     private String castTypeName(CSCastExpression cast) {
@@ -3007,16 +3007,24 @@ public class CSharpBuilder extends ASTVisitor {
 			return new CSCastExpression(mappedTypeReference(expectedType), expression);
 		}
 
-		return castNullableIfRequired(expectedType, actualType, expression);
+		return castNullableIfNeeded(expectedType, actualType, expression);
 	}
 
-	private CSExpression castNullableIfRequired(ITypeBinding expectedType, ITypeBinding actualType, CSExpression expression) {
+	private CSExpression castNullableIfNeeded(ITypeBinding expectedType, ITypeBinding actualType, CSExpression expression) {
+		if(expectedType == null){
+			return expression;
+		}
+
 		CSTypeReferenceExpression mappedActualType = mappedTypeReference(actualType);
 		CSTypeReferenceExpression mappedExpectedType = mappedTypeReference(expectedType);
 
 		if(mappedActualType instanceof CSTypeReference && mappedExpectedType instanceof CSTypeReference) {
 			if (((CSTypeReference)mappedExpectedType).typeName().equals("double") &&
 					((CSTypeReference)mappedActualType).typeName().equals("double?")) {
+
+				if(isSameTypeCast(expression, mappedTypeName(expectedType))) {
+					return expression;
+				}
 
 				return new CSCastExpression(mappedTypeReference(expectedType), expression);
 			}
@@ -3703,7 +3711,7 @@ public class CSharpBuilder extends ASTVisitor {
 
 			ITypeBinding actualType = node.resolveTypeBinding();
 
-			pushExpression(castNullableIfRequired(_currentExpectedType, actualType, resultExpression));
+			pushExpression(castNullableIfNeeded(_currentExpectedType, actualType, resultExpression));
 		}
 		return false;
 	}

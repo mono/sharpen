@@ -2140,13 +2140,13 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(ConstructorInvocation node) {
-		addChainedConstructorInvocation(new CSThisExpression(), node.arguments());
+		addChainedConstructorInvocation(new CSThisExpression(), node.resolveConstructorBinding().getParameterTypes(), node.arguments());
 		return false;
 	}
 
-	private void addChainedConstructorInvocation(CSExpression target, List arguments) {
+	private void addChainedConstructorInvocation(CSExpression target, ITypeBinding[] constructorArgTypes, List arguments) {
 		CSConstructorInvocationExpression cie = new CSConstructorInvocationExpression(target);
-		mapArguments(cie, arguments);
+		mapArguments(cie, constructorArgTypes, arguments);
 		((CSConstructor) _currentMethod).chainedConstructorInvocation(cie);
 	}
 
@@ -2154,7 +2154,7 @@ public class CSharpBuilder extends ASTVisitor {
 		if (null != node.getExpression()) {
 			notImplemented(node);
 		}
-		addChainedConstructorInvocation(new CSBaseExpression(), node.arguments());
+		addChainedConstructorInvocation(new CSBaseExpression(), node.resolveConstructorBinding().getTypeArguments(), node.arguments());
 		return false;
 	}
 
@@ -2939,7 +2939,7 @@ public class CSharpBuilder extends ASTVisitor {
 			}
 		}
 
-		mapArguments(initializer, node.arguments());
+		mapArguments(initializer, new ITypeBinding[0], node.arguments());
 
 		CSField field = new CSField(fieldName(node), typeName, visibility, initializer);
 		field.addModifier(CSFieldModifier.Static);
@@ -3087,7 +3087,8 @@ public class CSharpBuilder extends ASTVisitor {
             }
 		}
 
-		mapArguments(expression, node.arguments());
+		ITypeBinding[] constructorArgsTypes = node.resolveConstructorBinding().getParameterTypes();
+		mapArguments(expression, constructorArgsTypes, node.arguments());
 		pushExpression(expression);
 		return false;
 	}
@@ -3189,7 +3190,7 @@ public class CSharpBuilder extends ASTVisitor {
 		}
 
 		CSMethodInvocationExpression mie = new CSMethodInvocationExpression(target);
-		mapArguments(mie, node.arguments());
+		mapArguments(mie, node.resolveMethodBinding().getParameterTypes(), node.arguments());
 		pushExpression(mie);
 		return false;
 	}
@@ -3596,7 +3597,7 @@ public class CSharpBuilder extends ASTVisitor {
 				mie.addArgument(expression);
 			}
 		}
-		mapArguments(mie, arguments);
+		mapArguments(mie, node.resolveMethodBinding().getParameterTypes(), arguments);
 		adjustJUnitArguments(mie, node);
 		pushExpression(mie);
 	}
@@ -3658,9 +3659,9 @@ public class CSharpBuilder extends ASTVisitor {
 		return -1 != name.indexOf('.');
 	}
 
-	protected void mapArguments(CSMethodInvocationExpression mie, List arguments) {
-		for (Object arg : arguments) {
-			addArgument(mie, (Expression) arg, null);
+	protected void mapArguments(CSMethodInvocationExpression mie, ITypeBinding[] constructorArgTypes, List arguments) {
+		for (int i = 0; i < arguments.size(); i++) {
+			addArgument(mie, (Expression) arguments.get(i), i < constructorArgTypes.length ? constructorArgTypes[i] : null);
 		}
 	}
 

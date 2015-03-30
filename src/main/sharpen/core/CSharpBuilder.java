@@ -2797,10 +2797,18 @@ public class CSharpBuilder extends ASTVisitor {
 
 	public boolean visit(CastExpression node) {
         CSExpression expression = mapExpression(node.getExpression());
-        if(isSameTypeCast(expression, mappedTypeName(node.resolveTypeBinding()))) {
+		ITypeBinding actualType = node.resolveTypeBinding();
+		String mappedActualTypeName = mappedTypeName(actualType);
+        if(isSameTypeCast(expression, mappedActualTypeName)) {
             pushExpression(expression);
         }
-        else {
+        else if(_currentExpectedType != null &&
+				isValueTypeClass(actualType) &&
+				mappedTypeName(_currentExpectedType).equals(valueTypeName(mappedActualTypeName))){
+			//	replaces cast to nullable value type by cast to value type
+			pushExpression(new CSCastExpression(mappedTypeReference(_currentExpectedType), expression));
+		}
+		else {
             pushExpression(new CSCastExpression(mappedTypeReference(node.getType()), expression));
             // Make all byte casts unchecked
             if (node.getType().resolveBinding().getName().equals("byte"))
@@ -2809,7 +2817,15 @@ public class CSharpBuilder extends ASTVisitor {
 		return false;
 	}
 
-    private boolean isSameTypeCast(CSExpression expression, String expectedCSType) {
+	private String valueTypeName(String csTypeName) {
+		if(csTypeName.endsWith("?")) {
+			return csTypeName.substring(0, csTypeName.length() - 1);
+		}
+
+		return csTypeName;
+	}
+
+	private boolean isSameTypeCast(CSExpression expression, String expectedCSType) {
         CSExpression castExpression = expression;
         if(expression instanceof CSUncheckedExpression){
             castExpression = ((CSUncheckedExpression)expression).expression();
@@ -2888,8 +2904,8 @@ public class CSharpBuilder extends ASTVisitor {
 
 	public boolean visit(ConditionalExpression node) {
 		pushExpression(new CSConditionalExpression(mapExpression(node.getExpression()),
-                mapExpression(_currentExpectedType, node.getThenExpression()),
-                mapExpression(_currentExpectedType, node.getElseExpression())));
+				mapExpression(_currentExpectedType, node.getThenExpression()),
+				mapExpression(_currentExpectedType, node.getElseExpression())));
 		return false;
 	}
 
@@ -3015,46 +3031,48 @@ public class CSharpBuilder extends ASTVisitor {
 			return expression;
 		}
 
-		if (isPrimitiveType(actualType) || isNullableType(actualType)) {
+		if (isPrimitiveType(actualType) || isValueTypeClass(actualType)) {
 
-			CSTypeReferenceExpression mappedActualType = mappedTypeReference(actualType);
-			CSTypeReferenceExpression mappedExpectedType = mappedTypeReference(expectedType);
+			CSTypeReferenceExpression mappedActualTypeReference = mappedTypeReference(actualType);
+			CSTypeReferenceExpression mappedExpectedTypeReference = mappedTypeReference(expectedType);
 
 			if (isSameTypeCast(expression, mappedTypeName(expectedType))) {
 				return expression;
 			}
 
-			if (isNullableFor(mappedActualType, mappedExpectedType)) {
-				return new CSCastExpression(mappedExpectedType, expression);
+			if (!(mappedActualTypeReference instanceof CSTypeReference) || !(mappedExpectedTypeReference instanceof CSTypeReference)) {
+				return expression;
 			}
 
-			if(canBeCastedTo(mappedActualType, mappedExpectedType)) {
+			CSTypeReference mappedActualType = (CSTypeReference)mappedActualTypeReference;
+			CSTypeReference mappedExpectedType = (CSTypeReference)mappedExpectedTypeReference;
 
-				if(expression instanceof CSCastExpression){
-					return new CSCastExpression(mappedExpectedType, ((CSCastExpression)expression).expression());
-				}
+			if (isNullableFor(mappedActualType, mappedExpectedType) ||
+					canBeCastedTo(mappedActualType, mappedExpectedType)) {
 
-				return new CSCastExpression(mappedExpectedType, expression);
+				return applyCast(expression, mappedExpectedType);
 			}
 
-			if (mappedActualType instanceof CSTypeReference && mappedExpectedType instanceof CSTypeReference) {
-				String actualTypeName = ((CSTypeReference) mappedActualType).typeName();
-				String expectedTypeName = ((CSTypeReference) mappedExpectedType).typeName();
-				if(actualTypeName.endsWith("?")) {
-					String valueType = actualTypeName.substring(0, actualTypeName.length() - 1);
-					if (canBeCastedTo(valueType, expectedTypeName)) {
+			if (isNullableValueType(mappedActualType)) {
+				String actualTypeName = mappedActualType.typeName();
+                String actualValueTypeName = actualTypeName.substring(0, actualTypeName.length() - 1);
+                if (canBeCastedTo(actualValueTypeName, mappedExpectedType.typeName())) {
 
-						if(expression instanceof CSCastExpression){
-							return new CSCastExpression(mappedExpectedType, ((CSCastExpression)expression).expression());
-						}
-
-						return new CSCastExpression(mappedExpectedType, expression);
-					}
-				}
-			}
+					return applyCast(expression, mappedExpectedType);
+                }
+            }
 		}
 
 		return expression;
+	}
+
+	private CSExpression applyCast(CSExpression expression, CSTypeReference mappedExpectedType) {
+
+		if (expression instanceof CSCastExpression) {
+            return new CSCastExpression(mappedExpectedType, ((CSCastExpression) expression).expression());
+        }
+
+		return new CSCastExpression(mappedExpectedType, expression);
 	}
 
 	private boolean isPrimitiveType(ITypeBinding type) {
@@ -3066,7 +3084,11 @@ public class CSharpBuilder extends ASTVisitor {
 						type.getQualifiedName().equals("boolean"));
 	}
 
-	private boolean isNullableType(ITypeBinding type) {
+	private boolean isNullableValueType(CSTypeReference type) {
+		return type.typeName().endsWith("?");
+	}
+
+	private boolean isValueTypeClass(ITypeBinding type) {
 		return type != null &&
 				(type.getQualifiedName().equals("java.lang.Double") ||
 						type.getQualifiedName().equals("java.lang.Integer") ||
@@ -3075,28 +3097,14 @@ public class CSharpBuilder extends ASTVisitor {
 						type.getQualifiedName().equals("java.lang.Boolean"));
 	}
 
-	private boolean isNullableFor(CSTypeReferenceExpression nullableType, CSTypeReferenceExpression valueType) {
+	private boolean isNullableFor(CSTypeReference nullableType, CSTypeReference valueType) {
 
-		if (!(nullableType instanceof CSTypeReference) || !(valueType instanceof CSTypeReference)) {
-			return false;
-		}
-
-		String nullableTypeName = ((CSTypeReference)nullableType).typeName();
-		String valueTypeName = ((CSTypeReference)valueType).typeName();
-
-		return nullableTypeName.equals(valueTypeName + "?");
+		return isNullableValueType(nullableType) && valueTypeName(nullableType.typeName()).equals(valueType.typeName());
 	}
 
-	private boolean canBeCastedTo(CSTypeReferenceExpression actualType, CSTypeReferenceExpression expectedType) {
+	private boolean canBeCastedTo(CSTypeReference actualType, CSTypeReference expectedType) {
 
-		if (!(actualType instanceof CSTypeReference) || !(expectedType instanceof CSTypeReference)) {
-			return false;
-		}
-
-		String actualTypeName = ((CSTypeReference)actualType).typeName();
-		String expectedTypeName = ((CSTypeReference)expectedType).typeName();
-
-		return canBeCastedTo(actualTypeName, expectedTypeName);
+		return canBeCastedTo(actualType.typeName(), expectedType.typeName());
 	}
 
 	private boolean canBeCastedTo(String actualTypeName, String expectedTypeName) {

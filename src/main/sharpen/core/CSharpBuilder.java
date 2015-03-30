@@ -3015,6 +3015,10 @@ public class CSharpBuilder extends ASTVisitor {
 			return expression;
 		}
 
+		if(!isNullableType(actualType)) {
+			return expression;
+		}
+
 		CSTypeReferenceExpression mappedActualType = mappedTypeReference(actualType);
 		CSTypeReferenceExpression mappedExpectedType = mappedTypeReference(expectedType);
 
@@ -3031,6 +3035,11 @@ public class CSharpBuilder extends ASTVisitor {
 		}
 
 		return expression;
+	}
+
+	private boolean isNullableType(ITypeBinding type) {
+		return type != null &&
+				(type.getQualifiedName().equals("java.lang.Double"));
 	}
 
 	private boolean isGenericCollection (ITypeBinding t) {

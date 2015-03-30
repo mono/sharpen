@@ -3007,10 +3007,10 @@ public class CSharpBuilder extends ASTVisitor {
 			return new CSCastExpression(mappedTypeReference(expectedType), expression);
 		}
 
-		return castNullableIfNeeded(expectedType, actualType, expression);
+		return castToValueTypeIfNeeded(expectedType, actualType, expression);
 	}
 
-	private CSExpression castNullableIfNeeded(ITypeBinding expectedType, ITypeBinding actualType, CSExpression expression) {
+	private CSExpression castToValueTypeIfNeeded(ITypeBinding expectedType, ITypeBinding actualType, CSExpression expression) {
 		if(expectedType == null){
 			return expression;
 		}
@@ -3022,16 +3022,12 @@ public class CSharpBuilder extends ASTVisitor {
 		CSTypeReferenceExpression mappedActualType = mappedTypeReference(actualType);
 		CSTypeReferenceExpression mappedExpectedType = mappedTypeReference(expectedType);
 
-		if(mappedActualType instanceof CSTypeReference && mappedExpectedType instanceof CSTypeReference) {
-			if (((CSTypeReference)mappedExpectedType).typeName().equals("double") &&
-					((CSTypeReference)mappedActualType).typeName().equals("double?")) {
+		if(isSameTypeCast(expression, mappedTypeName(expectedType))) {
+			return expression;
+		}
 
-				if(isSameTypeCast(expression, mappedTypeName(expectedType))) {
-					return expression;
-				}
-
-				return new CSCastExpression(mappedTypeReference(expectedType), expression);
-			}
+		if(isNullableFor(mappedActualType, mappedExpectedType)){
+			return new CSCastExpression(mappedTypeReference(expectedType), expression);
 		}
 
 		return expression;
@@ -3040,6 +3036,17 @@ public class CSharpBuilder extends ASTVisitor {
 	private boolean isNullableType(ITypeBinding type) {
 		return type != null &&
 				(type.getQualifiedName().equals("java.lang.Double"));
+	}
+
+	private boolean isNullableFor(CSTypeReferenceExpression nullableType, CSTypeReferenceExpression valueType) {
+		if (!(nullableType instanceof CSTypeReference) || !(valueType instanceof CSTypeReference)) {
+			return false;
+		}
+
+		String nullableTypeName = ((CSTypeReference)nullableType).typeName();
+		String valueTypeName = ((CSTypeReference)valueType).typeName();
+
+		return nullableTypeName.equals(valueTypeName + "?");
 	}
 
 	private boolean isGenericCollection (ITypeBinding t) {
@@ -3720,7 +3727,7 @@ public class CSharpBuilder extends ASTVisitor {
 
 			ITypeBinding actualType = node.resolveTypeBinding();
 
-			pushExpression(castNullableIfNeeded(_currentExpectedType, actualType, resultExpression));
+			pushExpression(castToValueTypeIfNeeded(_currentExpectedType, actualType, resultExpression));
 		}
 		return false;
 	}

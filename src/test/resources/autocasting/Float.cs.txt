@@ -1,0 +1,27 @@
+namespace autocasting
+{
+	internal class CharAutocasting
+	{
+		public virtual float floatval()
+		{
+			float? val = 110.0F;
+			float? res = minus((float)val, (float)val / 2);
+			if (res != null)
+			{
+				return (float)res + 5;
+			}
+			return 0;
+		}
+
+		private float minus(float arg1, float arg2)
+		{
+			float? result = arg1 - arg2;
+			float test = (float)result + 4;
+			if (test < 0)
+			{
+				return 0;
+			}
+			return (float)result;
+		}
+	}
+}

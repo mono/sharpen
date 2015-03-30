@@ -1,0 +1,26 @@
+namespace autocasting
+{
+	internal class CharAutocasting
+	{
+		public virtual bool booleanval(int x)
+		{
+			bool? val = true;
+			bool? res = resolve((bool)val, (bool)val || (x == 2));
+			if ((bool)res != null)
+			{
+				return (bool)res || (x == 3);
+			}
+			return false;
+		}
+
+		private bool resolve(bool arg1, bool? arg2)
+		{
+			bool? result = arg1 && (bool)arg2;
+			if ((bool)result)
+			{
+				return true;
+			}
+			return (bool)result;
+		}
+	}
+}

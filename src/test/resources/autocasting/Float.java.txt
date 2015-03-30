@@ -1,0 +1,23 @@
+package autocasting;
+
+class CharAutocasting {
+
+	public float floatval(){
+	    Float val = 110.0F;
+        Float res = minus(val, val / 2);
+        if(res != null){
+            return res + 5;
+        }
+
+        return 0;
+    }
+
+    private float minus(float arg1, float arg2){
+        Float result = arg1 - arg2;
+        float test = result + 4;
+        if(test < 0)
+            return 0;
+
+        return result;
+    }
+}

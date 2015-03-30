@@ -1,0 +1,22 @@
+package autocasting;
+
+class CharAutocasting {
+
+	public boolean booleanval(int x){
+	    Boolean val = true;
+        Boolean res = resolve(val, val || (x == 2));
+        if(res != null){
+            return res || (x == 3);
+        }
+
+        return false;
+    }
+
+    private boolean resolve(boolean arg1, Boolean arg2){
+        Boolean result = arg1 && arg2;
+        if(result)
+            return true;
+
+        return result;
+    }
+}

@@ -3035,7 +3035,11 @@ public class CSharpBuilder extends ASTVisitor {
 
 	private boolean isNullableType(ITypeBinding type) {
 		return type != null &&
-				(type.getQualifiedName().equals("java.lang.Double"));
+				(type.getQualifiedName().equals("java.lang.Double") ||
+				type.getQualifiedName().equals("java.lang.Integer") ||
+				type.getQualifiedName().equals("java.lang.Long") ||
+				type.getQualifiedName().equals("java.lang.Float") ||
+				type.getQualifiedName().equals("java.lang.Boolean"));
 	}
 
 	private boolean isNullableFor(CSTypeReferenceExpression nullableType, CSTypeReferenceExpression valueType) {

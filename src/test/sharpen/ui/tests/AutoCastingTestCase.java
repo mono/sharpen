@@ -31,6 +31,11 @@ public class AutoCastingTestCase extends AbstractConversionTestCase {
 	protected Configuration getConfiguration() {
 		final Configuration config = super.getConfiguration();
 		config.mapType("java.lang.Double", "double?");
+		config.mapType("java.lang.Integer", "int?");
+		config.mapType("java.lang.Long", "long?");
+		config.mapType("java.lang.Float", "float?");
+		config.mapType("java.lang.Boolean", "bool?");
+		config.mapType("java.util.Date", "System.DateTime?");
 		return config;
 	}
 
@@ -47,5 +52,25 @@ public class AutoCastingTestCase extends AbstractConversionTestCase {
 	@Test
 	public void testDouble() throws Throwable {
 		runResourceTestCase("autocasting/Double");
+	}
+
+	@Test
+	public void testInteger() throws Throwable {
+		runResourceTestCase("autocasting/Integer");
+	}
+
+	@Test
+	public void testLong() throws Throwable {
+		runResourceTestCase("autocasting/Long");
+	}
+
+	@Test
+	public void testFloat() throws Throwable {
+		runResourceTestCase("autocasting/Float");
+	}
+
+	@Test
+	public void testBoolean() throws Throwable {
+		runResourceTestCase("autocasting/Boolean");
 	}
 }

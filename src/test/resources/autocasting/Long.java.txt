@@ -1,0 +1,23 @@
+package autocasting;
+
+class CharAutocasting {
+
+	public long longval(){
+	    Long val = 110L;
+        Long res = minus(val, val / 2);
+        if(res != null){
+            return res + 5;
+        }
+
+        return 0;
+    }
+
+    private long minus(long arg1, long arg2){
+        Long result = arg1 - arg2;
+        long test = result + 4;
+        if(test < 0)
+            return 0;
+
+        return result;
+    }
+}

@@ -1,0 +1,27 @@
+namespace autocasting
+{
+	internal class CharAutocasting
+	{
+		public virtual int integer()
+		{
+			int? val = 110;
+			int? res = minus((int)val, (int)val / 2);
+			if (res != null)
+			{
+				return (int)res + 5;
+			}
+			return 0;
+		}
+
+		private int minus(int arg1, int arg2)
+		{
+			int? result = arg1 - arg2;
+			int test = (int)result + 4;
+			if (test < 0)
+			{
+				return 0;
+			}
+			return (int)result;
+		}
+	}
+}

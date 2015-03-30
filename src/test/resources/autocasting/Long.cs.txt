@@ -1,0 +1,27 @@
+namespace autocasting
+{
+	internal class CharAutocasting
+	{
+		public virtual long longval()
+		{
+			long? val = 110L;
+			long? res = minus((long)val, (long)val / 2);
+			if (res != null)
+			{
+				return (long)res + 5;
+			}
+			return 0;
+		}
+
+		private long minus(long arg1, long arg2)
+		{
+			long? result = arg1 - arg2;
+			long test = (long)result + 4;
+			if (test < 0)
+			{
+				return 0;
+			}
+			return (long)result;
+		}
+	}
+}

@@ -3015,34 +3015,68 @@ public class CSharpBuilder extends ASTVisitor {
 			return expression;
 		}
 
-		if(!isNullableType(actualType)) {
-			return expression;
-		}
+		if (isPrimitiveType(actualType) || isNullableType(actualType)) {
 
-		CSTypeReferenceExpression mappedActualType = mappedTypeReference(actualType);
-		CSTypeReferenceExpression mappedExpectedType = mappedTypeReference(expectedType);
+			CSTypeReferenceExpression mappedActualType = mappedTypeReference(actualType);
+			CSTypeReferenceExpression mappedExpectedType = mappedTypeReference(expectedType);
 
-		if(isSameTypeCast(expression, mappedTypeName(expectedType))) {
-			return expression;
-		}
+			if (isSameTypeCast(expression, mappedTypeName(expectedType))) {
+				return expression;
+			}
 
-		if(isNullableFor(mappedActualType, mappedExpectedType)){
-			return new CSCastExpression(mappedTypeReference(expectedType), expression);
+			if (isNullableFor(mappedActualType, mappedExpectedType)) {
+				return new CSCastExpression(mappedExpectedType, expression);
+			}
+
+			if(canBeCastedTo(mappedActualType, mappedExpectedType)) {
+
+				if(expression instanceof CSCastExpression){
+					return new CSCastExpression(mappedExpectedType, ((CSCastExpression)expression).expression());
+				}
+
+				return new CSCastExpression(mappedExpectedType, expression);
+			}
+
+			if (mappedActualType instanceof CSTypeReference && mappedExpectedType instanceof CSTypeReference) {
+				String actualTypeName = ((CSTypeReference) mappedActualType).typeName();
+				String expectedTypeName = ((CSTypeReference) mappedExpectedType).typeName();
+				if(actualTypeName.endsWith("?")) {
+					String valueType = actualTypeName.substring(0, actualTypeName.length() - 1);
+					if (canBeCastedTo(valueType, expectedTypeName)) {
+
+						if(expression instanceof CSCastExpression){
+							return new CSCastExpression(mappedExpectedType, ((CSCastExpression)expression).expression());
+						}
+
+						return new CSCastExpression(mappedExpectedType, expression);
+					}
+				}
+			}
 		}
 
 		return expression;
 	}
 
+	private boolean isPrimitiveType(ITypeBinding type) {
+		return type != null &&
+				(type.getQualifiedName().equals("double") ||
+						type.getQualifiedName().equals("integer") ||
+						type.getQualifiedName().equals("long") ||
+						type.getQualifiedName().equals("float") ||
+						type.getQualifiedName().equals("boolean"));
+	}
+
 	private boolean isNullableType(ITypeBinding type) {
 		return type != null &&
 				(type.getQualifiedName().equals("java.lang.Double") ||
-				type.getQualifiedName().equals("java.lang.Integer") ||
-				type.getQualifiedName().equals("java.lang.Long") ||
-				type.getQualifiedName().equals("java.lang.Float") ||
-				type.getQualifiedName().equals("java.lang.Boolean"));
+						type.getQualifiedName().equals("java.lang.Integer") ||
+						type.getQualifiedName().equals("java.lang.Long") ||
+						type.getQualifiedName().equals("java.lang.Float") ||
+						type.getQualifiedName().equals("java.lang.Boolean"));
 	}
 
 	private boolean isNullableFor(CSTypeReferenceExpression nullableType, CSTypeReferenceExpression valueType) {
+
 		if (!(nullableType instanceof CSTypeReference) || !(valueType instanceof CSTypeReference)) {
 			return false;
 		}
@@ -3051,6 +3085,35 @@ public class CSharpBuilder extends ASTVisitor {
 		String valueTypeName = ((CSTypeReference)valueType).typeName();
 
 		return nullableTypeName.equals(valueTypeName + "?");
+	}
+
+	private boolean canBeCastedTo(CSTypeReferenceExpression actualType, CSTypeReferenceExpression expectedType) {
+
+		if (!(actualType instanceof CSTypeReference) || !(expectedType instanceof CSTypeReference)) {
+			return false;
+		}
+
+		String actualTypeName = ((CSTypeReference)actualType).typeName();
+		String expectedTypeName = ((CSTypeReference)expectedType).typeName();
+
+		return canBeCastedTo(actualTypeName, expectedTypeName);
+	}
+
+	private boolean canBeCastedTo(String actualTypeName, String expectedTypeName) {
+
+		if(actualTypeName.equals("float?")){
+			return expectedTypeName.equals("double");
+		}
+
+		if(actualTypeName.equals("double")){
+			return expectedTypeName.equals("long");
+		}
+
+		if(actualTypeName.equals("int")){
+			return expectedTypeName.equals("long");
+		}
+
+		return false;
 	}
 
 	private boolean isGenericCollection (ITypeBinding t) {

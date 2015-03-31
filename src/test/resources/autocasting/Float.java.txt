@@ -3,8 +3,8 @@ package autocasting;
 class Autocasting {
 
     private float _f;
-    private Autocasting(float f){
-        _f = f;
+    private Autocasting(float f, double d){
+        _f = f + (float)d;
     }
 
 	public float floatval(){
@@ -23,7 +23,7 @@ class Autocasting {
         if(test < 0)
             return 0;
 
-        Autocasting obj = new Autocasting(result);
+        Autocasting obj = new Autocasting(result, result);
         result = obj.floatval();
         return result;
     }

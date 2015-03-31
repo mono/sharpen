@@ -4,9 +4,9 @@ namespace autocasting
 	{
 		private float _f;
 
-		private Autocasting(float f)
+		private Autocasting(float f, double d)
 		{
-			_f = f;
+			_f = f + (float)d;
 		}
 
 		public virtual float floatval()
@@ -28,7 +28,8 @@ namespace autocasting
 			{
 				return 0;
 			}
-			autocasting.Autocasting obj = new autocasting.Autocasting((float)result);
+			autocasting.Autocasting obj = new autocasting.Autocasting((float)result, (double)
+				result);
 			result = obj.floatval();
 			return (float)result;
 		}

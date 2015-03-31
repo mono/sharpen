@@ -3,7 +3,7 @@ package autocasting;
 class Autocasting {
 
     private int _i;
-    private Autocasting(int i){
+    private Autocasting(int i, int i2){
         _i = i;
     }
 
@@ -23,7 +23,7 @@ class Autocasting {
         if(test < 0)
             return 0;
 
-        Autocasting obj = new Autocasting(result);
+        Autocasting obj = new Autocasting(result, (Integer)test);
         result = obj.integer();
         return result;
     }

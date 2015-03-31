@@ -4,9 +4,9 @@ namespace autocasting
 	{
 		private long _l;
 
-		private Autocasting(long l)
+		private Autocasting(long l, long l2)
 		{
-			_l = l;
+			_l = l + l2;
 		}
 
 		public virtual long longval()
@@ -28,7 +28,8 @@ namespace autocasting
 			{
 				return 0;
 			}
-			autocasting.Autocasting obj = new autocasting.Autocasting((long)result);
+			int? i = 10;
+			autocasting.Autocasting obj = new autocasting.Autocasting((long)result, (long)i);
 			result = obj.longval();
 			return (long)result;
 		}

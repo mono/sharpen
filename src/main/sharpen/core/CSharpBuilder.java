@@ -3048,7 +3048,7 @@ public class CSharpBuilder extends ASTVisitor {
 			CSTypeReference mappedExpectedType = (CSTypeReference)mappedExpectedTypeReference;
 
 			if (isNullableFor(mappedActualType, mappedExpectedType) ||
-					canBeCastedTo(mappedActualType, mappedExpectedType)) {
+					canBeSafeCastedTo(mappedActualType, mappedExpectedType)) {
 
 				return applyCast(expression, mappedExpectedType);
 			}
@@ -3056,7 +3056,7 @@ public class CSharpBuilder extends ASTVisitor {
 			if (isNullableValueType(mappedActualType)) {
 				String actualTypeName = mappedActualType.typeName();
                 String actualValueTypeName = actualTypeName.substring(0, actualTypeName.length() - 1);
-                if (canBeCastedTo(actualValueTypeName, mappedExpectedType.typeName())) {
+                if (canBeSafeCastedTo(actualValueTypeName, mappedExpectedType.typeName())) {
 
 					return applyCast(expression, mappedExpectedType);
                 }
@@ -3102,22 +3102,18 @@ public class CSharpBuilder extends ASTVisitor {
 		return isNullableValueType(nullableType) && valueTypeName(nullableType.typeName()).equals(valueType.typeName());
 	}
 
-	private boolean canBeCastedTo(CSTypeReference actualType, CSTypeReference expectedType) {
+	private boolean canBeSafeCastedTo(CSTypeReference actualType, CSTypeReference expectedType) {
 
-		return canBeCastedTo(actualType.typeName(), expectedType.typeName());
+		return canBeSafeCastedTo(actualType.typeName(), expectedType.typeName());
 	}
 
-	private boolean canBeCastedTo(String actualTypeName, String expectedTypeName) {
+	private boolean canBeSafeCastedTo(String actualTypeName, String expectedTypeName) {
 
 		if(actualTypeName.equals("float?")){
 			return expectedTypeName.equals("double");
 		}
 
-		if(actualTypeName.equals("double")){
-			return expectedTypeName.equals("long");
-		}
-
-		if(actualTypeName.equals("int")){
+		if(actualTypeName.equals("int?")){
 			return expectedTypeName.equals("long");
 		}
 

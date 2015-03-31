@@ -3,8 +3,8 @@ package autocasting;
 class Autocasting {
 
     private long _l;
-    private Autocasting(long l){
-        _l = l;
+    private Autocasting(long l, long l2){
+        _l = l + l2;
     }
 
 	public long longval(){
@@ -23,7 +23,8 @@ class Autocasting {
         if(test < 0)
             return 0;
 
-        Autocasting obj = new Autocasting(result);
+        Integer i = 10;
+        Autocasting obj = new Autocasting(result, i);
         result = obj.longval();
         return result;
     }

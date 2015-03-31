@@ -4,7 +4,7 @@ namespace autocasting
 	{
 		private int _i;
 
-		private Autocasting(int i)
+		private Autocasting(int i, int i2)
 		{
 			_i = i;
 		}
@@ -17,7 +17,9 @@ namespace autocasting
 			{
 				return (int)res + 5;
 			}
-			return 0;
+			long l = 100L;
+			_i += unchecked((int)(l));
+			return _i;
 		}
 
 		private int minus(int arg1, int arg2)
@@ -28,7 +30,7 @@ namespace autocasting
 			{
 				return 0;
 			}
-			autocasting.Autocasting obj = new autocasting.Autocasting((int)result);
+			autocasting.Autocasting obj = new autocasting.Autocasting((int)result, (int)test);
 			result = obj.integer();
 			return (int)result;
 		}

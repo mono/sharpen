@@ -14,7 +14,9 @@ class Autocasting {
             return res + 5;
         }
 
-        return 0;
+        long l = 100L;
+        _i += l;
+        return _i;
     }
 
     private int minus(int arg1, int arg2){

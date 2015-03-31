@@ -2455,8 +2455,8 @@ public class CSharpBuilder extends ASTVisitor {
 		String token = node.getToken();
 		CSExpression literal = new CSNumberLiteralExpression(token);
 
-        if (hasCastExpression(node)) {
-            ITypeBinding castTypeBinding = getCastType(node).resolveBinding();
+        if (hasParentCastExpression(node)) {
+            ITypeBinding castTypeBinding = getParentCastType(node).resolveBinding();
             if(!isInRange(castTypeBinding, token)){
                 literal = uncheckedCast (mappedTypeName(castTypeBinding.getName()), literal);
             }
@@ -2490,11 +2490,11 @@ public class CSharpBuilder extends ASTVisitor {
 		return false;
 	}
 
-    private boolean hasCastExpression(NumberLiteral node) {
+    private boolean hasParentCastExpression(Expression node) {
         return (node.getParent() instanceof CastExpression);
     }
 
-    private Type getCastType(NumberLiteral node) {
+    private Type getParentCastType(Expression node) {
         return ((CastExpression)node.getParent()).getType();
     }
 
@@ -3003,12 +3003,17 @@ public class CSharpBuilder extends ASTVisitor {
             return null;
 
 		if (expectedType != null && expectedType != resolveWellKnownType("void"))
-			return castIfNeeded(expectedType, expression.resolveTypeBinding(), mapExpression(expression));
+			return castIfNeeded(expectedType, expression);
 		else
 			return mapExpression (expression);
 	}
 
-	private CSExpression castIfNeeded(ITypeBinding expectedType, ITypeBinding actualType, CSExpression expression) {
+	private CSExpression castIfNeeded(ITypeBinding expectedType, Expression node) {
+		ITypeBinding actualType = node.resolveTypeBinding();
+		ITypeBinding saved = pushExpectedType(expectedType);
+		CSExpression expression = mapExpression(node);
+		popExpectedType(saved);
+
 		if (!_configuration.mapIteratorToEnumerator() && expectedType.getName().startsWith("Iterable<") && isGenericCollection (actualType)) {
 			return new CSMethodInvocationExpression (new CSMemberReferenceExpression (expression, "AsIterable"));
 		}
@@ -3023,13 +3028,15 @@ public class CSharpBuilder extends ASTVisitor {
 			return new CSCastExpression(mappedTypeReference(expectedType), expression);
 		}
 
-		return castToValueTypeIfNeeded(expectedType, actualType, expression);
+		return castToValueTypeIfNeeded(node, expectedType, expression);
 	}
 
-	private CSExpression castToValueTypeIfNeeded(ITypeBinding expectedType, ITypeBinding actualType, CSExpression expression) {
+	private CSExpression castToValueTypeIfNeeded(Expression node, ITypeBinding expectedType, CSExpression expression) {
 		if(expectedType == null){
 			return expression;
 		}
+
+		ITypeBinding actualType = node.resolveTypeBinding();
 
 		if (isPrimitiveType(actualType) || isValueTypeClass(actualType)) {
 
@@ -3048,19 +3055,15 @@ public class CSharpBuilder extends ASTVisitor {
 			CSTypeReference mappedExpectedType = (CSTypeReference)mappedExpectedTypeReference;
 
 			if (isNullableFor(mappedActualType, mappedExpectedType) ||
-					canBeSafeCastedTo(mappedActualType, mappedExpectedType)) {
+				canBeCastedTo(mappedActualType, mappedExpectedType) ||
+				canBeCastedTo(valueTypeName(mappedActualType.typeName()), mappedExpectedType.typeName())) {
 
 				return applyCast(expression, mappedExpectedType);
 			}
 
-			if (isNullableValueType(mappedActualType)) {
-				String actualTypeName = mappedActualType.typeName();
-                String actualValueTypeName = actualTypeName.substring(0, actualTypeName.length() - 1);
-                if (canBeSafeCastedTo(actualValueTypeName, mappedExpectedType.typeName())) {
-
-					return applyCast(expression, mappedExpectedType);
-                }
-            }
+			if(!hasParentCastExpression(node) && canBeUncheckedCastedTo(mappedActualType, mappedExpectedType)){
+				return uncheckedCast(mappedExpectedType.typeName(), expression);
+			}
 		}
 
 		return expression;
@@ -3102,12 +3105,12 @@ public class CSharpBuilder extends ASTVisitor {
 		return isNullableValueType(nullableType) && valueTypeName(nullableType.typeName()).equals(valueType.typeName());
 	}
 
-	private boolean canBeSafeCastedTo(CSTypeReference actualType, CSTypeReference expectedType) {
+	private boolean canBeCastedTo(CSTypeReference actualType, CSTypeReference expectedType) {
 
-		return canBeSafeCastedTo(actualType.typeName(), expectedType.typeName());
+		return canBeCastedTo(actualType.typeName(), expectedType.typeName());
 	}
 
-	private boolean canBeSafeCastedTo(String actualTypeName, String expectedTypeName) {
+	private boolean canBeCastedTo(String actualTypeName, String expectedTypeName) {
 
 		if(actualTypeName.equals("float?")){
 			return expectedTypeName.equals("double");
@@ -3115,6 +3118,18 @@ public class CSharpBuilder extends ASTVisitor {
 
 		if(actualTypeName.equals("int?")){
 			return expectedTypeName.equals("long");
+		}
+
+		return false;
+	}
+
+	private boolean canBeUncheckedCastedTo(CSTypeReference actualType, CSTypeReference expectedType) {
+
+		String actualTypeName = actualType.typeName();
+		String expectedTypeName = expectedType.typeName();
+
+		if(actualTypeName.equals("long")){
+			return expectedTypeName.equals("int");
 		}
 
 		return false;
@@ -3797,9 +3812,7 @@ public class CSharpBuilder extends ASTVisitor {
 			///	because Java makes autocasting i.e Double -> double, only one way to support nullables in C#,
 			///	to cast nullable to expected type immediately
 
-			ITypeBinding actualType = node.resolveTypeBinding();
-
-			pushExpression(castToValueTypeIfNeeded(_currentExpectedType, actualType, resultExpression));
+			pushExpression(castToValueTypeIfNeeded(node, _currentExpectedType, resultExpression));
 		}
 		return false;
 	}

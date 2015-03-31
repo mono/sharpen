@@ -1,9 +1,14 @@
 package autocasting;
 
-class CharAutocasting {
+class Autocasting {
+
+    private double _d;
+    private Autocasting(double d){
+        _d = d;
+    }
 
 	public double dbl(){
-	    Double val = 110.00;
+	    Double val = 110.00 + _d;
         Double res = minus(val, val / 2);
         if(res != null){
             return res + 5;
@@ -18,6 +23,8 @@ class CharAutocasting {
         if(test < 0)
             return 0;
 
+        Autocasting obj = new Autocasting(result);
+        result = obj.dbl();
         return result;
     }
 }

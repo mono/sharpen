@@ -1,9 +1,14 @@
 package autocasting;
 
-class CharAutocasting {
+class Autocasting {
+
+    private boolean _b;
+    private Autocasting(boolean b){
+        _b = b;
+    }
 
 	public boolean booleanval(int x){
-	    Boolean val = true;
+	    Boolean val = true && _b;
         Boolean res = resolve(val, val || (x == 2));
         if(res != null){
             return res || (x == 3);
@@ -17,6 +22,8 @@ class CharAutocasting {
         if(result)
             return true;
 
+        Autocasting obj = new Autocasting(result);
+        result = obj.booleanval(10);
         return result;
     }
 }

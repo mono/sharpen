@@ -1,10 +1,17 @@
 namespace autocasting
 {
-	internal class CharAutocasting
+	internal class Autocasting
 	{
+		private long _l;
+
+		private Autocasting(long l)
+		{
+			_l = l;
+		}
+
 		public virtual long longval()
 		{
-			long? val = 110L;
+			long? val = 110L + _l;
 			long? res = minus((long)val, (long)val / 2);
 			if (res != null)
 			{
@@ -21,6 +28,8 @@ namespace autocasting
 			{
 				return 0;
 			}
+			autocasting.Autocasting obj = new autocasting.Autocasting((long)result);
+			result = obj.longval();
 			return (long)result;
 		}
 	}

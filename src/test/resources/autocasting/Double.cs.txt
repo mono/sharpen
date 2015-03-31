@@ -1,10 +1,17 @@
 namespace autocasting
 {
-	internal class CharAutocasting
+	internal class Autocasting
 	{
+		private double _d;
+
+		private Autocasting(double d)
+		{
+			_d = d;
+		}
+
 		public virtual double dbl()
 		{
-			double? val = 110.00;
+			double? val = 110.00 + _d;
 			double? res = minus((double)val, (double)val / 2);
 			if (res != null)
 			{
@@ -21,6 +28,8 @@ namespace autocasting
 			{
 				return 0;
 			}
+			autocasting.Autocasting obj = new autocasting.Autocasting((double)result);
+			result = obj.dbl();
 			return (double)result;
 		}
 	}

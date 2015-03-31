@@ -1,10 +1,17 @@
 namespace autocasting
 {
-	internal class CharAutocasting
+	internal class Autocasting
 	{
+		private bool _b;
+
+		private Autocasting(bool b)
+		{
+			_b = b;
+		}
+
 		public virtual bool booleanval(int x)
 		{
-			bool? val = true;
+			bool? val = true && _b;
 			bool? res = resolve((bool)val, (bool)val || (x == 2));
 			if ((bool)res != null)
 			{
@@ -20,6 +27,8 @@ namespace autocasting
 			{
 				return true;
 			}
+			autocasting.Autocasting obj = new autocasting.Autocasting((bool)result);
+			result = obj.booleanval(10);
 			return (bool)result;
 		}
 	}

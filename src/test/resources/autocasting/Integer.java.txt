@@ -1,9 +1,14 @@
 package autocasting;
 
-class CharAutocasting {
+class Autocasting {
+
+    private int _i;
+    private Autocasting(int i){
+        _i = i;
+    }
 
 	public int integer(){
-	    Integer val = 110;
+	    Integer val = 110 + _i;
         Integer res = minus(val, val / 2);
         if(res != null){
             return res + 5;
@@ -18,6 +23,8 @@ class CharAutocasting {
         if(test < 0)
             return 0;
 
+        Autocasting obj = new Autocasting(result);
+        result = obj.integer();
         return result;
     }
 }

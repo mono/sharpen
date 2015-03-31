@@ -1,9 +1,14 @@
 package autocasting;
 
-class CharAutocasting {
+class Autocasting {
+
+    private float _f;
+    private Autocasting(float f){
+        _f = f;
+    }
 
 	public float floatval(){
-	    Float val = 110.0F;
+	    Float val = 110.0F + _f;
         Float res = minus(val, val / 2);
         if(res != null){
             return res + 5;
@@ -18,6 +23,8 @@ class CharAutocasting {
         if(test < 0)
             return 0;
 
+        Autocasting obj = new Autocasting(result);
+        result = obj.floatval();
         return result;
     }
 }

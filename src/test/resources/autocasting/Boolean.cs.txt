@@ -13,7 +13,7 @@ namespace autocasting
 		{
 			bool? val = true && _b;
 			bool? res = resolve((bool)val, (bool)val || (x == 2));
-			if ((bool)res != null)
+			if (res != null)
 			{
 				return (bool)res || (x == 3);
 			}

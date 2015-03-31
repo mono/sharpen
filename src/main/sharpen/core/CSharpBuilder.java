@@ -2863,10 +2863,21 @@ public class CSharpBuilder extends ASTVisitor {
 	public boolean visit(InfixExpression node) {
 
 		ITypeBinding expressionExpectedType = node.resolveTypeBinding();
-		ITypeBinding prevExpectedType = pushExpectedType(expressionExpectedType);
 
-		CSExpression left = mapExpression(node.getLeftOperand());
-		CSExpression right = mapExpression(node.getRightOperand());
+		Expression leftOperand = node.getLeftOperand();
+		Expression rightOperand = node.getRightOperand();
+
+		ITypeBinding prevExpectedType;
+		if(leftOperand.resolveTypeBinding().getName().equals("null") ||
+				rightOperand.resolveTypeBinding().getName().equals("null")){
+			//	if one of operands is null - expected type for the operands is unknown (reference?)
+			prevExpectedType = pushExpectedType(resolveWellKnownType("void"));
+		}else{
+			prevExpectedType = pushExpectedType(expressionExpectedType);
+		}
+
+		CSExpression left = mapExpression(leftOperand);
+		CSExpression right = mapExpression(rightOperand);
 		popExpectedType(prevExpectedType);
 		String type = node.getLeftOperand().resolveTypeBinding().getQualifiedName();
 		if (node.getOperator() == InfixExpression.Operator.RIGHT_SHIFT_UNSIGNED) {

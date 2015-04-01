@@ -3127,6 +3127,10 @@ public class CSharpBuilder extends ASTVisitor {
 			return expectedTypeName.equals("double");
 		}
 
+		if(actualTypeName.equals("long?")){
+			return expectedTypeName.equals("double");
+		}
+
 		if(actualTypeName.equals("int?")){
 			return expectedTypeName.equals("long");
 		}

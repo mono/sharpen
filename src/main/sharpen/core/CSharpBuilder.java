@@ -3066,10 +3066,17 @@ public class CSharpBuilder extends ASTVisitor {
 			CSTypeReference mappedExpectedType = (CSTypeReference)mappedExpectedTypeReference;
 
 			if (isNullableFor(mappedActualType, mappedExpectedType) ||
-				canBeCastedTo(mappedActualType, mappedExpectedType) ||
-				canBeCastedTo(valueTypeName(mappedActualType.typeName()), mappedExpectedType.typeName())) {
+				canBeCastedTo(mappedActualType, mappedExpectedType)) {
 
 				return applyCast(expression, mappedExpectedType);
+			}
+
+			if(isValueTypeClass(actualType)) {
+				String mappedActualValueTypeName = valueTypeName(mappedActualType.typeName());
+
+				if (canBeImplicitlyCastedTo(mappedActualValueTypeName, mappedExpectedType.typeName())) {
+					return applyCast(expression, new CSTypeReference(mappedActualValueTypeName));
+				}
 			}
 
 			if(!hasParentCastExpression(node) && canBeUncheckedCastedTo(mappedActualType, mappedExpectedType)){
@@ -3098,7 +3105,7 @@ public class CSharpBuilder extends ASTVisitor {
 						type.getQualifiedName().equals("boolean"));
 	}
 
-	private boolean isNullableValueType(CSTypeReference type) {
+	private boolean isCSNullableValueType(CSTypeReference type) {
 		return type.typeName().endsWith("?");
 	}
 
@@ -3113,7 +3120,7 @@ public class CSharpBuilder extends ASTVisitor {
 
 	private boolean isNullableFor(CSTypeReference nullableType, CSTypeReference valueType) {
 
-		return isNullableValueType(nullableType) && valueTypeName(nullableType.typeName()).equals(valueType.typeName());
+		return isCSNullableValueType(nullableType) && valueTypeName(nullableType.typeName()).equals(valueType.typeName());
 	}
 
 	private boolean canBeCastedTo(CSTypeReference actualType, CSTypeReference expectedType) {
@@ -3121,18 +3128,23 @@ public class CSharpBuilder extends ASTVisitor {
 		return canBeCastedTo(actualType.typeName(), expectedType.typeName());
 	}
 
-	private boolean canBeCastedTo(String actualTypeName, String expectedTypeName) {
+	private boolean canBeCastedTo(String csActualTypeName, String expectedTypeName) {
 
-		if(actualTypeName.equals("float?")){
+		if(csActualTypeName.equals("float?")){
 			return expectedTypeName.equals("double");
 		}
 
-		if(actualTypeName.equals("long?")){
+		if(csActualTypeName.equals("long?")){
 			return expectedTypeName.equals("double");
 		}
 
-		if(actualTypeName.equals("int?")){
-			return expectedTypeName.equals("long");
+		return false;
+	}
+
+	private boolean canBeImplicitlyCastedTo(String csActualTypeName, String csExpectedTypeName) {
+
+		if(csActualTypeName.equals("int")){
+			return csExpectedTypeName.equals("long");
 		}
 
 		return false;

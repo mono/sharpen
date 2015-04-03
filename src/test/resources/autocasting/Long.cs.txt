@@ -29,7 +29,7 @@ namespace autocasting
 				return 0;
 			}
 			int? i = 10;
-			autocasting.Autocasting obj = new autocasting.Autocasting((long)result, (long)i);
+			autocasting.Autocasting obj = new autocasting.Autocasting((long)result, (int)i);
 			result = obj.longval();
 			return (long)result;
 		}

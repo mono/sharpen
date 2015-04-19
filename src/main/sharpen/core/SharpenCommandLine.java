@@ -87,6 +87,7 @@ public class SharpenCommandLine {
 	public final Map<String, String> conditionalCompilation = new HashMap<String, String>();
 	public String configurationClass;
 	public boolean junitConversion;
+	public boolean flatNamespaceDirectoryStructure;
 	public String sharpenNamespace;
 	public boolean help;
 }

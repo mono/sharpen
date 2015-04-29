@@ -106,6 +106,8 @@ public abstract class Configuration {
 	private boolean _paramCountFileNames;
 
 	private boolean _junitConvert;
+
+	private boolean _flatNamespaceDirectoryStructure;
 	
 	private String _sharpenNamespace = "Sharpen";
 
@@ -462,6 +464,14 @@ public abstract class Configuration {
 	
 	public boolean junitConversion () {
 		return _junitConvert;
+	}
+
+	public void enableFlatNamespaceDirectoryStructure() {
+		this._flatNamespaceDirectoryStructure = true;
+	}
+
+	public boolean flatNamespaceDirectoryStructure() {
+		return this._flatNamespaceDirectoryStructure;
 	}
 
 	public void setSharpenNamespace(String sharpenNamespace) {

@@ -217,6 +217,10 @@ public class SharpenApplication {
 			ods("JUnit conversion mode on.");
 			configuration.enableJUnitConversion();
 		}
+		if (this._args.flatNamespaceDirectoryStructure) {
+			ods("Flat namespace directory structure mode on.");
+			configuration.enableFlatNamespaceDirectoryStructure();
+		}
 		if (_args.sharpenNamespace != null) {
 			ods("Sharpen namespace: " + _args.sharpenNamespace);
 			configuration.setSharpenNamespace(_args.sharpenNamespace);

@@ -1,0 +1,12 @@
+
+public enum Enum2
+{
+    EnumValue(0);
+
+    private final int _instanceField;
+
+    private Enum2(int value)
+    {
+        _instanceField = value;
+    }
+}

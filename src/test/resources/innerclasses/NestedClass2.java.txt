@@ -2,10 +2,12 @@ package innerclasses;
 
 public class NestedClass2 {
 	public class Foo {
+	    private Foo _child;
 		public Foo(int i) {
 		}
 		public void foo() {
 			bar();
+			_child = new Foo(1);
 		}
 	}
 	

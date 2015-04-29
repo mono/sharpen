@@ -1,0 +1,38 @@
+namespace autocasting
+{
+	internal class Autocasting
+	{
+		private int _i;
+
+		private Autocasting(int i, int i2)
+		{
+			_i = i;
+		}
+
+		public virtual int integer()
+		{
+			int? val = 110 + _i;
+			int? res = minus((int)val, (int)val / 2);
+			if (res != null)
+			{
+				return (int)res + 5;
+			}
+			long l = 100L;
+			_i += unchecked((int)(l));
+			return _i;
+		}
+
+		private int minus(int arg1, int arg2)
+		{
+			int? result = arg1 - arg2;
+			int test = (int)result + 4;
+			if (test < 0)
+			{
+				return 0;
+			}
+			autocasting.Autocasting obj = new autocasting.Autocasting((int)result, (int)test);
+			result = obj.integer();
+			return (int)result;
+		}
+	}
+}

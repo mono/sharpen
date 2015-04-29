@@ -23,11 +23,14 @@ public class StaticImports {
 	}
 	
 	public static boolean isStaticFieldImport(ImportDeclaration imp, IVariableBinding field) {
-		final IBinding binding = imp.resolveBinding();
-		if (binding.getKind() == IBinding.VARIABLE)
-			return binding == field;
-
-		return false;
+        final IBinding binding = imp.resolveBinding();
+        switch (binding.getKind()) {
+            case IBinding.TYPE:
+                return imp.isOnDemand() && field.getDeclaringClass() == binding;
+            case IBinding.VARIABLE:
+                return binding == field;
+        }
+        return false;
 	}
 	
 	public static boolean isStaticImport(IMethodBinding method, List imports) {

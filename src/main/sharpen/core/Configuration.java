@@ -27,7 +27,14 @@ import java.util.*;
 
 public abstract class Configuration {
 
-	public static class MemberMapping {
+    //  default mapping enabled
+    private boolean _mapIteratorToEnumerator = true;
+    //  default mapping disabled
+    private boolean _mapByteToSbyte = false;
+    //  default getter disabled
+    private boolean _numberValueGetter = false;
+
+    public static class MemberMapping {
 		public String name;
 		public MemberKind kind;
 		
@@ -189,7 +196,7 @@ public abstract class Configuration {
 		mapType("java.io.StringWriter", "System.IO.StringWriter");
 
 		mapMethod("java.io.PrintStream.print", "Write");
-		mapMethod("java.io.PrintStream.println", "WriteLine");			
+		mapMethod("java.io.PrintStream.println", "WriteLine");
 	}
 
 	protected String collectionRuntimeMethod(String methodName) {
@@ -363,7 +370,11 @@ public abstract class Configuration {
 	public void mapType(String from, String to) {
 		_typeMappings.put(from, to);
 	}
-	
+
+    protected void unmapType(String from) {
+        _typeMappings.remove(from);
+    }
+
 	public boolean typeHasMapping(String type) {
 		return _typeMappings.containsKey(type);
 	}
@@ -375,6 +386,10 @@ public abstract class Configuration {
 	public void mapMethod(String fromQualifiedName, String to) {
 		mapMember(fromQualifiedName, new MemberMapping(to, MemberKind.Method));
 	}
+
+    protected void unmapMethod(String fromQualifiedName) {
+		unmapMember(fromQualifiedName);
+	}
 	
 	public void mapIndexer(String fromQualifiedName) {
 		mapMember(fromQualifiedName, new MemberMapping(null, MemberKind.Indexer));
@@ -383,8 +398,12 @@ public abstract class Configuration {
 	public void mapProperty(String fromQualifiedName, String to) {
 		mapMember(fromQualifiedName, new MemberMapping(to, MemberKind.Property));
 	}
-	
-	public void setIgnoreErrors(boolean value) {
+
+    protected void unmapProperty(String fromQualifiedName) {
+        unmapMember(fromQualifiedName);
+	}
+
+    public void setIgnoreErrors(boolean value) {
 		_ignoreErrors = value;
 	}
 
@@ -395,6 +414,10 @@ public abstract class Configuration {
 	void mapMember(String fromQualifiedName, MemberMapping mapping) {
 		_memberMappings.put(fromQualifiedName, mapping);
 	}
+
+    protected void unmapMember(String fromQualifiedName) {
+        _memberMappings.remove(fromQualifiedName);
+    }
 
 	protected void mapWrapperConstructor(String from, String to, String wellKnownTypeName) {
 		mapMethod(from, to);
@@ -562,9 +585,26 @@ public abstract class Configuration {
 	}
 
 	public boolean mapIteratorToEnumerator() {
-		return true;
+		return _mapIteratorToEnumerator;
 	}
 
-	public abstract boolean mapByteToSbyte();
+    public void disableMapIteratorToEnumerator() {
+        _mapIteratorToEnumerator = false;
+    }
 
+	public boolean mapByteToSbyte(){
+        return _mapByteToSbyte;
+    }
+
+    public void enableMapByteToSbyte(){
+        _mapByteToSbyte = true;
+    }
+
+    public boolean numberValueGetter(){
+        return _numberValueGetter;
+    }
+
+    public void enableNumberValueGetter(){
+        _numberValueGetter = true;
+    }
 }

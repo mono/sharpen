@@ -24,8 +24,8 @@ package sharpen.core;
 import java.util.*;
 
 public class SharpenCommandLine {
-	
-	public static SharpenCommandLine parse(String[] args) {
+
+    public static SharpenCommandLine parse(String[] args) {
 		return new SharpenCommandLineParser(args).commandLine();
 	}
 	
@@ -74,9 +74,14 @@ public class SharpenCommandLine {
 	final public List<Configuration.NameMapping> namespaceMappings = new ArrayList<Configuration.NameMapping>();
 	final public List<Configuration.NameMapping> typeMappings = new ArrayList<Configuration.NameMapping>();
 	final public Map<String, Configuration.MemberMapping> memberMappings = new HashMap<String, Configuration.MemberMapping>();
+    final public List<String> removeTypeMappings = new ArrayList<String>();
+    final public List<String> removeMemberMappings = new ArrayList<String>();
 	public boolean nativeInterfaces;
 	public boolean separateInterfaceConstants;
 	public boolean organizeUsings;
+    public boolean mapByteToSbyte;
+    public boolean disableMapIteratorToEnumerator;
+    public boolean numberValueGetter;
 	public boolean paramCountFileNames;
 	final public List<String> fullyQualifiedTypes = new ArrayList<String>();
 	final public List<String> partialTypes = new ArrayList<String>();

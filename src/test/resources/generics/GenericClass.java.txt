@@ -6,6 +6,9 @@ public class GenericClass<T1, T2> {
 	public GenericClass(T1 f1) {
 		_field1 = f1;
 	}
+
+	public void varArgs(T1... f1) {
+    }
 	
 	public T1 field1() {
 		return _field1;

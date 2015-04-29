@@ -73,13 +73,12 @@ public class ConfigurationFactory {
 		String configJar = NameUtility.unqualify(configurationClass)+ ".sharpenconfig.jar";
 
 		try {
-			URI currentDirectoryURI = getCurrentDirectoryURI();
-			File currentDirectory = new File(currentDirectoryURI);
-			Path configPath = Paths.get(currentDirectory.getPath(), configJar);
+			Path currentDirectoryPath = getCurrentDirectory();
+			Path configPath = Paths.get(currentDirectoryPath.toString(), configJar);
 			URI jarURI = configPath.toUri();
 			File configFile = configPath.toFile();
 			if(!configFile.exists()){
-				progressMonitor.subTask("Configuration library " + configJar + " not found");
+				progressMonitor.subTask("Configuration library " + configPath);
 				return null;
 			}
 
@@ -90,8 +89,8 @@ public class ConfigurationFactory {
 		}
 	}
 
-	public static URI getCurrentDirectoryURI() throws URISyntaxException {
-		return ConfigurationFactory.class.getProtectionDomain().getCodeSource().getLocation().toURI();
+	public static Path getCurrentDirectory() throws URISyntaxException {
+		return Paths.get(".").toAbsolutePath().normalize();
 	}
 
 	private static String evalRuntimeType(String runtimeTypeName) {

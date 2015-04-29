@@ -1,0 +1,31 @@
+package autocasting;
+
+class Autocasting {
+
+    private long _l;
+    private Autocasting(long l, long l2){
+        _l = l + l2;
+    }
+
+	public long longval(){
+	    Long val = 110L + _l;
+        Long res = minus(val, val / 2);
+        if(res != null){
+            return res + 5;
+        }
+
+        return 0;
+    }
+
+    private long minus(long arg1, long arg2){
+        Long result = arg1 - arg2;
+        long test = result + 4;
+        if(test < 0)
+            return 0;
+
+        Integer i = 10;
+        Autocasting obj = new Autocasting(result, i);
+        result = obj.longval();
+        return result;
+    }
+}

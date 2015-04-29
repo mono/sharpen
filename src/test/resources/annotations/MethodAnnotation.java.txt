@@ -1,0 +1,16 @@
+package annotations;
+
+@interface TestAnnotation {
+}
+
+@interface NotNull {
+}
+
+class Annotated {
+	@TestAnnotation
+	public void annotatedMethod(@NotNull String name){
+	}
+
+	public void annotatedMethodWithVarAgs(@NotNull String... names){
+    }
+}

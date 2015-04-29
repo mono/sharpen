@@ -37,4 +37,7 @@ public class CSAttribute extends CSAbstractInvocation {
 		visitor.visit(this);
 	}
 
+    public boolean isParameter() {
+        return false;
+    }
 }

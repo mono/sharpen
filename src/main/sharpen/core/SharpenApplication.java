@@ -197,6 +197,18 @@ public class SharpenApplication {
 			ods("Organize usings mode on.");
 			configuration.enableOrganizeUsings();
 		}
+        if (_args.mapByteToSbyte) {
+			ods("Mapping byte to sbyte mode on.");
+			configuration.enableMapByteToSbyte();
+		}
+        if (_args.disableMapIteratorToEnumerator) {
+			ods("Mapping iterator to enumerator mode off.");
+			configuration.disableMapIteratorToEnumerator();
+		}
+        if (_args.numberValueGetter) {
+			ods("Number value getter mode on.");
+			configuration.enableNumberValueGetter();
+		}
 		if (_args.paramCountFileNames) {
 			ods("Generic parameter count appended to file names.");
 			configuration.enableParamCountFileNames();
@@ -234,7 +246,14 @@ public class SharpenApplication {
 		for (Configuration.NameMapping mapping : _args.typeMappings) {
 			configuration.mapType(mapping.from, mapping.to);
 		}
-		return configuration;
+
+        for (String from : _args.removeTypeMappings) {
+			configuration.unmapType(from);
+        }
+        for (String from : _args.removeMemberMappings) {
+			configuration.unmapMember(from);
+        }
+        return configuration;
 	}
 
 	private List<String> sortedByName(List<String> units) {

@@ -9,6 +9,10 @@ namespace generics
 			_field1 = f1;
 		}
 
+		public virtual void varArgs(params T1[] f1)
+		{
+		}
+
 		public virtual T1 field1()
 		{
 			return _field1;

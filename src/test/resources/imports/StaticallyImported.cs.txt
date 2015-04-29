@@ -2,6 +2,8 @@ namespace imports
 {
 	internal class StaticallyImported
 	{
+		public const int TAG = unchecked((int)(0x0003));
+
 		internal static int foo()
 		{
 			return 42;

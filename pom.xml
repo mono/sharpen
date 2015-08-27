@@ -132,6 +132,60 @@
     </testResources>
     
     <plugins>
+		<!--
+		==============================================================================================
+		begin 	FIX
+		moljac/moljac++/moljacsharp
+
+		by default maven uses sorde 1.3 (java 3???) thus missing a lot of modern
+		java features.
+		Following errors might occur:
+		
+		error: generics are not supported in -source 1.3
+		error: for-each loops are not supported in -source 1.3
+		error: annotations are not supported in -source 1.3
+		error: variable-arity methods are not supported in -source 1.3
+			
+		[ERROR] sharpen/src/main/sharpen/core/csharp/ast/CSAbstractInvocation.java:[28,15] 
+				error: generics are not supported in -source 1.3
+		[ERROR] (use -source 5 or higher to enable generics)
+		[ERROR] sharpen/src/main/sharpen/core/csharp/ast/CSAbstractInvocation.java:[34,24] 
+				error: for-each loops are not supported in -source 1.3
+		[ERROR] (use -source 5 or higher to enable for-each loops)
+		[ERROR] sharpen/src/main/sharpen/core/framework/DynamicVariable.java:[26,28] 
+				error: generics are not supported in -source 1.3
+		[ERROR] (use -source 5 or higher to enable generics)
+		[ERROR] sharpen/src/main/sharpen/core/csharp/ast/CSForStatement.java:[30,13] 
+				error: generics are not supported in -source 1.3
+		[ERROR] (use -source 5 or higher to enable generics)
+		[ERROR] sharpen/src/main/sharpen/core/csharp/ast/CSField.java:[29,12] 
+				error: generics are not supported in -source 1.3
+		[ERROR] (use -source 5 or higher to enable generics)
+		[ERROR] sharpen/src/main/sharpen/core/framework/ConversionBatch.java:[25,3] 
+				error: annotations are not supported in -source 1.3
+		[ERROR] (use -source 5 or higher to enable annotations)
+		[ERROR] sharpen/src/main/sharpen/core/framework/ConversionBatch.java:[26,5] 
+				error: generics are not supported in -source 1.3
+		[ERROR] (use -source 5 or higher to enable generics)
+		[ERROR] sharpen/src/main/sharpen/core/framework/ConversionBatch.java:[48,34] 
+				error: variable-arity methods are not supported in -source 1.3
+
+
+		Added this into pom.xml:
+			//build/plugins
+		-->
+		<plugin>
+			<artifactId>maven-compiler-plugin</artifactId>
+			<version>2.3.2</version>
+			<configuration>
+				<source>1.7</source>
+				<target>1.7</target>
+			</configuration>
+		</plugin>
+		<!--
+		end	FIX
+		==============================================================================================
+		-->
       
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>

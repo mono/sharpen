@@ -17,3 +17,6 @@ target/
 hs_err_pid*
 /*.iml
 /code_quality_report.txt
+/.classpath
+/.project
+.settings

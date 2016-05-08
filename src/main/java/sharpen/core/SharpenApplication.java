@@ -40,6 +40,7 @@ import sharpen.core.io.IO;
 public class SharpenApplication {
 	private SharpenCommandLine _args;
 	private static final int HELP_SIZE =27;
+	private String requestedOutputFolder = null;
 
 	public void start(String[] args) throws Exception {
 		try {
@@ -48,9 +49,17 @@ public class SharpenApplication {
 				displayHelp();
 				return;
 			}
+			
+			if(_args.configJarFilePath != null) {
+				System.err.println("Configuration Jar: " + _args.configJarFilePath);
+			}
+			
+			if(_args.outputFolder != null && !_args.outputFolder.isEmpty()) {
+				this.requestedOutputFolder = _args.outputFolder;
+			}
 			System.err.println("Configuration Class: " + _args.configurationClass);
 			System.err.println("Configuration Class: " +_args.runtimeTypeName);
-			Configuration config = ConfigurationFactory.newExternalConfiguration(_args.configurationClass, _args.runtimeTypeName, newProgressMonitor());
+			Configuration config = ConfigurationFactory.newExternalConfiguration(_args.configJarFilePath, _args.configurationClass, _args.runtimeTypeName, newProgressMonitor());
 			if(config == null)
 				config = ConfigurationFactory.newConfiguration(_args.configurationClass, _args.runtimeTypeName);
 			Sharpen.getDefault().configuration(config);
@@ -148,6 +157,11 @@ public class SharpenApplication {
 	private String deleteTargetProject(JavaProjectCmd project) throws IOException 
 	{
 		String target = project.getProjectPath() + "/" + project.getProjectName() + SharpenConstants.SHARPENED_PROJECT_SUFFIX;
+		
+		if(this.requestedOutputFolder != null && !this.requestedOutputFolder.isEmpty()) {
+			target = requestedOutputFolder;
+		}
+		
 		File targetfile = new File(target);
 		if (targetfile.exists()) {
 			delete(targetfile);
@@ -220,6 +234,12 @@ public class SharpenApplication {
 		if (_args.xmldoc != null) {
 			ods("Xml documentation: " + _args.xmldoc);
 			configuration.setDocumentationOverlay(new XmlDocumentationOverlay(_args.xmldoc));
+		}
+		if (_args.outputFolder != null) {
+			ods("Output folder: " + _args.outputFolder);
+		}
+		if (_args.configJarFilePath != null) {
+			ods("Specified configuration jar file: " + _args.configJarFilePath);
 		}
 		configuration.mapEventAdds(_args.eventAddMappings);
 		configuration.mapEvents(_args.eventMappings);

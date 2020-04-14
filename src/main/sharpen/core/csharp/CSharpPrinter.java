@@ -305,9 +305,20 @@ public class CSharpPrinter extends CSVisitor {
 	}
 	
 	public void visit(CSVariableDeclaration node) {
-		node.type().accept(this);
+        if(node.attributes().size() > 0) {
+            writeAttributes(node);
+            write(" ");
+        }
+        if(node.isVarArgs()) {
+            write("params ");
+        }
+        if(node.declareType()) {
+            node.type().accept(this);
+        }
 		if (null != node.name()) {
-			write(" ");
+            if(node.declareType()) {
+                write(" ");
+            }
 			write(node.name());
 		}
 		if (null != node.initializer()) {
@@ -413,7 +424,7 @@ public class CSharpPrinter extends CSVisitor {
 	}
 	
 	public void visit(CSDeclarationExpression node) {
-		node.declaration().accept(this);
+        writeCommaSeparatedList(node.declarations());
 	}
 
 	private void writeDeclaration(CSTypeReferenceExpression type, String name, CSExpression initializer) {
@@ -435,7 +446,7 @@ public class CSharpPrinter extends CSVisitor {
 	@Override
 	public void visit(CSBlockComment node) {
 		for(String line : node.lines()){
-			writeIndentedLine(line);
+			writeLine(line);
 		}
 	}
 
@@ -786,18 +797,8 @@ public class CSharpPrinter extends CSVisitor {
 	}
 
 	protected void writeParameterList(CSMethodBase node) {
-		List<CSVariableDeclaration> parameters = node.parameters();
 		write("(");
-		if (node.isVarArgs()) {
-			if (parameters.size() > 1) {
-				writeCommaSeparatedList(parameters.subList(0, parameters.size()-1));
-				write(", ");
-			}
-			write("params ");
-			visit(parameters.get(parameters.size()-1));
-		} else {
-			writeCommaSeparatedList(parameters);
-		}
+        writeCommaSeparatedList(node.parameters());
 		write(")");
 	}
 	
@@ -878,14 +879,24 @@ public class CSharpPrinter extends CSVisitor {
 	}
 
 	public void visit(CSAttribute node) {
-		writeIndented("[");
+        if(node.isParameter()) {
+            write("[");
+        }
+        else {
+            writeIndented("[");
+        }
 		write(node.name());
 		if (!node.arguments().isEmpty()) {
 			writeParameterList(node.arguments());
 		}
-		writeLine("]");
+        if(node.isParameter()) {
+            write("]");
+        }
+        else {
+            writeLine("]");
+        }
 	}
-	
+
 	@Override
 	public void visit(CSLabelStatement node) {
 		//labels can't be free-standing, for simplicity simply emit an empty statement
@@ -956,7 +967,7 @@ public class CSharpPrinter extends CSVisitor {
 		}
 	}
 	
-	private void writeAttributes(CSMember node) {
+	private void writeAttributes(CSAttributesContainer node) {
 		visitList(node.attributes());
 	}
 	

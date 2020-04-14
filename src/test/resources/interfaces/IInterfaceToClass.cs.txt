@@ -1,0 +1,13 @@
+namespace Interfaces
+{
+	public abstract class IInterfaceToClass
+	{
+		public const int value = 0;
+
+		public abstract void Bar();
+	}
+
+	public static class InterfaceToClassConstants
+	{
+	}
+}

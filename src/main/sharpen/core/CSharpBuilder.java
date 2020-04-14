@@ -154,30 +154,69 @@ public class CSharpBuilder extends ASTVisitor {
 	
 	@Override
 	public boolean visit(BlockComment node) {
-		_compilationUnit.addComment(new CSBlockComment(node.getStartPosition(), getText(node.getStartPosition(), node
+        String originalIndentation = getIndentation(node.getStartPosition());
+		_compilationUnit.addComment(new CSBlockComment(node.getStartPosition(), originalIndentation + getText(node.getStartPosition(), node
 		        .getLength())));
 		return false;
-	};
+	}
+
+    private String getIndentation(int position) {
+        try {
+            ICompilationUnit cu = (ICompilationUnit) _ast.getJavaElement();
+            String content;
+            if(cu != null){
+                IBuffer buffer = cu.getBuffer();
+                if(buffer == null){
+                    return "";
+                }
+
+                content = buffer.getContents();
+            }
+            else {
+                content = _content;
+            }
+
+            if (content == null || content.isEmpty()) {
+                return "";
+            }
+
+            StringBuilder builder = new StringBuilder();
+
+            while(position > 0){
+                char ch = content.charAt(--position);
+                if(ch == ' ' || ch == '\t'){
+                    builder.insert(0, ch);
+                    continue;
+                }
+
+                break;
+            }
+
+            return builder.toString();
+        } catch (JavaModelException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 	private String getText(int startPosition, int length) {
-		try {
-			ICompilationUnit cu = (ICompilationUnit) _ast.getJavaElement();
-			if(cu != null){
-				IBuffer buffer = cu.getBuffer();
-				if(buffer != null){
-					return buffer.getText(startPosition, length);
-				}
-			}
+        try {
+            ICompilationUnit cu = (ICompilationUnit) _ast.getJavaElement();
+            if(cu != null){
+                IBuffer buffer = cu.getBuffer();
+                if(buffer != null){
+                    return buffer.getText(startPosition, length);
+                }
+            }
 
-			if(_content != null && !_content.isEmpty()){
-				return _content.substring(startPosition, startPosition + length);
-			}
+            if(_content != null && !_content.isEmpty()){
+                return _content.substring(startPosition, startPosition + length);
+            }
 
-			return ""; 
-		} catch (JavaModelException e) {
-			throw new RuntimeException(e);
-		}
-	}
+            return "";
+        } catch (JavaModelException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 	public CSCompilationUnit compilationUnit() {
 		return _compilationUnit;
@@ -1491,13 +1530,13 @@ public class CSharpBuilder extends ASTVisitor {
 		} else {
 			processFieldModifiers(field, node.getModifiers());
 		}
-		mapAnnotations(node, field);
+		mapAnnotations(node.modifiers(), field);
 		mapDocumentation(node, field);
 		return field;
 	}
 
-	private void mapAnnotations(BodyDeclaration node, CSMember member) {
-		for (Object m : node.modifiers()) {
+	private void mapAnnotations(List modifiers, CSAttributesContainer member) {
+		for (Object m : modifiers) {
 			if (!(m instanceof Annotation)) {
 				continue;
 			}
@@ -1514,7 +1553,7 @@ public class CSharpBuilder extends ASTVisitor {
 		return _configuration.isIgnoredAnnotation(qualifiedName(m.resolveAnnotationBinding().getAnnotationType()));
     }
 
-	private void mapMarkerAnnotation(MarkerAnnotation annotation, CSMember member) {
+	private void mapMarkerAnnotation(MarkerAnnotation annotation, CSAttributesContainer member) {
 		final IAnnotationBinding binding = annotation.resolveAnnotationBinding();
 		final CSAttribute attribute = new CSAttribute(mappedTypeName(binding.getAnnotationType()));
 		member.addAttribute(attribute);
@@ -1751,6 +1790,7 @@ public class CSharpBuilder extends ASTVisitor {
 		}
 
 		CSMethod method = new CSMethod(mappedMethodDeclarationName(node));
+        ITypeBinding savedType = pushExpectedType(node.getReturnType2().resolveBinding());
 		method.returnType(mappedReturnType(node));
 		method.modifier(mapMethodModifier(node));
 		mapTypeParameters(node.typeParameters(), method);
@@ -1772,6 +1812,7 @@ public class CSharpBuilder extends ASTVisitor {
 				}
 			}
 		}
+        popExpectedType(savedType);
 	}
 	
 	private void cleanBaseSetupCalls (CSMethod method) {
@@ -1798,9 +1839,8 @@ public class CSharpBuilder extends ASTVisitor {
 		_currentType.addMember(method);
 
 		method.startPosition(node.getStartPosition());
-		method.isVarArgs(node.isVarargs());
 		mapParameters(node, method);
-		mapAnnotations(node, method);
+		mapAnnotations(node.modifiers(), method);
 		mapDocumentation(node, method);
 		visitBodyDeclarationBlock(node, node.getBody(), method);
 		
@@ -2100,13 +2140,13 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(ConstructorInvocation node) {
-		addChainedConstructorInvocation(new CSThisExpression(), node.arguments());
+		addChainedConstructorInvocation(new CSThisExpression(), node.resolveConstructorBinding().getParameterTypes(), node.arguments());
 		return false;
 	}
 
-	private void addChainedConstructorInvocation(CSExpression target, List arguments) {
+	private void addChainedConstructorInvocation(CSExpression target, ITypeBinding[] constructorArgTypes, List arguments) {
 		CSConstructorInvocationExpression cie = new CSConstructorInvocationExpression(target);
-		mapArguments(cie, arguments);
+		mapArguments(cie, constructorArgTypes, arguments);
 		((CSConstructor) _currentMethod).chainedConstructorInvocation(cie);
 	}
 
@@ -2114,7 +2154,7 @@ public class CSharpBuilder extends ASTVisitor {
 		if (null != node.getExpression()) {
 			notImplemented(node);
 		}
-		addChainedConstructorInvocation(new CSBaseExpression(), node.arguments());
+		addChainedConstructorInvocation(new CSBaseExpression(), node.resolveConstructorBinding().getTypeArguments(), node.arguments());
 		return false;
 	}
 
@@ -2133,8 +2173,15 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(VariableDeclarationExpression node) {
-		pushExpression(new CSDeclarationExpression(createVariableDeclaration((VariableDeclarationFragment) node
-		        .fragments().get(0))));
+        List<CSVariableDeclaration> declarations = new ArrayList<CSVariableDeclaration>();
+        for(int i = 0; i < node.fragments().size(); i++){
+            VariableDeclarationFragment fragment = (VariableDeclarationFragment) node.fragments().get(i);
+            CSVariableDeclaration variableDeclaraion = createVariableDeclaration(fragment);
+            //  write type declaration only for the first expression
+            variableDeclaraion.declareType(i == 0);
+            declarations.add(variableDeclaraion);
+        }
+		pushExpression(new CSDeclarationExpression(declarations));
 		return false;
 	}
 
@@ -2148,8 +2195,9 @@ public class CSharpBuilder extends ASTVisitor {
 
 	private CSVariableDeclaration createVariableDeclaration(VariableDeclarationFragment variable) {
 		IVariableBinding binding = variable.resolveBinding();
-		ITypeBinding saved = pushExpectedType(binding.getType());
-		CSExpression initializer = mapExpression(variable.getInitializer());
+        ITypeBinding expectedType = binding.getType();
+		ITypeBinding saved = pushExpectedType(expectedType);
+		CSExpression initializer = mapExpression(expectedType, variable.getInitializer());
 		popExpectedType(saved);
 		return createVariableDeclaration(binding, initializer);
 	}
@@ -2398,7 +2446,7 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(ReturnStatement node) {
-		addStatement(new CSReturnStatement(node.getStartPosition(), mapExpression(node.getExpression())));
+		addStatement(new CSReturnStatement(node.getStartPosition(), mapExpression(_currentExpectedType, node.getExpression())));
 		return false;
 	}
 
@@ -2407,14 +2455,26 @@ public class CSharpBuilder extends ASTVisitor {
 		String token = node.getToken();
 		CSExpression literal = new CSNumberLiteralExpression(token);
 
-		if (expectingType ("byte") && token.startsWith("-")) {
-			literal = uncheckedCast ("byte",literal);
+        if (hasParentCastExpression(node)) {
+            ITypeBinding castTypeBinding = getParentCastType(node).resolveBinding();
+            if(!isInRange(castTypeBinding, token)){
+                literal = uncheckedCast (mappedTypeName(castTypeBinding.getName()), literal);
+            }
+        }
+        else if (expectingType ("byte") && token.startsWith("-")) {
+			literal = uncheckedCast (mappedTypeName("byte"),literal);
 		}
 		else if (token.startsWith("0x")) {
-			if (token.endsWith("l") || token.endsWith("L")) {
-				literal = uncheckedCast("long", literal);
+            if (expectingType ("char")) {
+                if(token.startsWith("-")) {
+                    unsupportedConstruct(node, "Negative number cannot be converted to char");
+                    return false;
+                }
+            }
+            else if (token.endsWith("l") || token.endsWith("L")) {
+				literal = uncheckedCast(mappedTypeName("long"), literal);
 			} else {
-				literal = uncheckedCast("int", literal);
+				literal = uncheckedCast(mappedTypeName("int"), literal);
 			}
 
 		} else if (token.startsWith("0") && token.indexOf('.') == -1 && Character.isDigit(token.charAt(token.length() - 1))) {
@@ -2430,7 +2490,25 @@ public class CSharpBuilder extends ASTVisitor {
 		return false;
 	}
 
-	private CSUncheckedExpression uncheckedCast(String type, CSExpression expression) {
+    private boolean hasParentCastExpression(Expression node) {
+        return (node.getParent() instanceof CastExpression);
+    }
+
+    private Type getParentCastType(Expression node) {
+        return ((CastExpression)node.getParent()).getType();
+    }
+
+    private boolean isInRange(ITypeBinding typeBinding, String token) {
+        if(typeBinding.getQualifiedName().equals("short")){
+            Long val = Long.decode(token);
+            //  check that it matches C# range
+            return val >= -32768 && val <= 32767;
+        }
+
+        return true;
+    }
+
+    private CSUncheckedExpression uncheckedCast(String type, CSExpression expression) {
 		return new CSUncheckedExpression(new CSCastExpression(new CSTypeReference(type), new CSParenthesizedExpression(
 		        expression)));
 	}
@@ -2612,7 +2690,7 @@ public class CSharpBuilder extends ASTVisitor {
 	public boolean visit(final ForStatement node) {
 		consumeContinueLabel(new Function<CSBlock>() {
 			public CSBlock apply() {
-				ArrayList<CSExpression> initializers = new ArrayList<CSExpression> ();
+				ArrayList<CSExpression> initializers = new ArrayList<CSExpression>();
 				for (Object i : node.initializers()) {
 					initializers.add(mapExpression((Expression) i));
 				}
@@ -2681,7 +2759,7 @@ public class CSharpBuilder extends ASTVisitor {
 						openCaseBlock.addStatement(new CSGotoStatement (Integer.MIN_VALUE, "default"));
 				} else {
 					ITypeBinding stype = pushExpectedType (switchType);
-					CSExpression caseExpression = mapExpression(sc.getExpression());
+					CSExpression caseExpression = mapExpression(switchType, sc.getExpression());
 					current.addExpression(caseExpression);
 					popExpectedType(stype);
 					if (openCaseBlock != null)
@@ -2718,18 +2796,60 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(CastExpression node) {
-		pushExpression(new CSCastExpression(mappedTypeReference(node.getType()), mapExpression(node.getExpression())));
-		// Make all byte casts unchecked
-		if (node.getType().resolveBinding().getName().equals("byte"))
-			pushExpression(new CSUncheckedExpression (popExpression()));
+        CSExpression expression = mapExpression(node.getExpression());
+		ITypeBinding actualType = node.resolveTypeBinding();
+		String mappedActualTypeName = mappedTypeName(actualType);
+        if(isSameTypeCast(expression, mappedActualTypeName)) {
+            pushExpression(expression);
+        }
+        else if(_currentExpectedType != null &&
+				isValueTypeClass(actualType) &&
+				mappedTypeName(_currentExpectedType).equals(valueTypeName(mappedActualTypeName))){
+			//	replaces cast to nullable value type by cast to value type
+			pushExpression(new CSCastExpression(mappedTypeReference(_currentExpectedType), expression));
+		}
+		else {
+            pushExpression(new CSCastExpression(mappedTypeReference(node.getType()), expression));
+            // Make all byte casts unchecked
+            if (node.getType().resolveBinding().getName().equals("byte"))
+                pushExpression(new CSUncheckedExpression (popExpression()));
+        }
 		return false;
 	}
 
-	public boolean visit(PrefixExpression node) {
+	private String valueTypeName(String csTypeName) {
+		if(csTypeName.endsWith("?")) {
+			return csTypeName.substring(0, csTypeName.length() - 1);
+		}
+
+		return csTypeName;
+	}
+
+	private boolean isSameTypeCast(CSExpression expression, String expectedCSType) {
+        CSExpression castExpression = expression;
+        if(expression instanceof CSUncheckedExpression){
+            castExpression = ((CSUncheckedExpression)expression).expression();
+        }
+        if (!(castExpression instanceof CSCastExpression)) {
+            return false;
+        }
+        return castTypeName((CSCastExpression)castExpression).equals(expectedCSType);
+    }
+
+    private String castTypeName(CSCastExpression cast) {
+        CSTypeReferenceExpression expression = cast.type();
+        if(expression instanceof CSTypeReference){
+            return ((CSTypeReference)expression).typeName();
+        }
+
+        throw new UnsupportedOperationException();
+    }
+
+    public boolean visit(PrefixExpression node) {
 		CSExpression expr;
 		expr = new CSPrefixExpression(node.getOperator().toString(), mapExpression(node.getOperand()));
 		if (expectingType ("byte") && node.getOperator() == PrefixExpression.Operator.MINUS) {
-			expr = uncheckedCast ("byte", expr);
+			expr = uncheckedCast (mappedTypeName("byte"), expr);
 		}
 		pushExpression(expr);
 		return false;
@@ -2742,8 +2862,23 @@ public class CSharpBuilder extends ASTVisitor {
 
 	public boolean visit(InfixExpression node) {
 
-		CSExpression left = mapExpression(node.getLeftOperand());
-		CSExpression right = mapExpression(node.getRightOperand());
+		ITypeBinding expressionExpectedType = node.resolveTypeBinding();
+
+		Expression leftOperand = node.getLeftOperand();
+		Expression rightOperand = node.getRightOperand();
+
+		ITypeBinding prevExpectedType;
+		if(leftOperand.resolveTypeBinding().getName().equals("null") ||
+				rightOperand.resolveTypeBinding().getName().equals("null")){
+			//	if one of operands is null - expected type for the operands is unknown (reference?)
+			prevExpectedType = pushExpectedType(resolveWellKnownType("void"));
+		}else{
+			prevExpectedType = pushExpectedType(expressionExpectedType);
+		}
+
+		CSExpression left = mapExpression(leftOperand);
+		CSExpression right = mapExpression(rightOperand);
+		popExpectedType(prevExpectedType);
 		String type = node.getLeftOperand().resolveTypeBinding().getQualifiedName();
 		if (node.getOperator() == InfixExpression.Operator.RIGHT_SHIFT_UNSIGNED) {
 			if (type.equals ("byte")) {
@@ -2779,14 +2914,15 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(ConditionalExpression node) {
-		pushExpression(new CSConditionalExpression(mapExpression(node.getExpression()), mapExpression(node
-		        .getThenExpression()), mapExpression(node.getElseExpression())));
+		pushExpression(new CSConditionalExpression(mapExpression(node.getExpression()),
+				mapExpression(_currentExpectedType, node.getThenExpression()),
+				mapExpression(_currentExpectedType, node.getElseExpression())));
 		return false;
 	}
 
 	public boolean visit(InstanceofExpression node) {
 		pushExpression(new CSInfixExpression("is", mapExpression(node.getLeftOperand()), mappedTypeReference(node
-		        .getRightOperand().resolveBinding())));
+				.getRightOperand().resolveBinding())));
 		return false;
 	}
 
@@ -2830,12 +2966,12 @@ public class CSharpBuilder extends ASTVisitor {
 			}
 		}
 
-		mapArguments(initializer, node.arguments());
+		mapArguments(initializer, new ITypeBinding[0], node.arguments());
 
 		CSField field = new CSField(fieldName(node), typeName, visibility, initializer);
 		field.addModifier(CSFieldModifier.Static);
 		field.addModifier(CSFieldModifier.Readonly);
-		mapAnnotations(node, field);
+		mapAnnotations(node.modifiers(), field);
 		mapDocumentation(node, field);
 
 		popExpectedType(saved);
@@ -2874,13 +3010,21 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private CSExpression mapExpression(ITypeBinding expectedType, Expression expression) {
-		if (expectedType != null)
-			return castIfNeeded(expectedType, expression.resolveTypeBinding(), mapExpression(expression));
+        if (null == expression)
+            return null;
+
+		if (expectedType != null && expectedType != resolveWellKnownType("void"))
+			return castIfNeeded(expectedType, expression);
 		else
 			return mapExpression (expression);
 	}
 
-	private CSExpression castIfNeeded(ITypeBinding expectedType, ITypeBinding actualType, CSExpression expression) {
+	private CSExpression castIfNeeded(ITypeBinding expectedType, Expression node) {
+		ITypeBinding actualType = node.resolveTypeBinding();
+		ITypeBinding saved = pushExpectedType(expectedType);
+		CSExpression expression = mapExpression(node);
+		popExpectedType(saved);
+
 		if (!_configuration.mapIteratorToEnumerator() && expectedType.getName().startsWith("Iterable<") && isGenericCollection (actualType)) {
 			return new CSMethodInvocationExpression (new CSMemberReferenceExpression (expression, "AsIterable"));
 		}
@@ -2888,15 +3032,139 @@ public class CSharpBuilder extends ASTVisitor {
 			return new CSCastExpression(mappedTypeReference(expectedType), expression);
 
 		ITypeBinding charType = resolveWellKnownType("char");
-		if (expectedType != charType)
-			return expression;
-		if (actualType == expectedType)
-			return expression;
-		return new CSCastExpression(mappedTypeReference(expectedType), expression);
+		if (expectedType == charType) {
+			if (actualType == expectedType)
+				return expression;
+
+			return new CSCastExpression(mappedTypeReference(expectedType), expression);
+		}
+
+		return castToValueTypeIfNeeded(node, expectedType, expression);
 	}
-	
+
+	private CSExpression castToValueTypeIfNeeded(Expression node, ITypeBinding expectedType, CSExpression expression) {
+		if(expectedType == null){
+			return expression;
+		}
+
+		ITypeBinding actualType = node.resolveTypeBinding();
+
+		if (isPrimitiveType(actualType) || isValueTypeClass(actualType)) {
+
+			CSTypeReferenceExpression mappedActualTypeReference = mappedTypeReference(actualType);
+			CSTypeReferenceExpression mappedExpectedTypeReference = mappedTypeReference(expectedType);
+
+			if (isSameTypeCast(expression, mappedTypeName(expectedType))) {
+				return expression;
+			}
+
+			if (!(mappedActualTypeReference instanceof CSTypeReference) || !(mappedExpectedTypeReference instanceof CSTypeReference)) {
+				return expression;
+			}
+
+			CSTypeReference mappedActualType = (CSTypeReference)mappedActualTypeReference;
+			CSTypeReference mappedExpectedType = (CSTypeReference)mappedExpectedTypeReference;
+
+			if (isNullableFor(mappedActualType, mappedExpectedType) ||
+				canBeCastedTo(mappedActualType, mappedExpectedType)) {
+
+				return applyCast(expression, mappedExpectedType);
+			}
+
+			if(isValueTypeClass(actualType)) {
+				String mappedActualValueTypeName = valueTypeName(mappedActualType.typeName());
+
+				if (canBeImplicitlyCastedTo(mappedActualValueTypeName, mappedExpectedType.typeName())) {
+					return applyCast(expression, new CSTypeReference(mappedActualValueTypeName));
+				}
+			}
+
+			if(!hasParentCastExpression(node) && canBeUncheckedCastedTo(mappedActualType, mappedExpectedType)){
+				return uncheckedCast(mappedExpectedType.typeName(), expression);
+			}
+		}
+
+		return expression;
+	}
+
+	private CSExpression applyCast(CSExpression expression, CSTypeReference mappedExpectedType) {
+
+		if (expression instanceof CSCastExpression) {
+            return new CSCastExpression(mappedExpectedType, ((CSCastExpression) expression).expression());
+        }
+
+		return new CSCastExpression(mappedExpectedType, expression);
+	}
+
+	private boolean isPrimitiveType(ITypeBinding type) {
+		return type != null &&
+				(type.getQualifiedName().equals("double") ||
+						type.getQualifiedName().equals("integer") ||
+						type.getQualifiedName().equals("long") ||
+						type.getQualifiedName().equals("float") ||
+						type.getQualifiedName().equals("boolean"));
+	}
+
+	private boolean isCSNullableValueType(CSTypeReference type) {
+		return type.typeName().endsWith("?");
+	}
+
+	private boolean isValueTypeClass(ITypeBinding type) {
+		return type != null &&
+				(type.getQualifiedName().equals("java.lang.Double") ||
+						type.getQualifiedName().equals("java.lang.Integer") ||
+						type.getQualifiedName().equals("java.lang.Long") ||
+						type.getQualifiedName().equals("java.lang.Float") ||
+						type.getQualifiedName().equals("java.lang.Boolean"));
+	}
+
+	private boolean isNullableFor(CSTypeReference nullableType, CSTypeReference valueType) {
+
+		return isCSNullableValueType(nullableType) && valueTypeName(nullableType.typeName()).equals(valueType.typeName());
+	}
+
+	private boolean canBeCastedTo(CSTypeReference actualType, CSTypeReference expectedType) {
+
+		return canBeCastedTo(actualType.typeName(), expectedType.typeName());
+	}
+
+	private boolean canBeCastedTo(String csActualTypeName, String expectedTypeName) {
+
+		if(csActualTypeName.equals("float?")){
+			return expectedTypeName.equals("double");
+		}
+
+		if(csActualTypeName.equals("long?")){
+			return expectedTypeName.equals("double");
+		}
+
+		return false;
+	}
+
+	private boolean canBeImplicitlyCastedTo(String csActualTypeName, String csExpectedTypeName) {
+
+		if(csActualTypeName.equals("int")){
+			return csExpectedTypeName.equals("long");
+		}
+
+		return false;
+	}
+
+	private boolean canBeUncheckedCastedTo(CSTypeReference actualType, CSTypeReference expectedType) {
+
+		String actualTypeName = actualType.typeName();
+		String expectedTypeName = expectedType.typeName();
+
+		if(actualTypeName.equals("long")){
+			return expectedTypeName.equals("int");
+		}
+
+		return false;
+	}
+
 	private boolean isGenericCollection (ITypeBinding t) {
-		return t.getName().startsWith("List<") || t.getName().startsWith("Set<");
+		return t.getName().startsWith("List<") || t.getName().startsWith("Set<")
+                || t.getName().startsWith("Collection<");
 	}
 	
 	private boolean isSubclassOf (ITypeBinding t, ITypeBinding tbase) {
@@ -2920,10 +3188,16 @@ public class CSharpBuilder extends ASTVisitor {
 		}
 
 		if (isNonStaticNestedTypeCreation(node)) {
-			expression.addArgument(new CSThisExpression());
+            if(_currentType.name().equals(node.resolveTypeBinding().getName())){
+                expression.addArgument(new CSMemberReferenceExpression(new CSThisExpression(), AbstractNestedClassBuilder.ENCLOSING_FIELD));
+            }
+            else {
+                expression.addArgument(new CSThisExpression());
+            }
 		}
 
-		mapArguments(expression, node.arguments());
+		ITypeBinding[] constructorArgsTypes = node.resolveConstructorBinding().getParameterTypes();
+		mapArguments(expression, constructorArgsTypes, node.arguments());
 		pushExpression(expression);
 		return false;
 	}
@@ -3025,7 +3299,7 @@ public class CSharpBuilder extends ASTVisitor {
 		}
 
 		CSMethodInvocationExpression mie = new CSMethodInvocationExpression(target);
-		mapArguments(mie, node.arguments());
+		mapArguments(mie, node.resolveMethodBinding().getParameterTypes(), node.arguments());
 		pushExpression(mie);
 		return false;
 	}
@@ -3432,7 +3706,7 @@ public class CSharpBuilder extends ASTVisitor {
 				mie.addArgument(expression);
 			}
 		}
-		mapArguments(mie, arguments);
+		mapArguments(mie, node.resolveMethodBinding().getParameterTypes(), arguments);
 		adjustJUnitArguments(mie, node);
 		pushExpression(mie);
 	}
@@ -3494,9 +3768,9 @@ public class CSharpBuilder extends ASTVisitor {
 		return -1 != name.indexOf('.');
 	}
 
-	protected void mapArguments(CSMethodInvocationExpression mie, List arguments) {
-		for (Object arg : arguments) {
-			addArgument(mie, (Expression) arg, null);
+	protected void mapArguments(CSMethodInvocationExpression mie, ITypeBinding[] constructorArgTypes, List arguments) {
+		for (int i = 0; i < arguments.size(); i++) {
+			addArgument(mie, (Expression) arguments.get(i), i < constructorArgTypes.length ? constructorArgTypes[i] : null);
 		}
 	}
 
@@ -3543,31 +3817,34 @@ public class CSharpBuilder extends ASTVisitor {
 			String ident = mapVariableName (identifier (node));
 			IBinding b = node.resolveBinding();
 			IVariableBinding vb = b instanceof IVariableBinding ? (IVariableBinding) b : null;
+			CSReferenceExpression resultExpression = null;
 			if (vb != null) {
 				ITypeBinding cls = vb.getDeclaringClass();
 				if (cls != null) {
 					if (isStaticImport(vb, _ast.imports())) {
-						if (cls != null) {
-							pushExpression(new CSMemberReferenceExpression(mappedTypeReference(cls), ident));
-							return false;
-						}
+						resultExpression = new CSMemberReferenceExpression(mappedTypeReference(cls), ident);
 					}
-					else if (cls.isEnum() && ident.indexOf('.') == -1){
-						pushExpression(new CSMemberReferenceExpression(mappedTypeReference(cls), ident));
-						return false;
+					else if (cls.isEnum() && ident.indexOf('.') == -1 && vb.isEnumConstant()){
+						resultExpression = new CSMemberReferenceExpression(mappedTypeReference(cls), ident);
 					}
 					else if (_configuration.separateInterfaceConstants() && cls.isInterface() && ident.indexOf('.') == -1) {
-						pushExpression(new CSMemberReferenceExpression(mappedAuxillaryTypeReference(cls), ident));
-						return false;
+						resultExpression = new CSMemberReferenceExpression(mappedAuxillaryTypeReference(cls), ident);
 					}
 				}
 			}
-			pushExpression(new CSReferenceExpression(ident));
+			if(resultExpression == null) {
+				resultExpression = new CSReferenceExpression(ident);
+			}
+
+			///	because Java makes autocasting i.e Double -> double, only one way to support nullables in C#,
+			///	to cast nullable to expected type immediately
+
+			pushExpression(castToValueTypeIfNeeded(node, _currentExpectedType, resultExpression));
 		}
 		return false;
 	}
 
-	private void addStatement(CSStatement statement) {
+    private void addStatement(CSStatement statement) {
 		_currentBlock.addStatement(statement);
 	}
 
@@ -3745,7 +4022,10 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private CSVariableDeclaration createParameter(SingleVariableDeclaration declaration) {
-		return createVariableDeclaration(declaration.resolveBinding(), null);
+		CSVariableDeclaration varDeclaration = createVariableDeclaration(declaration.resolveBinding(), null);
+        varDeclaration.isVarArgs(declaration.isVarargs());
+        mapAnnotations(declaration.modifiers(), varDeclaration);
+        return varDeclaration;
 	}
 
 	protected void visit(List nodes) {
@@ -4073,8 +4353,25 @@ public class CSharpBuilder extends ASTVisitor {
 	}
 
 	private CSTypeReferenceExpression mappedWildcardTypeReference(ITypeBinding type) {
-		final ITypeBinding bound = type.getBound();
-		return bound != null ? mappedTypeReference(bound) : OBJECT_TYPE_REFERENCE;
+        final ITypeBinding bound = type.getBound();
+        if (bound == null) {
+            return OBJECT_TYPE_REFERENCE;
+        }
+
+        CSTypeReferenceExpression mappedTypeReference = mappedTypeReference(bound);
+
+        if(_currentMethod != null && _currentMethod instanceof CSMethod){
+            CSMethod method = (CSMethod)_currentMethod;
+            if(method.typeParameters().size() > 0){
+                for(CSTypeParameter param : method.typeParameters()){
+                    if(param.superClass().equals(mappedTypeReference)){
+                        return new CSTypeReference(param.name());
+                    }
+                }
+            }
+        }
+
+        return mappedTypeReference;
 	}
 
 	private CSTypeReferenceExpression mappedArrayTypeReference(ITypeBinding type) {

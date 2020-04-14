@@ -21,16 +21,24 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package sharpen.core.csharp.ast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CSDeclarationExpression extends CSExpression {
 
-	private CSVariableDeclaration _declaration;
+	private List<CSVariableDeclaration> _declarations;
 
 	public CSDeclarationExpression(CSVariableDeclaration declaration) {
-		_declaration = declaration;
+		_declarations = new ArrayList<CSVariableDeclaration>();
+        _declarations.add(declaration);
 	}
+
+    public CSDeclarationExpression(List<CSVariableDeclaration> declarations) {
+        _declarations = declarations;
+    }
 	
-	public CSVariableDeclaration declaration() {
-		return _declaration;
+	public List<CSVariableDeclaration> declarations() {
+		return _declarations;
 	}
 
 	public void accept(CSVisitor visitor) {

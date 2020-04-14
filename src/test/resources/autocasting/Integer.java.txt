@@ -1,0 +1,32 @@
+package autocasting;
+
+class Autocasting {
+
+    private int _i;
+    private Autocasting(int i, int i2){
+        _i = i;
+    }
+
+	public int integer(){
+	    Integer val = 110 + _i;
+        Integer res = minus(val, val / 2);
+        if(res != null){
+            return res + 5;
+        }
+
+        long l = 100L;
+        _i += l;
+        return _i;
+    }
+
+    private int minus(int arg1, int arg2){
+        Integer result = arg1 - arg2;
+        int test = result + 4;
+        if(test < 0)
+            return 0;
+
+        Autocasting obj = new Autocasting(result, (Integer)test);
+        result = obj.integer();
+        return result;
+    }
+}

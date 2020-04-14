@@ -2,6 +2,8 @@ package imports;
 
 class StaticallyImported {
 
+  public static final int TAG = 0x0003;
+
   static int foo() {
     return 42;
   }

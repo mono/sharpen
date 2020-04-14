@@ -1,0 +1,12 @@
+[System.Serializable]
+public sealed class Enum2
+{
+	public static readonly Enum2 EnumValue = new Enum2(0);
+
+	private readonly int _instanceField;
+
+	private Enum2(int value)
+	{
+		_instanceField = value;
+	}
+}

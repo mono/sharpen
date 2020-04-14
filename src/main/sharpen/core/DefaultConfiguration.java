@@ -252,12 +252,14 @@ public class DefaultConfiguration extends Configuration {
 		mapMethod("java.lang.Long.parseLong", "long.Parse");
 		mapMethod("java.lang.Integer.valueOf", "int.Parse");
 		mapMethod("java.lang.Integer.parseInt", "System.Convert.ToInt32");
-		mapMethod("java.lang.Number.shortValue", "");
-		mapMethod("java.lang.Number.intValue", "");
-		mapMethod("java.lang.Number.longValue", "");
-		mapMethod("java.lang.Number.byteValue", "");
-		mapMethod("java.lang.Number.floatValue", "");
-		mapMethod("java.lang.Number.doubleValue", "");
+        if(!numberValueGetter()) {
+            mapMethod("java.lang.Number.shortValue", "");
+            mapMethod("java.lang.Number.intValue", "");
+            mapMethod("java.lang.Number.longValue", "");
+            mapMethod("java.lang.Number.byteValue", "");
+            mapMethod("java.lang.Number.floatValue", "");
+            mapMethod("java.lang.Number.doubleValue", "");
+        }
 		mapMethod("java.lang.Character.charValue", "");
 		mapMethod("java.lang.Boolean.booleanValue", "");
 		mapMethod("java.lang.Float.floatToIntBits", runtimeMethod("floatToIntBits"));
@@ -266,11 +268,40 @@ public class DefaultConfiguration extends Configuration {
 	
 	public boolean isIgnoredExceptionType(String exceptionType) {
 		return exceptionType.equals("java.lang.CloneNotSupportedException");
-	}	
-
-	@Override
-	public boolean mapByteToSbyte() {
-		return false;
 	}
-}
 
+    @Override
+    public void enableMapByteToSbyte() {
+        super.enableMapByteToSbyte();
+        mapType("byte", "sbyte");
+        mapType("java.lang.Byte", "sbyte");
+        mapField("java.lang.Byte.MAX_VALUE", "sbyte.MaxValue");
+        mapField("java.lang.Byte.MIN_VALUE", "sbyte.MinValue");
+    }
+
+    @Override
+    public void disableMapIteratorToEnumerator() {
+        super.disableMapIteratorToEnumerator();
+        unmapType("java.util.Iterator");
+        unmapType("java.util.Iterator<>");
+        unmapType("java.lang.Iterable");
+        unmapType("java.lang.Iterable<>");
+        unmapMethod("java.lang.Iterable.iterator");
+        unmapMethod("java.util.Collection.iterator");
+        unmapMethod("java.util.List.iterator");
+        unmapMethod("java.util.Set.iterator");
+        unmapMethod("java.util.Iterator.hasNext");
+        unmapProperty("java.util.Iterator.next");
+    }
+
+    @Override
+    public void enableNumberValueGetter() {
+        super.enableNumberValueGetter();
+        unmapMethod("java.lang.Number.shortValue");
+        unmapMethod("java.lang.Number.intValue");
+        unmapMethod("java.lang.Number.longValue");
+        unmapMethod("java.lang.Number.byteValue");
+        unmapMethod("java.lang.Number.floatValue");
+        unmapMethod("java.lang.Number.doubleValue");
+    }
+}

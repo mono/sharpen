@@ -5,7 +5,10 @@ import static imports.StaticallyImported.*;
 class StaticImports {
 
   void bar() {
-    foo();
+    switch(foo()){
+        case TAG:
+        break;
+    }
   }
 
 }

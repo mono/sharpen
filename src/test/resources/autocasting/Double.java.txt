@@ -1,0 +1,30 @@
+package autocasting;
+
+class Autocasting {
+
+    private double _d;
+    private Autocasting(double d){
+        _d = d;
+    }
+
+	public double dbl(){
+	    Double val = 110.00 + _d;
+        Double res = minus(val, val / 2);
+        if(res != null){
+            return res + 5;
+        }
+
+        return 0;
+    }
+
+    private double minus(double arg1, double arg2){
+        Double result = arg1 - arg2;
+        double test = result + 4;
+        if(test < 0)
+            return 0;
+
+        Autocasting obj = new Autocasting(result);
+        result = obj.dbl();
+        return result;
+    }
+}

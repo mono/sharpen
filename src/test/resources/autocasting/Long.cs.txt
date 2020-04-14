@@ -1,0 +1,37 @@
+namespace autocasting
+{
+	internal class Autocasting
+	{
+		private long _l;
+
+		private Autocasting(long l, long l2)
+		{
+			_l = l + l2;
+		}
+
+		public virtual long longval()
+		{
+			long? val = 110L + _l;
+			long? res = minus((long)val, (long)val / 2);
+			if (res != null)
+			{
+				return (long)res + 5;
+			}
+			return 0;
+		}
+
+		private long minus(long arg1, long arg2)
+		{
+			long? result = arg1 - arg2;
+			long test = (long)result + 4;
+			if (test < 0)
+			{
+				return 0;
+			}
+			int? i = 10;
+			autocasting.Autocasting obj = new autocasting.Autocasting((long)result, (int)i);
+			result = obj.longval();
+			return (long)result;
+		}
+	}
+}

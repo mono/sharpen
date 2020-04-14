@@ -1,0 +1,35 @@
+namespace autocasting
+{
+	internal class Autocasting
+	{
+		private bool _b;
+
+		private Autocasting(bool b)
+		{
+			_b = b;
+		}
+
+		public virtual bool booleanval(int x)
+		{
+			bool? val = true && _b;
+			bool? res = resolve((bool)val, (bool)val || (x == 2));
+			if (res != null)
+			{
+				return (bool)res || (x == 3);
+			}
+			return false;
+		}
+
+		private bool resolve(bool arg1, bool? arg2)
+		{
+			bool? result = arg1 && (bool)arg2;
+			if ((bool)result)
+			{
+				return true;
+			}
+			autocasting.Autocasting obj = new autocasting.Autocasting((bool)result);
+			result = obj.booleanval(10);
+			return (bool)result;
+		}
+	}
+}

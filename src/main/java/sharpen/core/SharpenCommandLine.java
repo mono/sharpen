@@ -86,8 +86,10 @@ public class SharpenCommandLine {
 	public final List<String> eventAddMappings = new ArrayList<String>();
 	public final Map<String, String> conditionalCompilation = new HashMap<String, String>();
 	public String configurationClass;
+	public String configJarFilePath;
 	public boolean junitConversion;
 	public boolean flatNamespaceDirectoryStructure;
+	public String outputFolder;
 	public String sharpenNamespace;
 	public boolean help;
 }

@@ -30,23 +30,26 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class ConfigurationFactory {
 
 	public static final String DEFAULT_RUNTIME_TYPE_NAME = "Sharpen.Runtime";
-	
-	private ConfigurationFactory() {}
-	
+
+	private ConfigurationFactory() {
+	}
+
 	public static Configuration defaultConfiguration() {
 		return newConfiguration(null);
 	}
-	
+
 	public static Configuration newConfiguration(String configurationClass) {
 		return newConfiguration(configurationClass, DEFAULT_RUNTIME_TYPE_NAME);
 	}
-	
+
 	public static Configuration newConfiguration(String configurationClass, String runtimeTypeName) {
 		runtimeTypeName = evalRuntimeType(runtimeTypeName);
 
@@ -59,33 +62,43 @@ public class ConfigurationFactory {
 			ctor.setAccessible(true);
 			return (Configuration) ctor.newInstance(runtimeTypeName);
 		} catch (Exception e) {
-			throw new IllegalArgumentException("Cannot instantiate configuration class: " + configurationClass,  e);
+			throw new IllegalArgumentException("Cannot instantiate configuration class: " + configurationClass, e);
 		}
 	}
 
-	public static Configuration newExternalConfiguration(String configurationClass, String runtimeTypeName, IProgressMonitor progressMonitor) throws Exception {
+	public static Configuration newExternalConfiguration(String configurationClass, String runtimeTypeName,
+			IProgressMonitor progressMonitor) throws Exception {
+		return newExternalConfiguration(null, configurationClass, runtimeTypeName, progressMonitor);
+	}
+
+	public static Configuration newExternalConfiguration(String jarPath, String configurationClass,
+			String runtimeTypeName, IProgressMonitor progressMonitor) throws Exception {
 		if (configurationClass == null) {
 			return null;
 		}
 
 		runtimeTypeName = evalRuntimeType(runtimeTypeName);
 
-		String configJar = NameUtility.unqualify(configurationClass)+ ".sharpenconfig.jar";
-
 		try {
-			URI currentDirectoryURI = getCurrentDirectoryURI();
-			File currentDirectory = new File(currentDirectoryURI);
-			Path configPath = Paths.get(currentDirectory.getPath(), configJar);
-			URI jarURI = configPath.toUri();
-			File configFile = configPath.toFile();
-			if(!configFile.exists()){
-				progressMonitor.subTask("Configuration library " + configJar + " not found");
-				return null;
-			}
 
+			URI jarURI = null;
+
+			if (jarPath != null && Files.exists(Paths.get(jarPath), LinkOption.NOFOLLOW_LINKS)) {
+				jarURI = Paths.get(jarPath).toUri();
+			} else {
+				String configJar = NameUtility.unqualify(configurationClass) + ".sharpenconfig.jar";
+				URI currentDirectoryURI = getCurrentDirectoryURI();
+				File currentDirectory = new File(currentDirectoryURI);
+				Path configPath = Paths.get(currentDirectory.getPath(), configJar);
+				jarURI = configPath.toUri();
+				File configFile = configPath.toFile();
+				if (!configFile.exists()) {
+					progressMonitor.subTask("Configuration library " + configJar + " not found");
+					return null;
+				}
+			}
 			return createConfigFromJar(jarURI, configurationClass, runtimeTypeName);
-		}
-		catch (Exception ex){
+		} catch (Exception ex) {
 			throw new Exception("External configuration library error : " + ex.getMessage(), ex);
 		}
 	}
@@ -98,14 +111,16 @@ public class ConfigurationFactory {
 		return runtimeTypeName == null ? DEFAULT_RUNTIME_TYPE_NAME : runtimeTypeName;
 	}
 
-	private static Configuration createConfigFromJar(URI jarURI, String className, String runtimeTypeName) throws Exception {
-		URLClassLoader classLoader = new URLClassLoader(new URL[]{ jarURI.toURL() }, ConfigurationFactory.class.getClassLoader());
-		Class configurationClass = Class.forName (className, true, classLoader);
-		if(!Configuration.class.isAssignableFrom(configurationClass)){
+	private static Configuration createConfigFromJar(URI jarURI, String className, String runtimeTypeName)
+			throws Exception {
+		URLClassLoader classLoader = new URLClassLoader(new URL[] { jarURI.toURL() },
+				ConfigurationFactory.class.getClassLoader());
+		Class configurationClass = Class.forName(className, true, classLoader);
+		if (!Configuration.class.isAssignableFrom(configurationClass)) {
 			throw new Exception("Configuration class must extend " + Configuration.class.getName());
 		}
 		Constructor<?> ctor = configurationClass.getDeclaredConstructor(String.class);
-		if(!Modifier.isPublic(ctor.getModifiers())){
+		if (!Modifier.isPublic(ctor.getModifiers())) {
 			throw new Exception("Configuration class constructor must have public modifier");
 		}
 		return (Configuration) ctor.newInstance(runtimeTypeName);

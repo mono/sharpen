@@ -144,10 +144,14 @@ class SharpenCommandLineParser extends CommandLineParser {
 			_cmdLine.conditionalCompilation.put(consumeNext(), consumeNext());
 		} else if (areEqual(arg, "-configurationClass")) {
 			_cmdLine.configurationClass = consumeNext();		
+		} else if (areEqual(arg, "-configJarFilePath")) {
+			_cmdLine.configJarFilePath = consumeNext();		
 		} else if (areEqual(arg, "-junitConversion")) {
 			_cmdLine.junitConversion = true;
 		} else if (this.areEqual(arg, "-flatDirectoryStructure")) {
 			this._cmdLine.flatNamespaceDirectoryStructure = true;
+		} else if (this.areEqual(arg, "-outputFolder")) {
+			this._cmdLine.outputFolder = consumeNext();
 		} else if (areEqual(arg, "-sharpenNamespace")) {
 			_cmdLine.sharpenNamespace = consumeNext();	
 		} else if (areEqual(arg, "-help")) {
